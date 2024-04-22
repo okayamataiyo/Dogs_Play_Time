@@ -14,7 +14,11 @@
 #include "PlayScene.h"
 
 PlayScene::PlayScene(GameObject* _pParent)
-	:GameObject(_pParent, playSceneName),lengthRecedes_{5}, degreesMin_{0.0f}, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}, boneSummonsPosLimitMinX_{100.0f}, boneSummonsPosLimitMaxX_{100.0f}, boneSummonsPosLimitMinZ_{100.0f}, boneSummonsPosLimitMaxZ_{100.0f}, woodBoxCountMax_{5}, boneCountNone_{0}, boneCountMax_{3}, addBoneCountAmount_{1}, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}, random_value_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}, isCreateBone_{false}
+	:GameObject(_pParent, playSceneName),stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
+	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
+	, woodBoxCountMax_{5}
+	, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}
+	, random_value_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}
 	, collectPlayerPosition_{}, collectPlayerDirection_{},boneFrontPosition_{2.0f}, woodBoxCount_{0}
 	, attackPlayerPosition_{}, attackPlayerDirection_{},woodBoxFrontPosition_{10.0f}, blockOrCollect_{0},isGameStop_{false}
 	,pSceneManager_{nullptr}, pAttackPlayer_{nullptr}, pCollectPlayer_{nullptr}, pItemObjectManager_{nullptr}, pStageObjectManager_{nullptr}
@@ -26,20 +30,26 @@ void PlayScene::Initialize()
 {
 	//サウンドデータのロード
 	std::string soundName;
-	for (int i = initZeroInt; i < sizeof(soundPlaySceneNames) / sizeof(soundPlaySceneNames[initZeroInt]); i++)
+	for (int i = 0u; i < sizeof(soundPlaySceneNames) / sizeof(soundPlaySceneNames[initZeroInt]); i++)
 	{
 		soundName = soundFolderName + soundPlaySceneNames[i] + soundModifierName;
 		hSound_[i] = Audio::Load(soundName);
-		assert(hSound_[i] >= initZeroInt);
+		assert(hSound_[i] >= 0u);
 	}
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pItemObjectManager_ = new ItemObjectManager(this);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::STAGE);
-	for (int i = initZeroInt; i <= 2; i++)
+
+	float stageBlockSummonsPosLimitMinX = 100.0f;
+	float stageBlockSummonsPosLimitMaxX = 100.0f;
+	float stageBlockSummonsPosLimitMinZ = 100.0f;
+	float stageBlockSummonsPosLimitMaxZ = 100.0f;
+
+	for (int i = 0u; i < stageBlockNum_; i++)
 	{
-		pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGEBLOCK, -100.0f, 100.0f, -100.0f, 100.0f);
+		pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
 	}
 	floorPosition_[0].position_ = { 30.0f,0.8f,3.0f };
 	floorPosition_[1].position_ = { -70.0f,0.5f,50.0f };
@@ -51,17 +61,10 @@ void PlayScene::Initialize()
 							  ,XMFLOAT3(20.0f,-10.0f,40.0f)
 							  ,XMFLOAT3(10.0f,-20.0f,40.0f) };
 	XMFLOAT3 FrameBox = { XMFLOAT3(5.0f,5.0f,5.0f) };
-	//for (int i = 0u; i <= 1; i++)
-	//{
-	//	pObjectManager_->CreateObject(OBJECTSTATE::FLOOR, floorPosition_[i].position_, XMFLOAT3(0.0f,90.0f,0.0f), XMFLOAT3(4.0f,1.0f,4.0f));
-	//}
+
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 
-	//for (int i = 0u; i <= 2; i++)
-	//{
-	//	pObjectManager_->CreateObject(OBJECTSTATE::WOODBOX, WoodBox[i], DefaultData[0], XMFLOAT3(0.3f, 0.3f, 0.3f));
-	//}
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
 	camVec_[attackPlayerNumber].x = 0;
 	camVec_[attackPlayerNumber].y = 5;
@@ -94,37 +97,27 @@ void PlayScene::Update()
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
 		Audio::Play(hSound_[random_value_],soundVolume_);
 	}
-	if((!isGameStop_ && pAttackPlayer_->GetScore() < changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() < 100))
+	if((!isGameStop_ && pAttackPlayer_->GetScore() < changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() < changeScore_))
 	{
 		Audio::Play(hSound_[(int)SOUNDSTATE::BGM], soundVolumeHalf_);
 	}
-	//木箱が邪魔側の犬の口にくるための計算
+	//木箱が邪魔側の犬の前にくるための計算
 	attackPlayerPosition_ = pAttackPlayer_->GetPosition();
 	attackPlayerDirection_ = XMLoadFloat3(&attackPlayerPosition_) - Camera::VecGetPosition(attackPlayerNumber);
-	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, initZeroFloat);
+	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, 0);	//y座標の初期化
 	attackPlayerDirection_ = XMVector3Normalize(attackPlayerDirection_);
 	attackPlayerPosition_.x = attackPlayerPosition_.x + woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
 	attackPlayerPosition_.z = attackPlayerPosition_.z + woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
 	//骨が収集側の犬の口にくるための計算
 	collectPlayerPosition_ = pCollectPlayer_->GetPosition();
 	collectPlayerDirection_ = XMLoadFloat3(&collectPlayerPosition_) - Camera::VecGetPosition(collectPlayerNumber);
-	collectPlayerDirection_ = XMVectorSetY(collectPlayerDirection_, initZeroFloat);
+	collectPlayerDirection_ = XMVectorSetY(collectPlayerDirection_, 0);	//y座標の初期化
 	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
 	collectPlayerPosition_.x = collectPlayerPosition_.x + boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
 	collectPlayerPosition_.z = collectPlayerPosition_.z + boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
 	SetCursorPos(mousePosX_, mousePosY_);
 	HideCursor();
-	isCreateBone_ = (boneCount_ == boneCountNone_) ? true : isCreateBone_;
-	isCreateBone_ = (boneCount_ == boneCountMax_) ? false : isCreateBone_;
-
-	if (isCreateBone_)
-	{
-		for (int i = 0u; i <= 2u; i++)
-		{
-			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::BONE, -boneSummonsPosLimitMinX_, boneSummonsPosLimitMaxX_, -boneSummonsPosLimitMinZ_, boneSummonsPosLimitMaxZ_);
-			boneCount_ += addBoneCountAmount_;
-		}
-	}
+	BoneSummons();
 	if (woodBoxCount_ <= woodBoxCountMax_)
 	{
 		if (Input::IsPadButtonDown(XINPUT_GAMEPAD_Y,pAttackPlayer_->GetPadID()) && !pAttackPlayer_->GetIsJump())
@@ -242,6 +235,30 @@ void PlayScene::Draw()
 
 void PlayScene::Release()
 {
+}
+
+void PlayScene::BoneSummons()
+{
+	int boneCountNone = 0;
+	int boneCountMax = 3;
+	int addBoneCountAmount = 1;
+	float boneSummonsPosLimitMinX = 100.0f;
+	float boneSummonsPosLimitMaxX = 100.0f;
+	float boneSummonsPosLimitMinZ = 100.0f;
+	float boneSummonsPosLimitMaxZ = 100.0f;
+	bool isCreateBone = false;     //骨を作ったかどうか
+
+	isCreateBone = (boneCount_ == boneCountNone) ? true : isCreateBone;
+	isCreateBone = (boneCount_ == boneCountMax) ? false : isCreateBone;
+
+	if (isCreateBone)
+	{
+		for (int i = 0u; i < boneCountMax; i++)
+		{
+			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::BONE, -boneSummonsPosLimitMinX, boneSummonsPosLimitMaxX, -boneSummonsPosLimitMinZ, boneSummonsPosLimitMaxZ);
+			boneCount_ += addBoneCountAmount;
+		}
+	}
 }
 
 void PlayScene::SetGameStop()

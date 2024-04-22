@@ -39,7 +39,6 @@ ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
     positionY_ = 0.0f;
     isDash_ = false;
     isFling_ = 1.0f;
-    deadZone_ = 0.3f;
     pi_ = 3.14;
     halfPi_ = pi_ / 2.0f;
     dashSpeed_ = 0.5f;

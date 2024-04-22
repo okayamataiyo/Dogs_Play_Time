@@ -45,7 +45,6 @@ protected:
 	float mouseMoveSpeed_;
 	bool isDash_;				//ダッシュしているかどうか
 	float isFling_;				//地面から離れているか
-	float deadZone_;			//コントローラーのデットゾーン
 	float pi_;					//円周率
 	float halfPi_;				//円周率の半分
 	float dashSpeed_;

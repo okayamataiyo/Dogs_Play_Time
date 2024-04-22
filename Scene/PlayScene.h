@@ -47,20 +47,14 @@ private:
         THIRD,
         FOUR,
     };
+    int stageBlockNum_;             //ステージブロックの数
     int lengthRecedes_;
     float degreesMin_;
     float degreesMax_;
     float degreesToRadians_;
     float vecLengthRecedes_;
     float vecLengthApproach_;
-    float boneSummonsPosLimitMinX_;
-    float boneSummonsPosLimitMaxX_;
-    float boneSummonsPosLimitMinZ_;
-    float boneSummonsPosLimitMaxZ_;
     int woodBoxCountMax_;
-    int boneCountNone_;
-    int boneCountMax_;
-    int addBoneCountAmount_;
     int mousePosX_;
     int mousePosY_;
     int changeScore_;
@@ -74,7 +68,6 @@ private:
     float soundVolumeHalf_;
     //▼骨に関するメンバ変数
     int boneCount_;         //今ある骨の数
-    bool isCreateBone_;     //骨を作ったかどうか
     XMFLOAT3 collectPlayerPosition_;
     XMVECTOR collectPlayerDirection_;
     float boneFrontPosition_;
@@ -120,6 +113,7 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    void BoneSummons();
     std::vector<int> GetWoodBoxs() { return pItemObjectManager_->GetWoodBoxs(); }
     int GetBlockOrCollect() { return blockOrCollect_; }
     XMFLOAT3 GetAttackPlayerPosition() { return attackPlayerPosition_; }

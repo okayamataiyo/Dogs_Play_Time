@@ -51,7 +51,6 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     positionY_ = 0.0f;
     isDash_ = false;
     isFling_ = 1.0f;
-    deadZone_ = 0.3f;
     pi_ = 3.14;
     halfPi_ = pi_ / 2.0f;
     dashSpeed_ = 0.5f;
@@ -426,41 +425,34 @@ void CollectPlayer::PlayerMove()
     }
 
     transform_.rotate_.y = XMConvertToDegrees(angle_);
-    if (Input::GetPadStickL(padID_).y > deadZone_)
+    //XMConvertToRadians = degree角をradian角に(ただ)変換する
+    //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
+    const XMMATRIX rotmat = XMMatrixRotationY(halfPi_);
+    XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
+    vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
+    vecDirection = XMVector3Normalize(vecDirection);
+    const float deadZone = 0.3f;			//コントローラーのデットゾーン
+    if (Input::GetPadStickL(padID_).y > deadZone)
     {
-        XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
-        vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
-        vecDirection = XMVector3Normalize(vecDirection);
-        transform_.position_.x = transform_.position_.x + controllerMoveSpeed_ * XMVectorGetX(vecDirection);
-        transform_.position_.z = transform_.position_.z + controllerMoveSpeed_ * XMVectorGetZ(vecDirection);
+        transform_.position_.x += controllerMoveSpeed_ * XMVectorGetX(vecDirection);
+        transform_.position_.z += controllerMoveSpeed_ * XMVectorGetZ(vecDirection);
     }
-    if (Input::GetPadStickL(padID_).y < -deadZone_)
+    if (Input::GetPadStickL(padID_).y < -deadZone)
     {
-        XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
-        vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
-        vecDirection = XMVector3Normalize(vecDirection);
-        transform_.position_.x = transform_.position_.x + controllerMoveSpeed_ * XMVectorGetX(-vecDirection);
-        transform_.position_.z = transform_.position_.z + controllerMoveSpeed_ * XMVectorGetZ(-vecDirection);
+        transform_.position_.x += controllerMoveSpeed_ * XMVectorGetX(-vecDirection);
+        transform_.position_.z += controllerMoveSpeed_ * XMVectorGetZ(-vecDirection);
     }
-    if (Input::GetPadStickL(padID_).x > deadZone_)
+    if (Input::GetPadStickL(padID_).x > deadZone)
     {
-        XMMATRIX rotmat = XMMatrixRotationY(halfPi_);                          //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数,//XMConvertToRadians = degree角をradian角に(ただ)変換する
-        XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
-        vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
-        vecDirection = XMVector3Normalize(vecDirection);
         XMVECTOR tempvec = XMVector3Transform(vecDirection, rotmat);
-        transform_.position_.x = transform_.position_.x + controllerMoveSpeed_ * XMVectorGetX(tempvec);
-        transform_.position_.z = transform_.position_.z + controllerMoveSpeed_ * XMVectorGetZ(tempvec);
+        transform_.position_.x += controllerMoveSpeed_ * XMVectorGetX(tempvec);
+        transform_.position_.z += controllerMoveSpeed_ * XMVectorGetZ(tempvec);
     }
-    if (Input::GetPadStickL(padID_).x < -deadZone_)
+    if (Input::GetPadStickL(padID_).x < -deadZone)
     {
-        XMMATRIX rotmat = XMMatrixRotationY(halfPi_);
-        XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
-        vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
-        vecDirection = XMVector3Normalize(vecDirection);
         XMVECTOR tempvec = XMVector3Transform(vecDirection, -rotmat);
-        transform_.position_.x = transform_.position_.x + controllerMoveSpeed_ * XMVectorGetX(tempvec);
-        transform_.position_.z = transform_.position_.z + controllerMoveSpeed_ * XMVectorGetZ(tempvec);
+        transform_.position_.x += controllerMoveSpeed_ * XMVectorGetX(tempvec);
+        transform_.position_.z += controllerMoveSpeed_ * XMVectorGetZ(tempvec);
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_A, padID_) && !isJump_)
     {

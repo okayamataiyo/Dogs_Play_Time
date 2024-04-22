@@ -11,7 +11,7 @@
 
 Bone::Bone(GameObject* _parent)
 	:ItemObjectBase(_parent, boneName), hModel_{-1},rayDist_{0.0f},positionRotate_{1.0f}
-	, boneInitPosY_{ 0.6f },pickUpBoneScale_{0.2f,0.2f,0.2f}
+	, boneInitPosY_{ 1.0f },pickUpBoneScale_{0.2f,0.2f,0.2f}
 	,pPlayScene_{nullptr},pCollision_{nullptr},pStage_{nullptr},pCollectPlayer_{nullptr}
 {
 }
@@ -32,8 +32,8 @@ void Bone::Initialize()
 	AddCollider(pCollision_);
 	pPlayScene_ = (PlayScene*)FindObject(playSceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
-	transform_.scale_ = { 0.5,0.5,0.5 };
-	transform_.position_ = { 10,0,0 };
+	transform_.scale_ = { 0.7f,0.7f,0.7f };
+	transform_.position_ = { 10.0,0.0,0.0 };
 }
 
 void Bone::Update()
