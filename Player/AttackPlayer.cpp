@@ -297,8 +297,7 @@ void AttackPlayer::UpdateGameOver()
 
 void AttackPlayer::Stun(int _timeLimit)
 {
-    isStun_ = true;
-    stunLimit_ = _timeLimit;
+    PlayerBase::Stun(_timeLimit);
 }
 
 void AttackPlayer::OnCollision(GameObject* _pTarget)
@@ -345,32 +344,17 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
 
 void AttackPlayer::PlayerFall()
 {
-    if (isJump_)
-    {
-        //ï˙ï®ê¸Ç…â∫Ç™ÇÈèàóù
-        positionTempY_ = positionY_;
-        positionY_ += (positionY_ - positionPrevY_) - gravity_;
-        positionPrevY_ = positionTempY_;
-        isJump_ = (positionY_ <= -rayFloorDistDown_ + playerInitPosY_) ? false : isJump_;
-        isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
-    }
+    PlayerBase::PlayerFall();
 }
 
 void AttackPlayer::PlayerMove()
 {
-    if (!isDash_)
-    {
-        controllerMoveSpeed_ = walkSpeed_;
-    }
-    else
-    {
-        controllerMoveSpeed_ = dashSpeed_;
-    }
+    PlayerBase::PlayerMove();
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, padID_)))
     {
         XMVECTOR vecCam = {};
         CamPositionVec_ = Camera::VecGetPosition(attackPlayerNumber);
-        vecCam = -(Camera::VecGetPosition(attackPlayerNumber) - Camera::VecGetTarget(attackPlayerNumber));
+        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(attackPlayerNumber));
         XMFLOAT3 camRot = {};
         XMStoreFloat3(&camRot, vecCam);
         camRot.y = initZeroFloat;

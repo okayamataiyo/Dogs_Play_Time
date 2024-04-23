@@ -2,6 +2,12 @@
 //インクルード
 #include "../Engine/GameObject.h"
 
+namespace
+{
+	int collectPlayerNumber = 0;
+	int attackPlayerNumber = 1;
+}
+
 class  PlayerBase : public GameObject
 {
 protected:
@@ -107,19 +113,18 @@ protected:
 	float rayStageDistLeft_;		//左壁とプレイヤーの差距離
 	float rayStageDistRight_;		//右壁とプレイヤーの差距離
 protected:
-	PlayerBase(GameObject* _parent, std::string _name)
-		:GameObject(_parent, _name) {}
+	PlayerBase(GameObject* _parent, std::string _name);
 	//初期化
-	void Initialize()   override {};
+	void Initialize()   override;
 
 	//更新
-	void Update()       override {};
+	void Update()       override;
 
 	//描画
-	void Draw()         override {};
+	void Draw()         override;
 
 	//開放
-	void Release()      override {};
+	void Release()      override;
 
 	virtual void UpdateReady() = 0;
 

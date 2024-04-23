@@ -173,6 +173,7 @@
     <ClCompile Include="Player\ActorCollectPlayer.cpp" />
     <ClCompile Include="Player\AttackPlayer.cpp" />
     <ClCompile Include="Player\CollectPlayer.cpp" />
+    <ClCompile Include="Player\PlayerBase.cpp" />
     <ClCompile Include="Scene\GameOverScene.cpp" />
     <ClCompile Include="Scene\GameTitleScene.cpp" />
     <ClCompile Include="Scene\PlayScene.cpp" />

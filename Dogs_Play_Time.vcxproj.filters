@@ -195,6 +195,9 @@
     <ClCompile Include="Player\ActorCollectPlayer.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="Player\PlayerBase.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">

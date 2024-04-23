@@ -315,8 +315,7 @@ void CollectPlayer::UpdateGameOver()
 
 void CollectPlayer::Stun(int _timeLimit)
 {
-    isStun_ = true;
-    stunLimit_ = _timeLimit;
+    PlayerBase::Stun(_timeLimit);
     Audio::Play(hSound_[((int)SOUNDSTATE::STUN)], soundVolume_);
 }
 
@@ -372,31 +371,17 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
 
 void CollectPlayer::PlayerFall()
 {
-    if (isJump_)
-    {
-        //ï˙ï®ê¸Ç…â∫Ç™ÇÈèàóù
-        positionTempY_ = positionY_;
-        positionY_ += (positionY_ - positionPrevY_) - gravity_;
-        positionPrevY_ = positionTempY_;
-        isJump_ = (positionY_ <= -rayFloorDistDown_ + playerInitPosY_) ? false : isJump_;
-        isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
-    }
+    PlayerBase::PlayerFall();
 }
 
 void CollectPlayer::PlayerMove()
 {
-    if (!isDash_)
-    {
-        controllerMoveSpeed_ = walkSpeed_;
-    }
-    else
-    {
-        controllerMoveSpeed_ = dashSpeed_;
-    }
+    PlayerBase::PlayerMove();
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, padID_)))
     {
         XMVECTOR vecCam = {};
-        vecCam = -(Camera::VecGetPosition(collectPlayerNumber) - Camera::VecGetTarget(collectPlayerNumber));
+        CamPositionVec_ = Camera::VecGetPosition(collectPlayerNumber);
+        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(collectPlayerNumber));
         XMFLOAT3 camRot = {};
         XMStoreFloat3(&camRot, vecCam);
         camRot.y = initZeroFloat;

@@ -24,7 +24,6 @@ namespace
 	};
 
 	std::string attackPlayerName = "AttackPlayer";
-	int attackPlayerNumber = 1;
 }
 
 /// <summary>

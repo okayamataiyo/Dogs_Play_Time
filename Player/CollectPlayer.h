@@ -26,7 +26,6 @@ namespace
 	};
 
 	std::string collectPlayerName = "CollectPlayer";
-	int collectPlayerNumber = 0;
 }
 
 /// <summary>
