@@ -45,6 +45,9 @@
     <Filter Include="Engine\ResourceManager\Json">
       <UniqueIdentifier>{15f1cc6c-94c4-4ffc-9ee4-38cef84b852b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="State">
+      <UniqueIdentifier>{99395ec2-5ef2-4efd-b9a5-1ebca1506df9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -197,6 +200,12 @@
     </ClCompile>
     <ClCompile Include="Player\PlayerBase.cpp">
       <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="State\StateManager.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="State\PlayerState.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +374,15 @@
     </ClInclude>
     <ClInclude Include="Player\ActorCollectPlayer.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="State\StateBase.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="State\StateManager.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="State\PlayerState.h">
+      <Filter>State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

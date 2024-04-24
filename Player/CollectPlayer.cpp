@@ -14,6 +14,8 @@
 #include "../ItemObject/ItemObjectManager.h"
 #include "../StageObject/Stage.h"
 #include "../StageObject/StageBlock.h"
+#include "../State/StateManager.h"
+#include "../State/PlayerState.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
@@ -22,7 +24,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , decBoneCount_{ -1 }, isBoneDeath_{ false }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
     , playerState_{PLAYERSTATE::WAIT}, playerStatePrev_{PLAYERSTATE::WAIT}, gameState_{GAMESTATE::READY}
     , pParent_{ nullptr }, pPlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr}
+    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr},pStateManager_{nullptr}
 {
     pParent_ = _pParent;
     //▼UIに関する基底クラスメンバ変数
@@ -125,12 +127,23 @@ void CollectPlayer::Initialize()
     pStageBlock_ = (StageBlock*)FindObject(stageBlockName);
     pFloor_ = (Floor*)FindObject(floorName);
     pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
+    pStateManager_ = new StateManager(this);
+
+    pStateManager_->AddState("WaitState", new PlayerWaitState(pStateManager_));
+    pStateManager_->AddState("WalkState", new PlayerWalkState(pStateManager_));
+    pStateManager_->AddState("RunState", new PlayerRunState(pStateManager_));
+    pStateManager_->AddState("JumpState", new PlayerJumpState(pStateManager_));
+    pStateManager_->AddState("StunState", new PlayerStunState(pStateManager_));
+    pStateManager_->ChangeState("IdleState");
     pText_ = new Text;
     pText_->Initialize();
 }
 
 void CollectPlayer::Update()
 {
+    //ステートマネージャーの更新
+    pStateManager_->Update();
+
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
@@ -150,6 +163,7 @@ void CollectPlayer::Draw()
 
 void CollectPlayer::Release()
 {
+    SAFE_DELETE(pStateManager_);
 }
 
 void CollectPlayer::UpdateReady()

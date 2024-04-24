@@ -114,8 +114,8 @@ void PlayerBase::PlayerMove()
     vecDirection_ = XMVector3Normalize(vecDirection_);
 
     const float deadZone = 0.3f;			//コントローラーのデットゾーン
-    controllerMoveSpeed_.x = 0.3f * XMVectorGetX(vecDirection_);
-    controllerMoveSpeed_.z = 0.3f * XMVectorGetZ(vecDirection_);
+    controllerMoveSpeed_.x *= XMVectorGetX(vecDirection_);
+    controllerMoveSpeed_.z *= XMVectorGetZ(vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(vecDirection_, rotmat);
     if (Input::GetPadStickL(padID_).y > deadZone)
     {

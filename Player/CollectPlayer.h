@@ -13,6 +13,7 @@ class StageBlock;
 class Floor;
 class SceneManager;
 class ItemObjectManager;
+class StateManager;
 
 namespace
 {
@@ -70,6 +71,7 @@ private:
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
+	StateManager* pStateManager_;
 public:
 
 	/// <summary>
