@@ -47,21 +47,13 @@ protected:
 	//▼プレイヤー移動に関するメンバ変数
 	XMVECTOR CamPositionVec_;
 	XMFLOAT3 positionPrev_;		//1フレーム前の位置座標
-	float controllerMoveSpeed_;
-	float mouseMoveSpeed_;
+	XMFLOAT3 controllerMoveSpeed_;
 	bool isDash_;				//ダッシュしているかどうか
 	float isFling_;				//地面から離れているか
-	float pi_;					//円周率
-	float halfPi_;				//円周率の半分
-	float dashSpeed_;
-	float walkSpeed_;
 	//▼向き変えに関するメンバ変数
 	XMVECTOR vecMove_;
-	XMVECTOR vecLength_;
-	XMVECTOR vecDot_;
 	XMVECTOR vecCross_;
-	float length_;
-	float dot_;
+	XMVECTOR vecDirection_;
 	float angle_;
 	//▼ジャンプに関するメンバ変数
 	float gravity_;				//重力
@@ -93,6 +85,7 @@ protected:
 	int hitStopTime_;		//ヒットストップの時間
 	int getUpTime_;		//スタンしてから起き上がる時間
 	float knockbackSpeed_;
+	XMVECTOR vecKnockbackDirection_;
 	bool isStun_;		//スタンしているかどうか
 	bool isKnockBack_;	//ノックバックしているかどうか
 	//▼慣性に関するメンバ変数
@@ -100,10 +93,6 @@ protected:
 	//▼壁判定に関するメンバ変数
 	float distMax_;					//衝突点までの最大距離
 	float inTheWall_;				//壁に埋まっているか
-	float outerWallPosFront_;		//前の外壁の位置
-	float outerWallPosBack_;		//後ろの外壁の位置
-	float outerWallPosLeft_;		//左の外壁の位置
-	float outerWallPosRight_;		//右の外壁の位置
 	float rayFloorDistUp_;			//上のすり抜け床とプレイヤーの差距離
 	float rayFloorDistDown_;		//下のすり抜け床とプレイヤーの差距離
 	float rayStageBlockDistDown_;

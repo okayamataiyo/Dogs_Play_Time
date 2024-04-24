@@ -49,7 +49,6 @@ private:
 	int number_;
 	int scoreTimeCounter_;
 	int scoreTimeCounterWait_;
-	XMVECTOR vecKnockbackDirection_;
 	PLAYERSTATE playerState_;
 	PLAYERSTATE playerStatePrev_;
 	GAMESTATE gameState_;

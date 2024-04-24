@@ -56,7 +56,6 @@ private:
 	int killTime_;
 	int killTimeWait_;
 	int killTimeMax_;
-	XMVECTOR vecKnockbackDirection_;
 	PLAYERSTATE playerState_;
 	PLAYERSTATE playerStatePrev_;
 	GAMESTATE gameState_;

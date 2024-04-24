@@ -34,22 +34,14 @@ ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
     //▼邪魔側プレイヤー移動に関する基底クラスメンバ変数
     CamPositionVec_ = {};
     positionPrev_ = { 0.0f,0.0f,0.0f };
-    controllerMoveSpeed_ = 0.3f;
-    mouseMoveSpeed_ = 0.3f;
+    controllerMoveSpeed_ = {0.3f,0.0f,0.3f};
     positionY_ = 0.0f;
     isDash_ = false;
     isFling_ = 1.0f;
-    pi_ = 3.14;
-    halfPi_ = pi_ / 2.0f;
-    dashSpeed_ = 0.5f;
-    walkSpeed_ = 0.4f;
     //▼向き変えに関する基底クラスメンバ変数
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecLength_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecDot_ = { 0.0f,0.0f,0.0f,0.0f };
     vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
-    length_ = 0.0f;
-    dot_ = 0.0f;
+    vecDirection_ = { 0.0f,0.0f,0.0f,0.0f };
     angle_ = 0.0f;
     //▼邪魔側プレイヤージャンプに関する基底クラスメンバ変数
     gravity_ = 0.007f;
@@ -83,10 +75,6 @@ ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
     //▼壁判定に関する基底クラスメンバ変数
     distMax_ = 99999.0f;
     inTheWall_ = 1.5f;
-    outerWallPosFront_ = 99.0f;
-    outerWallPosBack_ = -99.0f;
-    outerWallPosLeft_ = 99.0f;
-    outerWallPosRight_ = -99.0f;
     rayStageDistDown_ = 0.0f;
     rayFloorDistDown_ = 0.0f;
     rayFloorDistUp_ = 0.0f;
@@ -221,50 +209,10 @@ void ActorAttackPlayer::PlayerFall()
 
 void ActorAttackPlayer::PlayerMove()
 {
-    if (!isDash_)
-    {
-        controllerMoveSpeed_ = walkSpeed_;
-    }
-    else
-    {
-        controllerMoveSpeed_ = dashSpeed_;
-    }
-    //向き変更
-    vecLength_ = XMVector3Length(vecMove_);
-    length_ = XMVectorGetX(vecLength_);
-    if (length_ != initZeroInt)
-    {
-        //プレイヤーが入力キーに応じて、その向きに変える(左向きには出来ない)
-        vecMove_ = XMVector3Normalize(vecMove_);
+    PlayerBase::PlayerMove();
 
-        vecDot_ = XMVector3Dot(vecFront, vecMove_);
-        dot_ = XMVectorGetX(vecDot_);
-        angle_ = acos(dot_);
-
-        //右向きにしか向けなかったものを左向きにする事ができる
-        vecCross_ = XMVector3Cross(vecFront, vecMove_);
-        if (XMVectorGetY(vecCross_) < initZeroInt)
-        {
-            angle_ *= -initOneInt;
-        }
-    }
-    transform_.rotate_.y = XMConvertToDegrees(angle_);
-    if (transform_.position_.z <= outerWallPosBack_ || transform_.position_.z >= outerWallPosFront_)
-    {
-        transform_.position_.z = positionPrev_.z;
-    }
-    if (transform_.position_.x <= outerWallPosRight_ || transform_.position_.x >= outerWallPosLeft_)
-    {
-        transform_.position_.x = positionPrev_.x;
-    }
-
-    XMMATRIX rotmat = XMMatrixRotationY(halfPi_);
-    XMVECTOR vecDirection = vecBackLeft;//XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(attackPlayerNumber);
-    vecDirection = XMVectorSetY(vecDirection, initZeroFloat);
-    vecDirection = XMVector3Normalize(vecDirection);
-    XMVECTOR tempvec = XMVector3Transform(vecDirection, rotmat);
-    transform_.position_.x = transform_.position_.x + controllerMoveSpeed_ * XMVectorGetX(tempvec);
-    transform_.position_.z = transform_.position_.z + controllerMoveSpeed_ * XMVectorGetZ(tempvec);
+    transform_.position_.x += controllerMoveSpeed_.x;
+    transform_.position_.z += controllerMoveSpeed_.z;
 }
 
 void ActorAttackPlayer::PlayerJump()
