@@ -16,8 +16,6 @@ class ActorCollectPlayer : public PlayerBase
 private:
 	int hModel_;
 	int stageHModel_;
-	PLAYERSTATE playerState_;
-	PLAYERSTATE playerStatePrev_;
 	GAMESTATE gameState_;
 	PlayScene* pPlayScene_;
 	Stage* pStage_;
@@ -64,8 +62,6 @@ public:
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
-
-	PLAYERSTATE GetPlayerState() override { return playerState_; }
 
 	int GetPadID()override { return padID_; }
 

@@ -11,16 +11,6 @@ namespace
 class  PlayerBase : public GameObject
 {
 protected:
-
-	enum class PLAYERSTATE
-	{
-		WAIT = 0,
-		WALK,
-		RUN,
-		JUMP,
-		STUN,
-	};
-
 	enum class GAMESTATE
 	{
 		READY = 0,
@@ -93,6 +83,7 @@ protected:
 	//Å•ï«îªíËÇ…ä÷Ç∑ÇÈÉÅÉìÉoïœêî
 	float distMax_;					//è’ìÀì_Ç‹Ç≈ÇÃç≈ëÂãóó£
 	float inTheWall_;				//ï«Ç…ñÑÇ‹Ç¡ÇƒÇ¢ÇÈÇ©
+	float rayFloorDistDown_;
 	float rayStageDistDown_;
 protected:
 	PlayerBase(GameObject* _parent, std::string _name);
@@ -113,6 +104,12 @@ protected:
 	virtual void UpdatePlay() = 0;
 
 	virtual void UpdateGameOver() = 0;
+
+	virtual void PlayerWaitStateFunc();
+	virtual void PlayerWalkStateFunc();
+	virtual void PlayerRunStateFunc();
+	virtual void PlayerJumpStateFunc();
+	virtual void PlayerStunStateFunc();
 
 	virtual void PlayerFall() = 0;
 
@@ -139,8 +136,6 @@ protected:
 	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) = 0;
 
 	virtual XMVECTOR GetVecPos() = 0;
-
-	virtual PLAYERSTATE GetPlayerState() = 0;
 
 	virtual int GetPadID() = 0;
 

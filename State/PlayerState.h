@@ -10,6 +10,8 @@ class PlayerWaitState : public StateBase
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
+	bool isChangeState_;
+	bool isChangeStatePrev_;
 public:
 	PlayerWaitState(StateManager* _pStateManager);
 	void EnterState() override;
@@ -22,6 +24,8 @@ class PlayerWalkState : public StateBase
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
+	bool isChangeState_;
+	bool isChangeStatePrev_;
 public:
 	PlayerWalkState(StateManager* _pStateManager);
 	void EnterState() override;
@@ -34,6 +38,8 @@ class PlayerRunState : public StateBase
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
+	bool isChangeState_;
+	bool isChangeStatePrev_;
 public:
 	PlayerRunState(StateManager* _pStateManager);
 	void EnterState() override;
@@ -46,6 +52,8 @@ class PlayerJumpState : public StateBase
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
+	bool isChangeState_;
+	bool isChangeStatePrev_;
 public:
 	PlayerJumpState(StateManager* _pStateManager);
 	void EnterState() override;
@@ -58,6 +66,8 @@ class PlayerStunState : public StateBase
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
+	bool isChangeState_;
+	bool isChangeStatePrev_;
 public:
 	PlayerStunState(StateManager* _pStateManager);
 	void EnterState() override;

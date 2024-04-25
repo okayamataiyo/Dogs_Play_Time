@@ -10,7 +10,7 @@
 #include "CollectPlayer.h"
 
 ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, actorCollectPlayerName), hModel_{ -1 }, stageHModel_{ -1 }, playerState_{ PLAYERSTATE::WAIT }, playerStatePrev_{ PLAYERSTATE::WAIT }, gameState_{ GAMESTATE::READY }
+    :PlayerBase(_pParent, actorCollectPlayerName), hModel_{ -1 }, stageHModel_{ -1 }, gameState_{ GAMESTATE::READY }
     , pPlayScene_{ nullptr }, pStage_{ nullptr }
 {
     //▼UIに関する基底クラスメンバ変数
@@ -75,6 +75,7 @@ ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
     //▼壁判定に関する基底クラスメンバ変数
     distMax_ = 99999.0f;
     inTheWall_ = 1.5f;
+    rayFloorDistDown_ = 0.0f;
     rayStageDistDown_ = 0.0f;
 }
 
@@ -114,33 +115,18 @@ void ActorCollectPlayer::Update()
         PlayerDive();
     }
 
-    if (playerStatePrev_ != playerState_)
-    {
-        switch (playerState_)
-        {
-        case PLAYERSTATE::WAIT:       Model::SetAnimFrame(hModel_, 0, 0, 1.0f); break;
-        case PLAYERSTATE::WALK:       Model::SetAnimFrame(hModel_, 20, 60, 0.5f); break;
-        case PLAYERSTATE::RUN:        Model::SetAnimFrame(hModel_, 80, 120, 0.5f); break;
-        case PLAYERSTATE::JUMP:       Model::SetAnimFrame(hModel_, 120, 120, 1.0f); break;
-        case PLAYERSTATE::STUN:       Model::SetAnimFrame(hModel_, 140, 200, 0.5f); break;
-        }
-    }
-    playerStatePrev_ = playerState_;
     PlayerFall();
     PlayerMove();
     PlayerRayCast();
     transform_.position_.y = positionY_;
     if (IsMoving() && !isJump_ && !isDash_)
     {
-        playerState_ = PLAYERSTATE::WALK;
     }
     if (!IsMoving() && !isJump_)
     {
-        playerState_ = PLAYERSTATE::WAIT;
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && IsMoving())
     {
-        playerState_ = PLAYERSTATE::RUN;
         isDash_ = true;
     }
     else
@@ -149,11 +135,9 @@ void ActorCollectPlayer::Update()
     }
     if (isJump_)
     {
-        playerState_ = PLAYERSTATE::JUMP;
     }
     if (isStun_)
     {
-        playerState_ = PLAYERSTATE::STUN;
     }
 }
 

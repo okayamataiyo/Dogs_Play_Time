@@ -53,6 +53,26 @@ void PlayerBase::UpdateGameOver()
 
 }
 
+void PlayerBase::PlayerWaitStateFunc()
+{
+}
+
+void PlayerBase::PlayerWalkStateFunc()
+{
+}
+
+void PlayerBase::PlayerRunStateFunc()
+{
+}
+
+void PlayerBase::PlayerJumpStateFunc()
+{
+}
+
+void PlayerBase::PlayerStunStateFunc()
+{
+}
+
 void PlayerBase::PlayerFall()
 {
     // ƒvƒŒƒCƒ„[‚ª—‰º‚·‚éˆ—

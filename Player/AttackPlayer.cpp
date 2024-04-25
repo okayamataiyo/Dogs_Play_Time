@@ -20,9 +20,9 @@
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{0}, floorHModel_{0}
     , number_{ 0 },  scoreTimeCounter_{ 0 }, scoreTimeCounterWait_{ 1 }
-    , playerState_{ PLAYERSTATE::WAIT }, playerStatePrev_{ PLAYERSTATE::WAIT }, gameState_{ GAMESTATE::READY }
+    , gameState_{ GAMESTATE::READY }
     , pParent_{ nullptr }, pPlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr}
+    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr},pStateManager_{nullptr}
 {
     pParent_ = _pParent;
     //▼UIに関する基底クラスメンバ変数
@@ -87,6 +87,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     //▼壁判定に関する基底クラスメンバ変数
     distMax_ = 99999.0f;
     inTheWall_ = 1.5f;
+    rayFloorDistDown_ = 0.0f;
     rayStageDistDown_ = 0.0f;
 }
 
@@ -142,7 +143,7 @@ void AttackPlayer::Draw()
 
 void AttackPlayer::Release()
 {
-
+    SAFE_DELETE(pStateManager_);
 }
 
 void AttackPlayer::UpdateReady()
@@ -194,23 +195,11 @@ void AttackPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-    if (playerStatePrev_ != playerState_)
-    {
-        switch (playerState_)
-        {
-        case PLAYERSTATE::WAIT:       Model::SetAnimFrame(hModel_, 0, 0, 1.0f); break;
-        case PLAYERSTATE::WALK:       Model::SetAnimFrame(hModel_, 20, 60, 0.5f); break;
-        case PLAYERSTATE::RUN:        Model::SetAnimFrame(hModel_, 80, 120, 0.5f); break;
-        case PLAYERSTATE::JUMP:       Model::SetAnimFrame(hModel_, 120, 120, 1.0f); break;
-        case PLAYERSTATE::STUN:       Model::SetAnimFrame(hModel_, 140, 200, 0.5f); break;
-        }
-    }
     scoreTimeCounter_++;
     if (scoreTimeCounter_ % FPS_ == scoreTimeCounterWait_)
     {
         score_ += scoreAmount_;
     }
-    playerStatePrev_ = playerState_;
     PlayerFall();
     PlayerRayCast();
     PlayerKnockback();
@@ -237,18 +226,15 @@ void AttackPlayer::UpdatePlay()
     }
     if (IsMoving() && !isJump_ && !isDash_)
     {
-        playerState_ = PLAYERSTATE::WALK;
         Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
     }
     if (!IsMoving() && !isJump_)
     {
-        playerState_ = PLAYERSTATE::WAIT;
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER,padID_) && !isJump_ && IsMoving())
     {
-        playerState_ = PLAYERSTATE::RUN;
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundVolumeHalf_);
         isDash_ = true;
@@ -259,11 +245,9 @@ void AttackPlayer::UpdatePlay()
     }
     if (isJump_)
     {
-        playerState_ = PLAYERSTATE::JUMP;
     }
     if (isStun_)
     {
-        playerState_ = PLAYERSTATE::STUN;
     }
 }
 
@@ -276,6 +260,31 @@ void AttackPlayer::UpdateGameOver()
         PlayerScore_[collectPlayerNumber] = pCollectPlayer_->GetScore();
         PlayerScore_[attackPlayerNumber] = this->GetScore();
     }
+}
+
+void AttackPlayer::PlayerWaitStateFunc()
+{
+    Model::SetAnimFrame(hModel_, 0, 0, 1.0f);
+}
+
+void AttackPlayer::PlayerWalkStateFunc()
+{
+    Model::SetAnimFrame(hModel_, 20, 60, 0.5f);
+}
+
+void AttackPlayer::PlayerRunStateFunc()
+{
+    Model::SetAnimFrame(hModel_, 80, 120, 0.5f);
+}
+
+void AttackPlayer::PlayerJumpStateFunc()
+{
+    Model::SetAnimFrame(hModel_, 120, 120, 1.0f);
+}
+
+void AttackPlayer::PlayerStunStateFunc()
+{
+    Model::SetAnimFrame(hModel_, 140, 200, 0.5f);
 }
 
 void AttackPlayer::PlayerStun(int _timeLimit)
@@ -385,7 +394,6 @@ void AttackPlayer::PlayerKnockback()
 void AttackPlayer::PlayerRayCast()
 {
     float rayFloorDistUp = 0.0f;
-    float rayFloorDistDown = 0.0f;
     float rayStageBlockDistDown = 0.0f;
     float rayStageDistFront = 0.0f;
     float rayStageDistBack = 0.0f;
@@ -417,14 +425,14 @@ void AttackPlayer::PlayerRayCast()
         {
             Model::RayCast(floorHModel_ + i, &floorDataDown);  //レイを発射
         }
-        rayFloorDistDown = floorDataDown.dist;
-        if (rayFloorDistDown + positionY_ <= isFling_)
+        rayFloorDistDown_ = floorDataDown.dist;
+        if (rayFloorDistDown_ + positionY_ <= isFling_)
         {
             if (!isJump_)
             {
                 isOnFloor_ = true;
                 isDived_ = false;
-                positionY_ = -rayFloorDistDown + playerInitPosY_;
+                positionY_ = -rayFloorDistDown_ + playerInitPosY_;
                 positionTempY_ = positionY_;
                 positionPrevY_ = positionTempY_;
             }

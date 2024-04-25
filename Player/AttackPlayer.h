@@ -50,8 +50,6 @@ private:
 	int number_;
 	int scoreTimeCounter_;
 	int scoreTimeCounterWait_;
-	PLAYERSTATE playerState_;
-	PLAYERSTATE playerStatePrev_;
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	PlayScene* pPlayScene_;
@@ -87,10 +85,6 @@ public:
 	/// </summary>
 	void Update() override;
 
-	void UpdateReady();
-	void UpdatePlay();
-	void UpdateGameOver();
-
 	/// <summary>
 	/// 描画関数
 	/// </summary>
@@ -100,6 +94,16 @@ public:
 	/// 開放関数
 	/// </summary>
 	void Release() override;
+
+	void UpdateReady();
+	void UpdatePlay();
+	void UpdateGameOver();
+
+	void PlayerWaitStateFunc();
+	void PlayerWalkStateFunc();
+	void PlayerRunStateFunc();
+	void PlayerJumpStateFunc();
+	void PlayerStunStateFunc();
 
 	/// <summary>
 	/// 何かに当たった時の関数
@@ -135,9 +139,9 @@ public:
 	void PlayerRevival() override;
 
 	/// <summary>
-/// プレイヤーをスタン(行動不能)にする処理
-/// </summary>
-/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
+	/// プレイヤーをスタン(行動不能)にする処理
+	/// </summary>
+	/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
@@ -148,8 +152,6 @@ public:
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
-	PLAYERSTATE GetPlayerState() override { return playerState_; }
-
 	float GetAngle() { return angle_; }
 
 	int GetPadID()override { return padID_; }
@@ -158,9 +160,11 @@ public:
 
 	int GetModelHandle() override { return hModel_; };
 
-	int GetIsJump() { return isJump_; }
+	bool GetIsJump() { return isJump_; }
 
-	int GetIsStun() { return isStun_; }
+	bool GetIsDash() { return isDash_; }
+
+	bool GetIsStun() { return isStun_; }
 
 	bool IsMoving() override;
 };
