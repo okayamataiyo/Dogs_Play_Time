@@ -45,7 +45,7 @@ void PlayerBase::UpdateReady()
 
 void PlayerBase::UpdatePlay()
 {
-
+    isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
 }
 
 void PlayerBase::UpdateGameOver()
@@ -200,7 +200,7 @@ void PlayerBase::PlayerKnockback()
     if (isKnockBack_)
     {
         SetKnockback(vecKnockbackDirection_, knockbackSpeed_);
-        Stun(getUpTime_);
+        PlayerStun(getUpTime_);
     }
 }
 
@@ -210,7 +210,12 @@ void PlayerBase::PlayerRayCast()
 
 }
 
-void PlayerBase::Stun(int _timeLimit)
+void PlayerBase::PlayerRevival()
+{
+    transform_.position_ = initZeroXMFLOAT3;
+}
+
+void PlayerBase::PlayerStun(int _timeLimit)
 {
     // ÉXÉ^ÉìÇÃèàóù
     isStun_ = true;

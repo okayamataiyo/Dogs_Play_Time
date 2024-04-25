@@ -93,14 +93,7 @@ protected:
 	//▼壁判定に関するメンバ変数
 	float distMax_;					//衝突点までの最大距離
 	float inTheWall_;				//壁に埋まっているか
-	float rayFloorDistUp_;			//上のすり抜け床とプレイヤーの差距離
-	float rayFloorDistDown_;		//下のすり抜け床とプレイヤーの差距離
-	float rayStageBlockDistDown_;
-	float rayStageDistDown_;		//地面とプレイヤーの差距離
-	float rayStageDistFront_;		//前壁とプレイヤーの差距離
-	float rayStageDistBack_;		//後壁とプレイヤーの差距離
-	float rayStageDistLeft_;		//左壁とプレイヤーの差距離
-	float rayStageDistRight_;		//右壁とプレイヤーの差距離
+	float rayStageDistDown_;
 protected:
 	PlayerBase(GameObject* _parent, std::string _name);
 	//初期化
@@ -137,7 +130,9 @@ protected:
 
 	virtual void PlayerRayCast() = 0;
 
-	virtual void Stun(int _timeLimit = 60) = 0;
+	virtual void PlayerRevival();
+
+	virtual void PlayerStun(int _timeLimit = 60) = 0;
 
 	virtual void SetVecPos(XMVECTOR _vecMove) = 0;
 

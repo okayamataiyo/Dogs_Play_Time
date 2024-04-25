@@ -98,11 +98,6 @@ public:
 	void UpdateReady();
 	void UpdatePlay();
 	void UpdateGameOver();
-	/// <summary>
-	/// プレイヤーをスタン(行動不能)にする処理
-	/// </summary>
-	/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
-	void Stun(int _timeLimit = 60) override;
 
 	/// <summary>
 	/// 描画関数
@@ -144,6 +139,14 @@ public:
 	/// プレイヤーのレイ関数
 	/// </summary>
 	void PlayerRayCast() override;
+
+	void PlayerRevival() override;
+
+	/// <summary>
+/// プレイヤーをスタン(行動不能)にする処理
+/// </summary>
+/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
+	void PlayerStun(int _timeLimit = 60) override;
 
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
 

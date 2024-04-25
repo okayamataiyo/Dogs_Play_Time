@@ -31,7 +31,7 @@ public:
 
 	void Update() override;
 
-	void Stun(int _timeLimit = 60) override;
+	void PlayerStun(int _timeLimit = 60) override;
 
 	void Draw() override;
 

@@ -76,12 +76,6 @@ ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
     distMax_ = 99999.0f;
     inTheWall_ = 1.5f;
     rayStageDistDown_ = 0.0f;
-    rayFloorDistDown_ = 0.0f;
-    rayFloorDistUp_ = 0.0f;
-    rayStageDistFront_ = 0.0f;
-    rayStageDistBack_ = 0.0f;
-    rayStageDistLeft_ = 0.0f;
-    rayStageDistRight_ = 0.0f;
 }
 
 ActorCollectPlayer::~ActorCollectPlayer()
@@ -163,7 +157,7 @@ void ActorCollectPlayer::Update()
     }
 }
 
-void ActorCollectPlayer::Stun(int _timeLimit)
+void ActorCollectPlayer::PlayerStun(int _timeLimit)
 {
 }
 

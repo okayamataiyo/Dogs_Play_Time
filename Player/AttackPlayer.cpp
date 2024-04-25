@@ -12,6 +12,8 @@
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/ItemObjectManager.h"
 #include "../StageObject/Stage.h"
+#include "../State/StateManager.h"
+#include "../State/PlayerState.h"
 #include "AttackPlayer.h"
 #include "CollectPlayer.h"
 
@@ -86,12 +88,6 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     distMax_ = 99999.0f;
     inTheWall_ = 1.5f;
     rayStageDistDown_ = 0.0f;
-    rayFloorDistDown_ = 0.0f;
-    rayFloorDistUp_ = 0.0f;
-    rayStageDistFront_ = 0.0f;
-    rayStageDistBack_ = 0.0f;
-    rayStageDistLeft_ = 0.0f;
-    rayStageDistRight_ = 0.0f;
 }
 
 AttackPlayer::~AttackPlayer()
@@ -175,6 +171,7 @@ void AttackPlayer::UpdateReady()
 
 void AttackPlayer::UpdatePlay()
 {
+    PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_A))
     {
         pPlayScene_->SetGameStop();
@@ -183,12 +180,9 @@ void AttackPlayer::UpdatePlay()
     //落ちた時の処理
     if (transform_.position_.y <= -fallLimit_)
     {
-        transform_.position_ = initZeroXMFLOAT3;
-    }
-
-    if(Input::GetPadTrrigerR(padID_))
-    {
-        isDive_ = true;
+        int revivalTime = 60;
+        PlayerRevival();
+        PlayerStun(revivalTime);
     }
 
     if (isDive_ && !isDived_)
@@ -284,9 +278,9 @@ void AttackPlayer::UpdateGameOver()
     }
 }
 
-void AttackPlayer::Stun(int _timeLimit)
+void AttackPlayer::PlayerStun(int _timeLimit)
 {
-    PlayerBase::Stun(_timeLimit);
+    PlayerBase::PlayerStun(_timeLimit);
 }
 
 void AttackPlayer::OnCollision(GameObject* _pTarget)
@@ -324,7 +318,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
 
     if (_pTarget->GetObjectName() == collectPlayerName)
     {
-        Stun(hitStopTime_);
+        PlayerStun(hitStopTime_);
         isKnockBack_ = true;
         vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pCollectPlayer_->GetVecPos());
         vecKnockbackDirection_ = XMVector3Normalize(vecKnockbackDirection_);
@@ -390,6 +384,13 @@ void AttackPlayer::PlayerKnockback()
 
 void AttackPlayer::PlayerRayCast()
 {
+    float rayFloorDistUp = 0.0f;
+    float rayFloorDistDown = 0.0f;
+    float rayStageBlockDistDown = 0.0f;
+    float rayStageDistFront = 0.0f;
+    float rayStageDistBack = 0.0f;
+    float rayStageDistLeft = 0.0f;
+    float rayStageDistRight = 0.0f;
     RayCastData floorDataUp;
     RayCastData floorDataDown;
     RayCastData stageDataDown;
@@ -406,24 +407,24 @@ void AttackPlayer::PlayerRayCast()
         floorDataUp.start = transform_.position_;           //レイの発射位置
         XMStoreFloat3(&floorDataUp.dir, vecUp);             //レイの方向
         Model::RayCast(floorHModel_ + i, &floorDataUp);         //レイを発射
-        rayFloorDistUp_ = floorDataUp.dist;
+        rayFloorDistUp = floorDataUp.dist;
 
         //▼下の法線(すり抜け床)
         floorDataDown.start = transform_.position_;    //レイの発射位置
         floorDataDown.start.y = 0;
         XMStoreFloat3(&floorDataDown.dir, vecDown);     //レイの方向
-        if (rayFloorDistUp_ == distMax_)
+        if (rayFloorDistUp == distMax_)
         {
             Model::RayCast(floorHModel_ + i, &floorDataDown);  //レイを発射
         }
-        rayFloorDistDown_ = floorDataDown.dist;
-        if (rayFloorDistDown_ + positionY_ <= isFling_)
+        rayFloorDistDown = floorDataDown.dist;
+        if (rayFloorDistDown + positionY_ <= isFling_)
         {
             if (!isJump_)
             {
                 isOnFloor_ = true;
                 isDived_ = false;
-                positionY_ = -rayFloorDistDown_ + playerInitPosY_;
+                positionY_ = -rayFloorDistDown + playerInitPosY_;
                 positionTempY_ = positionY_;
                 positionPrevY_ = positionTempY_;
             }
@@ -461,8 +462,8 @@ void AttackPlayer::PlayerRayCast()
     stageDataFront.start = transform_.position_;      //レイの発射位置
     XMStoreFloat3(&stageDataFront.dir, vecFrontUp);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataFront);    //レイを発射
-    rayStageDistFront_ = stageDataFront.dist;
-    if (rayStageDistFront_ <= inTheWall_)
+    rayStageDistFront = stageDataFront.dist;
+    if (rayStageDistFront <= inTheWall_)
     {
         transform_.position_.z = positionPrev_.z;
     }
@@ -470,8 +471,8 @@ void AttackPlayer::PlayerRayCast()
     stageDataBack.start = transform_.position_;       //レイの発射位置
     XMStoreFloat3(&stageDataBack.dir, vecBackUp);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataBack);     //レイを発射
-    rayStageDistBack_ = stageDataBack.dist;
-    if (rayStageDistBack_ <= inTheWall_)
+    rayStageDistBack = stageDataBack.dist;
+    if (rayStageDistBack <= inTheWall_)
     {
         transform_.position_.z = positionPrev_.z;
     }
@@ -479,8 +480,8 @@ void AttackPlayer::PlayerRayCast()
     stageDataLeft.start = transform_.position_;       //レイの発射位置
     XMStoreFloat3(&stageDataLeft.dir, vecLeftUp);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataLeft);     //レイを発射
-    rayStageDistLeft_ = stageDataLeft.dist;
-    if (rayStageDistLeft_ <= inTheWall_)
+    rayStageDistLeft = stageDataLeft.dist;
+    if (rayStageDistLeft <= inTheWall_)
     {
         transform_.position_.x = positionPrev_.x;
     }
@@ -488,12 +489,17 @@ void AttackPlayer::PlayerRayCast()
     stageDataRight.start = transform_.position_;      //レイの発射位置
     XMStoreFloat3(&stageDataRight.dir, vecRightUp);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataRight);    //レイを発射
-    rayStageDistRight_ = stageDataRight.dist;
-    if (rayStageDistRight_ <= inTheWall_)
+    rayStageDistRight = stageDataRight.dist;
+    if (rayStageDistRight <= inTheWall_)
     {
         transform_.position_.x = positionPrev_.x;
     }
     positionPrev_ = transform_.position_;
+}
+
+void AttackPlayer::PlayerRevival()
+{
+    PlayerBase::PlayerRevival();
 }
 
 void AttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
