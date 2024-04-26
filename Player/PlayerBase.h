@@ -39,6 +39,7 @@ protected:
 	XMFLOAT3 positionPrev_;		//1フレーム前の位置座標
 	XMFLOAT3 controllerMoveSpeed_;
 	bool isDash_;				//ダッシュしているかどうか
+	bool isMove_;
 	float isFling_;				//地面から離れているか
 	//▼向き変えに関するメンバ変数
 	XMVECTOR vecMove_;
@@ -115,6 +116,16 @@ protected:
 
 	virtual void PlayerMove() = 0;
 
+	virtual void IsMove();
+
+	virtual void IsJump();
+
+	virtual void IsDash();
+
+	virtual void IsStun();
+
+	virtual void IsDive();
+
 	virtual void PlayerJump() = 0;
 
 	virtual void PlayerJumpPower() = 0;
@@ -135,11 +146,19 @@ protected:
 
 	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) = 0;
 
+	virtual bool GetIsMove() = 0;
+
+	virtual bool GetIsJump() = 0;
+
+	virtual bool GetIsDash() = 0;
+
+	virtual bool GetIsStun() = 0;
+
+	virtual bool GetIsDive() = 0;
+
 	virtual XMVECTOR GetVecPos() = 0;
 
 	virtual int GetPadID() = 0;
-
-	virtual bool IsMoving() = 0;
 
 	virtual int GetModelHandle() = 0;
 };

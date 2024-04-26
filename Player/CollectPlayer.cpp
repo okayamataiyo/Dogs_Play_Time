@@ -123,12 +123,6 @@ void CollectPlayer::Initialize()
     pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
     pStateManager_ = new StateManager(this);
 
-    pStateManager_->AddState("WaitState", new PlayerWaitState(pStateManager_));
-    pStateManager_->AddState("WalkState", new PlayerWalkState(pStateManager_));
-    pStateManager_->AddState("RunState", new PlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new PlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new PlayerStunState(pStateManager_));
-    pStateManager_->ChangeState("WaitState");
     pText_ = new Text;
     pText_->Initialize();
 }
@@ -235,16 +229,16 @@ void CollectPlayer::UpdatePlay()
         pPlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
-    if (IsMoving() && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isDash_)
     {
         Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
     }
-    if (!IsMoving() && !isJump_)
+    if (!isMove_ && !isJump_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && IsMoving())
+    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundVolumeHalf_);
@@ -254,12 +248,8 @@ void CollectPlayer::UpdatePlay()
     {
         isDash_ = false;
     }
-    if (isJump_)
-    {
-    }
-    if (isStun_)
-    {
-    }
+
+    IsMove();
     if (isBoneTatch_)
     {
         if (killTime_ > initZeroInt)
@@ -277,6 +267,8 @@ void CollectPlayer::UpdatePlay()
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
         killTime_ = killTimeMax_;
     }
+    IsMove();
+    IsJump();
 }
 
 void CollectPlayer::UpdateGameOver()
@@ -501,10 +493,6 @@ void CollectPlayer::PlayerRayCast()
             positionPrevY_ = positionTempY_;
         }
     }
-    else if (!isOnFloor_)
-    {
-        isJump_ = true;
-    }
     //▼前の法線(壁の当たり判定)
     stageDataFront.start = transform_.position_;      //レイの発射位置
     XMStoreFloat3(&stageDataFront.dir, vecFrontUp);   //レイの方向
@@ -555,7 +543,27 @@ void CollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockba
     transform_.position_.z = transform_.position_.z + _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
 }
 
-bool CollectPlayer::IsMoving()
+void CollectPlayer::IsMove()
 {
-    return (transform_.position_.x != positionPrev_.x || transform_.position_.z != positionPrev_.z);
+    PlayerBase::IsMove();
+}
+
+void CollectPlayer::IsJump()
+{
+    PlayerBase::IsJump();
+}
+
+void CollectPlayer::IsDash()
+{
+    PlayerBase::IsDash();
+}
+
+void CollectPlayer::IsStun()
+{
+    PlayerBase::IsStun();
+}
+
+void CollectPlayer::IsDive()
+{
+    PlayerBase::IsDive();
 }

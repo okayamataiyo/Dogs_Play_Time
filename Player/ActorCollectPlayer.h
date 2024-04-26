@@ -45,6 +45,16 @@ public:
 
 	void PlayerMove() override;
 
+	void IsMove() override;
+
+	void IsJump() override;
+
+	void IsDash() override;
+
+	void IsStun() override;
+
+	void IsDive() override;
+
 	void PlayerJump() override;
 
 	void PlayerJumpPower() override;
@@ -61,12 +71,20 @@ public:
 
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
 
+	bool GetIsMove() override { return isMove_; }
+
+	bool GetIsJump() override { return isJump_; }
+
+	bool GetIsDash() override { return isDash_; }
+
+	bool GetIsStun() override { return isStun_; }
+
+	bool GetIsDive() override { return isDive_; }
+
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
 	int GetPadID()override { return padID_; }
 
 	int GetModelHandle() override { return hModel_; };
-
-	bool IsMoving() override;
 };
 

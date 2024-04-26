@@ -119,13 +119,13 @@ void ActorCollectPlayer::Update()
     PlayerMove();
     PlayerRayCast();
     transform_.position_.y = positionY_;
-    if (IsMoving() && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isDash_)
     {
     }
-    if (!IsMoving() && !isJump_)
+    if (!isMove_ && !isJump_)
     {
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && IsMoving())
+    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
     {
         isDash_ = true;
     }
@@ -261,7 +261,27 @@ void ActorCollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _kn
 {
 }
 
-bool ActorCollectPlayer::IsMoving()
+void ActorCollectPlayer::IsMove()
 {
-    return (transform_.position_.x != positionPrev_.x || transform_.position_.z != positionPrev_.z);
+    PlayerBase::IsMove();
+}
+
+void ActorCollectPlayer::IsJump()
+{
+    PlayerBase::IsJump();
+}
+
+void ActorCollectPlayer::IsDash()
+{
+    PlayerBase::IsDash();
+}
+
+void ActorCollectPlayer::IsStun()
+{
+    PlayerBase::IsStun();
+}
+
+void ActorCollectPlayer::IsDive()
+{
+    PlayerBase::IsDive();
 }

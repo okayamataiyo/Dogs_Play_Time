@@ -118,6 +118,16 @@ public:
 	/// </summary>
 	void PlayerMove() override;
 
+	void IsMove() override;
+
+	void IsJump() override;
+
+	void IsDash() override;
+
+	void IsStun() override;
+
+	void IsDive() override;
+
 	void PlayerJump() override;
 
 	/// <summary>
@@ -150,6 +160,16 @@ public:
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
+	bool GetIsMove() override { return isMove_; }
+
+	bool GetIsJump() override { return isJump_; }
+
+	bool GetIsDash() override { return isDash_; }
+
+	bool GetIsStun() override { return isStun_; }
+
+	bool GetIsDive() override { return isDive_; }
+
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
 	float GetAngle() { return angle_; }
@@ -160,12 +180,5 @@ public:
 
 	int GetModelHandle() override { return hModel_; };
 
-	bool GetIsJump() { return isJump_; }
-
-	bool GetIsDash() { return isDash_; }
-
-	bool GetIsStun() { return isStun_; }
-
-	bool IsMoving() override;
 };
 

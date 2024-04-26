@@ -99,16 +99,16 @@ void AttackPlayer::Initialize()
 {
     //▼サウンドデータのロード
     std::string soundName;
-    for (int i = initZeroInt; i < sizeof(soundAttackPlayerNames) / sizeof(soundAttackPlayerNames[initZeroInt]); i++)
+    for (int i = 0; i < sizeof(soundAttackPlayerNames) / sizeof(soundAttackPlayerNames[initZeroInt]); i++)
     {
         soundName = soundFolderName + soundAttackPlayerNames[i] + soundModifierName;
         hSound_[i] = Audio::Load(soundName);
-        assert(hSound_[i] >= initZeroInt);
+        assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
     std::string modelName = modelFolderName + attackPlayerName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= initZeroInt);
+    assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     positionY_ = transform_.position_.y;
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
@@ -118,12 +118,23 @@ void AttackPlayer::Initialize()
     pStage_ = (Stage*)FindObject(stageName);
     pFloor_ = (Floor*)FindObject(floorName);
     pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
+    pStateManager_ = new StateManager(this);
+    pStateManager_->AddState("WalkState", new PlayerWalkState(pStateManager_));
+    pStateManager_->AddState("WaitState", new PlayerWaitState(pStateManager_));
+    pStateManager_->AddState("RunState", new PlayerRunState(pStateManager_));
+    pStateManager_->AddState("JumpState", new PlayerJumpState(pStateManager_));
+    pStateManager_->AddState("StunState", new PlayerStunState(pStateManager_));
+    pStateManager_->ChangeState("WaitState");
+
     pText_ = new Text;
     pText_->Initialize();
 }
 
 void AttackPlayer::Update()
 {
+    //ステートマネージャーの更新
+    pStateManager_->Update();
+
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
@@ -209,9 +220,9 @@ void AttackPlayer::UpdatePlay()
         stunTimeCounter_++;
         if (stunTimeCounter_ >= stunLimit_)
         {
-            gameState_ = GAMESTATE::PLAY;
             isStun_ = false;
             isKnockBack_ = false;
+            gameState_ = GAMESTATE::PLAY;
             stunTimeCounter_ = initZeroInt;
         }
     }
@@ -224,31 +235,25 @@ void AttackPlayer::UpdatePlay()
         pPlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
-    if (IsMoving() && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isDash_)
     {
         Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
     }
-    if (!IsMoving() && !isJump_)
+    if (!isMove_ && !isJump_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER,padID_) && !isJump_ && IsMoving())
+    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER,padID_) && !isJump_ && isMove_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundVolumeHalf_);
-        isDash_ = true;
     }
-    else
-    {
-        isDash_ = false;
-    }
-    if (isJump_)
-    {
-    }
-    if (isStun_)
-    {
-    }
+    IsMove();
+    IsJump();
+    IsDash();
+    IsStun();
+    IsDive();
 }
 
 void AttackPlayer::UpdateGameOver()
@@ -462,10 +467,6 @@ void AttackPlayer::PlayerRayCast()
             positionPrevY_ = positionTempY_;
         }
     }
-    else if (!isOnFloor_)
-    {
-        isJump_ = true;
-    }
     //▼前の法線(壁の当たり判定)
     stageDataFront.start = transform_.position_;      //レイの発射位置
     XMStoreFloat3(&stageDataFront.dir, vecFrontUp);   //レイの方向
@@ -516,7 +517,27 @@ void AttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbac
     transform_.position_.z = transform_.position_.z + _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
 }
 
-bool AttackPlayer::IsMoving()
+void AttackPlayer::IsMove()
 {
-    return (transform_.position_.x != positionPrev_.x || transform_.position_.z != positionPrev_.z);
+    PlayerBase::IsMove();
+}
+
+void AttackPlayer::IsJump()
+{
+    PlayerBase::IsJump();
+}
+
+void AttackPlayer::IsDash()
+{
+    PlayerBase::IsDash();
+}
+
+void AttackPlayer::IsStun()
+{
+    PlayerBase::IsStun();
+}
+
+void AttackPlayer::IsDive()
+{
+    PlayerBase::IsDive();
 }

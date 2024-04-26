@@ -119,13 +119,13 @@ void ActorAttackPlayer::Update()
     PlayerMove();
     PlayerRayCast();
     transform_.position_.y = positionY_;
-    if (IsMoving() && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isDash_)
     {
     }
-    if (!IsMoving() && !isJump_)
+    if (!isMove_ && !isJump_)
     {
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && IsMoving())
+    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
     {
         isDash_ = true;
     }
@@ -191,6 +191,31 @@ void ActorAttackPlayer::PlayerMove()
 
     transform_.position_.x += controllerMoveSpeed_.x;
     transform_.position_.z += controllerMoveSpeed_.z;
+}
+
+void ActorAttackPlayer::IsMove()
+{
+    PlayerBase::IsMove();
+}
+
+void ActorAttackPlayer::IsJump()
+{
+    PlayerBase::IsJump();
+}
+
+void ActorAttackPlayer::IsDash()
+{
+    PlayerBase::IsDash();
+}
+
+void ActorAttackPlayer::IsStun()
+{
+    PlayerBase::IsStun();
+}
+
+void ActorAttackPlayer::IsDive()
+{
+    PlayerBase::IsDive();
 }
 
 void ActorAttackPlayer::PlayerJump()
@@ -259,9 +284,4 @@ void ActorAttackPlayer::PlayerRayCast()
 
 void ActorAttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
-}
-
-bool ActorAttackPlayer::IsMoving()
-{
-    return (transform_.position_.x != positionPrev_.x || transform_.position_.z != positionPrev_.z);
 }

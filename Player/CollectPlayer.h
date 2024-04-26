@@ -126,6 +126,16 @@ public:
 	/// </summary>
 	void PlayerMove() override;
 
+	void IsMove() override;
+
+	void IsJump() override;
+
+	void IsDash() override;
+
+	void IsStun() override;
+
+	void IsDive() override;
+
 	void PlayerJump() override;
 
 	/// <summary>
@@ -162,6 +172,16 @@ public:
 
 	void SetKillTime(int _killTime) { killTime_ = _killTime; }
 
+	bool GetIsMove() override { return isMove_; }
+
+	bool GetIsJump() override { return isJump_; }
+
+	bool GetIsDash() override { return isDash_; }
+
+	bool GetIsStun() override { return isStun_; }
+
+	bool GetIsDive() override { return isDive_; }
+
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
 	int GetPadID()override { return padID_; }
@@ -170,18 +190,10 @@ public:
 
 	bool GetIsBoneDeath() { return isBoneDeath_; }
 
-	bool GetIsJump() { return isJump_; }
-
-	bool GetIsDash() { return isDash_; }
-
-	bool GetIsStun() { return isStun_; }
-
 	float GetAngle() { return angle_; }
 
 	int GetScore() { return score_; }
 
 	bool GetIsBoneTatch() { return isBoneTatch_; }
-
-	bool IsMoving() override;
 };
 

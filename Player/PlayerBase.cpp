@@ -45,7 +45,7 @@ void PlayerBase::UpdateReady()
 
 void PlayerBase::UpdatePlay()
 {
-    isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
+
 }
 
 void PlayerBase::UpdateGameOver()
@@ -81,8 +81,7 @@ void PlayerBase::PlayerFall()
         positionTempY_ = positionY_;
         positionY_ += (positionY_ - positionPrevY_) - gravity_;
         positionPrevY_ = positionTempY_;
-        isJump_ = (positionY_ <= -rayFloorDistDown_ + playerInitPosY_) ? false : isJump_;
-        isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
+        IsJump();
     }
 }
 
@@ -258,8 +257,32 @@ XMVECTOR PlayerBase::GetVecPos()
     return XMVECTOR(); // 仮の戻り値
 }
 
-bool PlayerBase::IsMoving()
+void PlayerBase::IsMove()
 {
     // プレイヤーが移動中かどうかを判定する処理
-    return false; // 仮の戻り値
+    isMove_ = (transform_.position_.x != positionPrev_.x || 
+               transform_.position_.z != positionPrev_.z) ? true : false;
+}
+
+void PlayerBase::IsJump()
+{
+    isJump_ = (rayStageDistDown_ + positionY_ > isFling_ && !isOnFloor_) ? true : isJump_;
+    isJump_ = (positionY_ <= -rayFloorDistDown_ + playerInitPosY_) ? false : isJump_;
+    isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
+}
+
+void PlayerBase::IsDash()
+{
+    isDash_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_) ? true : false;
+}
+
+void PlayerBase::IsStun()
+{
+
+}
+
+void PlayerBase::IsDive()
+{
+    isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
+    
 }
