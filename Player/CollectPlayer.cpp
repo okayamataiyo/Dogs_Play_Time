@@ -50,7 +50,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     positionPrev_ = { 0.0f,0.0f,0.0f };
     controllerMoveSpeed_ = { 0.3f,0.0f,0.3f };
     positionY_ = 0.0f;
-    isDash_ = false;
+    isRun_ = false;
     isFling_ = 1.0f;
     //¥Œü‚«•Ï‚¦‚ÉŠÖ‚·‚éŠî’êƒNƒ‰ƒXƒƒ“ƒo•Ï”
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
@@ -229,7 +229,7 @@ void CollectPlayer::UpdatePlay()
         pPlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
-    if (isMove_ && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isRun_)
     {
         Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
     }
@@ -242,14 +242,13 @@ void CollectPlayer::UpdatePlay()
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundVolumeHalf_);
-        isDash_ = true;
+        isRun_ = true;
     }
     else
     {
-        isDash_ = false;
+        isRun_ = false;
     }
 
-    IsMove();
     if (isBoneTatch_)
     {
         if (killTime_ > initZeroInt)
@@ -553,9 +552,9 @@ void CollectPlayer::IsJump()
     PlayerBase::IsJump();
 }
 
-void CollectPlayer::IsDash()
+void CollectPlayer::IsRun()
 {
-    PlayerBase::IsDash();
+    PlayerBase::IsRun();
 }
 
 void CollectPlayer::IsStun()

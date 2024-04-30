@@ -48,7 +48,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     positionPrev_ = { 0.0f,0.0f,0.0f };
     controllerMoveSpeed_ = { 0.3f,0.0f,0.3f };
     positionY_ = 0.0f;
-    isDash_ = false;
+    isRun_ = false;
     isFling_ = 1.0f;
     //¥Œü‚«•Ï‚¦‚ÉŠÖ‚·‚éŠî’êƒNƒ‰ƒXƒƒ“ƒo•Ï”
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
@@ -235,7 +235,7 @@ void AttackPlayer::UpdatePlay()
         pPlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
-    if (isMove_ && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isRun_)
     {
         Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
     }
@@ -251,7 +251,7 @@ void AttackPlayer::UpdatePlay()
     }
     IsMove();
     IsJump();
-    IsDash();
+    IsRun();
     IsStun();
     IsDive();
 }
@@ -527,9 +527,9 @@ void AttackPlayer::IsJump()
     PlayerBase::IsJump();
 }
 
-void AttackPlayer::IsDash()
+void AttackPlayer::IsRun()
 {
-    PlayerBase::IsDash();
+    PlayerBase::IsRun();
 }
 
 void AttackPlayer::IsStun()

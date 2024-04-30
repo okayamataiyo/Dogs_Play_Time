@@ -36,7 +36,7 @@ ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
     positionPrev_ = { 0.0f,0.0f,0.0f };
     controllerMoveSpeed_ = {0.3f,0.0f,0.3f};
     positionY_ = 0.0f;
-    isDash_ = false;
+    isRun_ = false;
     isFling_ = 1.0f;
     //Å•å¸Ç´ïœÇ¶Ç…ä÷Ç∑ÇÈäÓíÍÉNÉâÉXÉÅÉìÉoïœêî
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
@@ -119,7 +119,7 @@ void ActorAttackPlayer::Update()
     PlayerMove();
     PlayerRayCast();
     transform_.position_.y = positionY_;
-    if (isMove_ && !isJump_ && !isDash_)
+    if (isMove_ && !isJump_ && !isRun_)
     {
     }
     if (!isMove_ && !isJump_)
@@ -127,11 +127,11 @@ void ActorAttackPlayer::Update()
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
     {
-        isDash_ = true;
+        isRun_ = true;
     }
     else
     {
-        isDash_ = false;
+        isRun_ = false;
     }
     if (isJump_)
     {
@@ -203,9 +203,9 @@ void ActorAttackPlayer::IsJump()
     PlayerBase::IsJump();
 }
 
-void ActorAttackPlayer::IsDash()
+void ActorAttackPlayer::IsRun()
 {
-    PlayerBase::IsDash();
+    PlayerBase::IsRun();
 }
 
 void ActorAttackPlayer::IsStun()

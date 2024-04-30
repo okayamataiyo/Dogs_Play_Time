@@ -38,7 +38,7 @@ protected:
 	XMVECTOR CamPositionVec_;
 	XMFLOAT3 positionPrev_;		//1フレーム前の位置座標
 	XMFLOAT3 controllerMoveSpeed_;
-	bool isDash_;				//ダッシュしているかどうか
+	bool isRun_;				//ダッシュしているかどうか
 	bool isMove_;
 	float isFling_;				//地面から離れているか
 	//▼向き変えに関するメンバ変数
@@ -120,7 +120,7 @@ protected:
 
 	virtual void IsJump();
 
-	virtual void IsDash();
+	virtual void IsRun();
 
 	virtual void IsStun();
 
@@ -150,7 +150,7 @@ protected:
 
 	virtual bool GetIsJump() = 0;
 
-	virtual bool GetIsDash() = 0;
+	virtual bool GetIsRun() = 0;
 
 	virtual bool GetIsStun() = 0;
 

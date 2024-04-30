@@ -88,15 +88,15 @@ void PlayerBase::PlayerFall()
 void PlayerBase::PlayerMove()
 {
     const float walkSpeed = 0.4f;
-    const float dashSpeed = 0.5f;
+    const float runSpeed = 0.5f;
     // プレイヤーの移動処理
-    if (!isDash_)
+    if (!isRun_)
     {
         controllerMoveSpeed_ = XMFLOAT3(walkSpeed ,0.0f,walkSpeed);
     }
     else
     {
-        controllerMoveSpeed_ = XMFLOAT3(dashSpeed, 0.0f, dashSpeed);
+        controllerMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
     //向き変更
     XMVECTOR vecLength = XMVector3Length(vecMove_);
@@ -271,9 +271,9 @@ void PlayerBase::IsJump()
     isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
 }
 
-void PlayerBase::IsDash()
+void PlayerBase::IsRun()
 {
-    isDash_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_) ? true : false;
+    isRun_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_) ? true : false;
 }
 
 void PlayerBase::IsStun()

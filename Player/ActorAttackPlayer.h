@@ -49,7 +49,7 @@ public:
 
 	void IsJump() override;
 
-	void IsDash() override;
+	void IsRun() override;
 
 	void IsStun() override;
 
@@ -75,7 +75,7 @@ public:
 
 	bool GetIsJump() override { return isJump_; }
 
-	bool GetIsDash() override { return isDash_; }
+	bool GetIsRun() override { return isRun_; }
 
 	bool GetIsStun() override { return isStun_; }
 
