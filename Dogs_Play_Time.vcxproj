@@ -183,7 +183,8 @@
     <ClCompile Include="StageObject\Stage.cpp" />
     <ClCompile Include="StageObject\StageBlock.cpp" />
     <ClCompile Include="StageObject\StageObjectManager.cpp" />
-    <ClCompile Include="State\PlayerState.cpp" />
+    <ClCompile Include="State\AttackPlayerState.cpp" />
+    <ClCompile Include="State\CollectPlayerState.cpp" />
     <ClCompile Include="State\StateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +244,8 @@
     <ClInclude Include="StageObject\StageBlock.h" />
     <ClInclude Include="StageObject\StageObjectBase.h" />
     <ClInclude Include="StageObject\StageObjectManager.h" />
-    <ClInclude Include="State\PlayerState.h" />
+    <ClInclude Include="State\AttackPlayerState.h" />
+    <ClInclude Include="State\CollectPlayerState.h" />
     <ClInclude Include="State\StateBase.h" />
     <ClInclude Include="State\StateManager.h" />
   </ItemGroup>

@@ -2,20 +2,20 @@
 #include "../Player/CollectPlayer.h"
 #include "../Player/AttackPlayer.h"
 #include "StateManager.h"
-#include "PlayerState.h"
+#include "AttackPlayerState.h"
 
-PlayerWaitState::PlayerWaitState(StateManager* _pStateManager) : StateBase(_pStateManager), pCollectPlayer_{ nullptr }, pAttackPlayer_{ nullptr }
+AttackPlayerWaitState::AttackPlayerWaitState(StateManager* _pStateManager) : StateBase(_pStateManager), pCollectPlayer_{ nullptr }, pAttackPlayer_{ nullptr }
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
 }
 
-void PlayerWaitState::EnterState()
+void AttackPlayerWaitState::EnterState()
 {
 	pAttackPlayer_->PlayerWaitStateFunc();
 }
 
-void PlayerWaitState::UpdateState()
+void AttackPlayerWaitState::UpdateState()
 {
 	if (pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump() && !pAttackPlayer_->GetIsRun())
 	{
@@ -38,23 +38,23 @@ void PlayerWaitState::UpdateState()
 	}
 }
 
-void PlayerWaitState::ExitState()
+void AttackPlayerWaitState::ExitState()
 {
 }
 
-PlayerWalkState::PlayerWalkState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerWalkState::AttackPlayerWalkState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
 }
 
-void PlayerWalkState::EnterState()
+void AttackPlayerWalkState::EnterState()
 {
 
 	pAttackPlayer_->PlayerWalkStateFunc();
 }
 
-void PlayerWalkState::UpdateState()
+void AttackPlayerWalkState::UpdateState()
 {
 	if (!pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump())
 	{
@@ -77,22 +77,22 @@ void PlayerWalkState::UpdateState()
 	}
 }
 
-void PlayerWalkState::ExitState()
+void AttackPlayerWalkState::ExitState()
 {
 }
 
-PlayerRunState::PlayerRunState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerRunState::AttackPlayerRunState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
 }
 
-void PlayerRunState::EnterState()
+void AttackPlayerRunState::EnterState()
 {
 	pAttackPlayer_->PlayerRunStateFunc();
 }
 
-void PlayerRunState::UpdateState()
+void AttackPlayerRunState::UpdateState()
 {
 	if (!pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump())
 	{
@@ -115,22 +115,22 @@ void PlayerRunState::UpdateState()
 	}
 }
 
-void PlayerRunState::ExitState()
+void AttackPlayerRunState::ExitState()
 {
 }
 
-PlayerJumpState::PlayerJumpState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerJumpState::AttackPlayerJumpState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
 }
 
-void PlayerJumpState::EnterState()
+void AttackPlayerJumpState::EnterState()
 {
 	pAttackPlayer_->PlayerJumpStateFunc();
 }
 
-void PlayerJumpState::UpdateState()
+void AttackPlayerJumpState::UpdateState()
 {
 	if (!pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump())
 	{
@@ -153,40 +153,40 @@ void PlayerJumpState::UpdateState()
 	}
 }
 
-void PlayerJumpState::ExitState()
+void AttackPlayerJumpState::ExitState()
 {
 
 }
 
-PlayerStunState::PlayerStunState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr}, pAttackPlayer_{nullptr}
+AttackPlayerStunState::AttackPlayerStunState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr}, pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
 }
 
-void PlayerStunState::EnterState()
+void AttackPlayerStunState::EnterState()
 {
 	pAttackPlayer_->PlayerStunStateFunc();
 }
 
-void PlayerStunState::UpdateState()
+void AttackPlayerStunState::UpdateState()
 {
-	if (!pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump())
+	if (!pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump() && !pAttackPlayer_->GetIsStun())
 	{
 		pStateManager_->ChangeState("WaitState");
 	}
 
-	if (pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump() && !pAttackPlayer_->GetIsRun())
+	if (pAttackPlayer_->GetIsMove() && !pAttackPlayer_->GetIsJump() && !pAttackPlayer_->GetIsRun() && !pAttackPlayer_->GetIsStun())
 	{
 		pStateManager_->ChangeState("WalkState");
 	}
 
-	if (pAttackPlayer_->GetIsRun())
+	if (pAttackPlayer_->GetIsRun() && !pAttackPlayer_->GetIsStun())
 	{
 		pStateManager_->ChangeState("RunState");
 	}
 }
 
-void PlayerStunState::ExitState()
+void AttackPlayerStunState::ExitState()
 {
 }

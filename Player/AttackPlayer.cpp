@@ -13,7 +13,7 @@
 #include "../ItemObject/ItemObjectManager.h"
 #include "../StageObject/Stage.h"
 #include "../State/StateManager.h"
-#include "../State/PlayerState.h"
+#include "../State/AttackPlayerState.h"
 #include "AttackPlayer.h"
 #include "CollectPlayer.h"
 
@@ -119,11 +119,11 @@ void AttackPlayer::Initialize()
     pFloor_ = (Floor*)FindObject(floorName);
     pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
     pStateManager_ = new StateManager(this);
-    pStateManager_->AddState("WalkState", new PlayerWalkState(pStateManager_));
-    pStateManager_->AddState("WaitState", new PlayerWaitState(pStateManager_));
-    pStateManager_->AddState("RunState", new PlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new PlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new PlayerStunState(pStateManager_));
+    pStateManager_->AddState("WalkState", new AttackPlayerWalkState(pStateManager_));
+    pStateManager_->AddState("WaitState", new AttackPlayerWaitState(pStateManager_));
+    pStateManager_->AddState("RunState", new AttackPlayerRunState(pStateManager_));
+    pStateManager_->AddState("JumpState", new AttackPlayerJumpState(pStateManager_));
+    pStateManager_->AddState("StunState", new AttackPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
 
     pText_ = new Text;

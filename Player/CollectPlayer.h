@@ -35,6 +35,7 @@ namespace
 class CollectPlayer : public PlayerBase
 {
 private:
+
 	enum class SOUNDSTATE
 	{
 		STUN = 0,

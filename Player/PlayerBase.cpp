@@ -284,5 +284,4 @@ void PlayerBase::IsStun()
 void PlayerBase::IsDive()
 {
     isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
-    
 }

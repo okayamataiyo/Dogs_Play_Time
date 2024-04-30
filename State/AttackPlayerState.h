@@ -5,61 +5,61 @@
 class CollectPlayer;
 class AttackPlayer;
 
-class PlayerWaitState : public StateBase
+class AttackPlayerWaitState : public StateBase
 {
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
 public:
-	PlayerWaitState(StateManager* _pStateManager);
+	AttackPlayerWaitState(StateManager* _pStateManager);
 	void EnterState() override;
 	void UpdateState() override;
 	void ExitState() override;
 };
 
-class PlayerWalkState : public StateBase
+class AttackPlayerWalkState : public StateBase
 {
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
 public:
-	PlayerWalkState(StateManager* _pStateManager);
+	AttackPlayerWalkState(StateManager* _pStateManager);
 	void EnterState() override;
 	void UpdateState() override;
 	void ExitState() override;
 };
 
-class PlayerRunState : public StateBase
+class AttackPlayerRunState : public StateBase
 {
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
 public:
-	PlayerRunState(StateManager* _pStateManager);
+	AttackPlayerRunState(StateManager* _pStateManager);
 	void EnterState() override;
 	void UpdateState() override;
 	void ExitState() override;
 };
 
-class PlayerJumpState : public StateBase
+class AttackPlayerJumpState : public StateBase
 {
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
 public:
-	PlayerJumpState(StateManager* _pStateManager);
+	AttackPlayerJumpState(StateManager* _pStateManager);
 	void EnterState() override;
 	void UpdateState() override;
 	void ExitState() override;
 };
 
-class PlayerStunState : public StateBase
+class AttackPlayerStunState : public StateBase
 {
 private:
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
 public:
-	PlayerStunState(StateManager* _pStateManager);
+	AttackPlayerStunState(StateManager* _pStateManager);
 	void EnterState() override;
 	void UpdateState() override;
 	void ExitState() override;

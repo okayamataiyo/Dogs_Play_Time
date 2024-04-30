@@ -15,7 +15,7 @@
 #include "../StageObject/Stage.h"
 #include "../StageObject/StageBlock.h"
 #include "../State/StateManager.h"
-#include "../State/PlayerState.h"
+#include "../State/CollectPlayerState.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
@@ -122,6 +122,12 @@ void CollectPlayer::Initialize()
     pFloor_ = (Floor*)FindObject(floorName);
     pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
     pStateManager_ = new StateManager(this);
+    pStateManager_->AddState("WalkState", new CollectPlayerWalkState(pStateManager_));
+    pStateManager_->AddState("WaitState", new CollectPlayerWaitState(pStateManager_));
+    pStateManager_->AddState("RunState", new CollectPlayerRunState(pStateManager_));
+    pStateManager_->AddState("JumpState", new CollectPlayerJumpState(pStateManager_));
+    pStateManager_->AddState("StunState", new CollectPlayerStunState(pStateManager_));
+    pStateManager_->ChangeState("WaitState");
 
     pText_ = new Text;
     pText_->Initialize();
