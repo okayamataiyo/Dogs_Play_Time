@@ -55,22 +55,37 @@ void PlayerBase::UpdateGameOver()
 
 void PlayerBase::PlayerWaitStateFunc()
 {
+    startFrame_ = 0;
+    endFrame_ = 0;
+    animSpeed_ = 1.0f;
 }
 
 void PlayerBase::PlayerWalkStateFunc()
 {
+    startFrame_ = 20;
+    endFrame_ = 60;
+    animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerRunStateFunc()
 {
+    startFrame_ = 80;
+    endFrame_ = 120;
+    animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerJumpStateFunc()
 {
+    startFrame_ = 120;
+    endFrame_ = 120;
+    animSpeed_ = 1.0f;
 }
 
 void PlayerBase::PlayerStunStateFunc()
 {
+    startFrame_ = 140;
+    endFrame_ = 200;
+    animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerFall()
@@ -136,24 +151,24 @@ void PlayerBase::PlayerMove()
     controllerMoveSpeed_.x *= XMVectorGetX(vecDirection_);
     controllerMoveSpeed_.z *= XMVectorGetZ(vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(vecDirection_, rotmat);
-    if (Input::GetPadStickL(padID_).y > deadZone)
+    if (Input::GetPadStickL(padID_).y > deadZone)   //‘O‚Ö‚ÌˆÚ“®
     {
         transform_.position_.x += controllerMoveSpeed_.x;
         transform_.position_.z += controllerMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).y < -deadZone)
+    if (Input::GetPadStickL(padID_).y < -deadZone)  //Œã‚ë‚Ö‚ÌˆÚ“®
     {
         transform_.position_.x -= controllerMoveSpeed_.x;
         transform_.position_.z -= controllerMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).x > deadZone)
+    if (Input::GetPadStickL(padID_).x > deadZone)   //‰E‚Ö‚ÌˆÚ“®
     {
         controllerMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         controllerMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
         transform_.position_.x += controllerMoveSpeed_.x;
         transform_.position_.z += controllerMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).x < -deadZone)
+    if (Input::GetPadStickL(padID_).x < -deadZone)  //¶‚Ö‚ÌˆÚ“®
     {
         controllerMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         controllerMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);

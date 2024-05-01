@@ -11,6 +11,13 @@ namespace
 		LOSE,
 	};
 
+	enum class PLAYERSTATE
+	{
+		ATTACK = false,
+		COLLECT,
+	};
+	bool attackOrCollect = false;	//×–‚‚·‚é‘¤‚©ûW‚·‚é‘¤‚©
+
 	int PlayerScore_[2] = { 0,0 };
 	int winOrLose_ = (int)WINORLOSE::WIN;
 }

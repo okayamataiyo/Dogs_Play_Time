@@ -3,16 +3,20 @@
 #include "../Engine/SceneManager.h"
 #include "../Engine/Direct3D.h"
 #include "../Engine/Image.h"
+#include "../Engine/Global.h"
 #include "../StageObject/StageObjectManager.h"
 #include "../StageObject/SolidText.h"
 #include "../StageObject/Sky.h"
 #include "../Player/AttackPlayer.h"
 #include "../Player/CollectPlayer.h"
+#include "../Player/ActorAttackPlayer.h"
+#include "../Player/ActorCollectPlayer.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(GameObject* _pParent)
-	:GameObject(_pParent, selectSceneName), hPict_{ -1 }, solidTextRotate_{ 0.3f }, isViewPicture_{ false },padID_{0}, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
-	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}
+	:GameObject(_pParent, selectSceneName), hPict_{ -1 }, solidTextRotate_{ 0.3f }, isViewPicture_{ false },padIDNum_{0}
+	, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
+	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }, pActorCollectPlayer_{ nullptr }
 {
 
 }
@@ -25,35 +29,71 @@ void SelectScene::Initialize()
 	assert(hPict_ >= initZeroInt);
 	pictureTrans_ = {};
 	ShowCursor();
-	pSolidText_ = Instantiate<SolidText>(this);
-	pSolidText_->SetMode((int)TEXTSTATE::SELECT);
+	//pSolidText_ = Instantiate<SolidText>(this);
+	//pSolidText_->SetMode((int)TEXTSTATE::SELECT);
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
-	camPos_ = pSolidText_->GetPosition();
+	//camPos_ = pSolidText_->GetPosition();
 	camPos_.y += 2;
-	camPos_.z -= 15;
+	camPos_.z += 15;
+	pActorAttackPlayer_ = Instantiate<ActorAttackPlayer>(this);
+	pActorCollectPlayer_ = Instantiate<ActorCollectPlayer>(this);
+	pActorAttackPlayer_->SetIsSelect(true);
+	pActorCollectPlayer_->SetIsSelect(true);
+	XMFLOAT3 positionActorAttackPlayer = { 5.0f,0.0f,0.0f };
+	XMFLOAT3 positionActorCollectPlayer = { -5.0f,0.0f,0.0f };
+	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
+	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 }
 
 void SelectScene::Update()
 {
 	Camera::SetPosition(camPos_, attackPlayerNumber);
-	Camera::SetTarget(pSolidText_->GetPosition(), attackPlayerNumber);
+	//Camera::SetTarget(pSolidText_->GetPosition(), attackPlayerNumber);
 	Camera::SetPosition(camPos_, collectPlayerNumber);
-	Camera::SetTarget(pSolidText_->GetPosition(), collectPlayerNumber);
+	//Camera::SetTarget(pSolidText_->GetPosition(), collectPlayerNumber);
 
-	transform_.rotate_.y += solidTextRotate_;
+	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
+	const XMFLOAT3 defaultScale = { 0.8f,0.8f,0.8f };
 
-	XMFLOAT3 pos = Input::GetMousePosition();
-	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, 0))
+	if (attackOrCollect == (bool)PLAYERSTATE::ATTACK)
 	{
-		padID_ = 0;
+		pActorAttackPlayer_->SetScale(bigScale);
+		pActorCollectPlayer_->SetScale(defaultScale);
+	}
+	else
+	{
+		pActorAttackPlayer_->SetScale(defaultScale);
+		pActorCollectPlayer_->SetScale(bigScale);
 	}
 
-	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, 1))
+	XMFLOAT3 pos = Input::GetMousePosition();
+	const float deadZone = 0.3f;
+	switch (padIDNum_)
 	{
-		padID_ = 1;
+	case (int)PADIDSTATE::FIRST:
+		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //‰E‚Ö‚ÌˆÚ“®
+		{
+			attackOrCollect = (bool)PLAYERSTATE::ATTACK;
+		}
+		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //‰E‚Ö‚ÌˆÚ“®
+		{
+			attackOrCollect = (bool)PLAYERSTATE::COLLECT;
+		}
+		break;
+	case (int)PADIDSTATE::SECONDS:
+		break;
+	}
+	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST))
+	{
+		//padID_ = 0;
+	}
+
+	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	{
+		//padID_ = 1;
 	}
 
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
@@ -92,12 +132,12 @@ void SelectScene::Update()
 	if (isViewPicture_)
 	{
 		pSky_->SetPosition(skyPosFly_);
-		pSolidText_->SetPosition(skyPosFly_);
+		//pSolidText_->SetPosition(skyPosFly_);
 	}
 	else
 	{
 		pSky_->SetPosition(skyPos_);
-		pSolidText_->SetPosition(skyPos_);
+		//pSolidText_->SetPosition(skyPos_);
 	}
 }
 

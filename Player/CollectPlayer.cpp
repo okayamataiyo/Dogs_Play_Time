@@ -8,7 +8,6 @@
 #include "../Engine/VFX.h"
 #include "../Engine/Global.h"
 #include "../Engine/SceneManager.h"
-#include "../Scene/SelectScene.h"
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/Bone.h"
@@ -26,7 +25,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , gameState_{GAMESTATE::READY}
     , pParent_{ nullptr }, pPlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }
-    , pSceneManager_{ nullptr },pSelectScene_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
+    , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
     //▼UIに関する基底クラスメンバ変数
@@ -42,7 +41,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     score_ = 0;
     scoreAmount_ = 10;
     scoreMax_ = 150;
-    padID_ = pSelectScene_->;
+    //padID_ = pSelectScene_->;
     playerInitPosY_ = 0.6f;
     //▼サウンドに関する基底クラスメンバ変数
     soundVolume_ = 0.5f;
@@ -93,6 +92,10 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     inTheWall_ = 1.5f;
     rayFloorDistDown_ = 0.0f;
     rayStageDistDown_ = 0.0f;
+    //▼アニメーションに関する基底クラスメンバ変数
+    startFrame_ = 0;
+    endFrame_ = 0;
+    animSpeed_ = 0.0f;
 }
 
 CollectPlayer::~CollectPlayer()
@@ -133,6 +136,15 @@ void CollectPlayer::Initialize()
 
     pText_ = new Text;
     pText_->Initialize();
+
+    if (!attackOrCollect)
+    {
+        padID_ = (bool)PLAYERSTATE::COLLECT;
+    }
+    else
+    {
+        padID_ = (bool)PLAYERSTATE::ATTACK;
+    }
 }
 
 void CollectPlayer::Update()
@@ -294,27 +306,32 @@ void CollectPlayer::UpdateGameOver()
 
 void CollectPlayer::PlayerWaitStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 0, 0, 1.0f);
+    PlayerBase::PlayerWaitStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void CollectPlayer::PlayerWalkStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 20, 60, 0.5f);
+    PlayerBase::PlayerWalkStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void CollectPlayer::PlayerRunStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 80, 120, 0.5f);
+    PlayerBase::PlayerRunStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void CollectPlayer::PlayerJumpStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 120, 120, 1.0f);
+    PlayerBase::PlayerJumpStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void CollectPlayer::PlayerStunStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 140, 200, 0.5f);
+    PlayerBase::PlayerStunStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void CollectPlayer::PlayerStun(int _timeLimit)

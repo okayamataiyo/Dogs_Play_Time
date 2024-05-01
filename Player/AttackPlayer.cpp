@@ -1,5 +1,4 @@
 //インクルード
-#include "../Engine/SceneManager.h"
 #include "../Engine/Input.h"
 #include "../Engine/Model.h"
 #include "../Engine/Direct3D.h"
@@ -8,6 +7,7 @@
 #include "../Engine/Audio.h"
 #include "../Engine/SceneManager.h"
 #include "../Engine/Global.h"
+#include "../Engine/SceneManager.h"
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/ItemObjectManager.h"
@@ -22,7 +22,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     , number_{ 0 },  scoreTimeCounter_{ 0 }, scoreTimeCounterWait_{ 1 }
     , gameState_{ GAMESTATE::READY }
     , pParent_{ nullptr }, pPlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr},pStateManager_{nullptr}
+    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr }, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
     //▼UIに関する基底クラスメンバ変数
@@ -89,6 +89,10 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     inTheWall_ = 1.5f;
     rayFloorDistDown_ = 0.0f;
     rayStageDistDown_ = 0.0f;
+    //▼アニメーションに関する基底クラスメンバ変数
+    startFrame_ = 0;
+    endFrame_ = 0;
+    animSpeed_ = 0.0f;
 }
 
 AttackPlayer::~AttackPlayer()
@@ -128,6 +132,15 @@ void AttackPlayer::Initialize()
 
     pText_ = new Text;
     pText_->Initialize();
+
+    if (attackOrCollect)
+    {
+        padID_ = (bool)PLAYERSTATE::COLLECT;
+    }
+    else
+    {
+        padID_ = (bool)PLAYERSTATE::ATTACK;
+    }
 }
 
 void AttackPlayer::Update()
@@ -269,27 +282,32 @@ void AttackPlayer::UpdateGameOver()
 
 void AttackPlayer::PlayerWaitStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 0, 0, 1.0f);
+    PlayerBase::PlayerWaitStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void AttackPlayer::PlayerWalkStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 20, 60, 0.5f);
+    PlayerBase::PlayerWalkStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void AttackPlayer::PlayerRunStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 80, 120, 0.5f);
+    PlayerBase::PlayerRunStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void AttackPlayer::PlayerJumpStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 120, 120, 1.0f);
+    PlayerBase::PlayerJumpStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void AttackPlayer::PlayerStunStateFunc()
 {
-    Model::SetAnimFrame(hModel_, 140, 200, 0.5f);
+    PlayerBase::PlayerStunStateFunc();
+    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
 }
 
 void AttackPlayer::PlayerStun(int _timeLimit)

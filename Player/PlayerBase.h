@@ -86,6 +86,10 @@ protected:
 	float inTheWall_;				//壁に埋まっているか
 	float rayFloorDistDown_;
 	float rayStageDistDown_;
+	//▼アニメーションに関するメンバ変数
+	int startFrame_;
+	int endFrame_;
+	float animSpeed_;
 protected:
 	PlayerBase(GameObject* _parent, std::string _name);
 	//初期化

@@ -10,7 +10,7 @@
 #include "CollectPlayer.h"
 
 ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, actorCollectPlayerName), hModel_{ -1 }, stageHModel_{ -1 }, gameState_{ GAMESTATE::READY }
+    :PlayerBase(_pParent, actorCollectPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMESTATE::READY}
     , pPlayScene_{ nullptr }, pStage_{ nullptr }
 {
     //Å•UIÇ…ä÷Ç∑ÇÈäÓíÍÉNÉâÉXÉÅÉìÉoïœêî
@@ -103,8 +103,10 @@ void ActorCollectPlayer::Update()
         transform_.position_ = initZeroXMFLOAT3;
     }
 
-    isDive_ = true;
-
+    if (!isSelect_)
+    {
+        isDive_ = true;
+    }
     if (isDive_ && !isDived_)
     {
         ++diveTime_;
@@ -117,7 +119,10 @@ void ActorCollectPlayer::Update()
 
     PlayerFall();
     PlayerMove();
-    PlayerRayCast();
+    if (!isSelect_)
+    {
+        PlayerRayCast();
+    }
     transform_.position_.y = positionY_;
     if (isMove_ && !isJump_ && !isRun_)
     {

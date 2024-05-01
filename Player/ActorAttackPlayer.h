@@ -16,6 +16,7 @@ class ActorAttackPlayer : public PlayerBase
 private:
 	int hModel_;
 	int stageHModel_;
+	bool isSelect_;		//セレクトシーンで呼ばれているかどうか
 	GAMESTATE gameState_;
 	PlayScene* pPlayScene_;
 	Stage* pStage_;
@@ -70,6 +71,8 @@ public:
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
 
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
+
+	void SetIsSelect(bool _isSelect) { isSelect_ = _isSelect; }
 
 	bool GetIsMove() override { return isMove_; }
 

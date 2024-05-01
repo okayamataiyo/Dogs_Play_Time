@@ -1,6 +1,5 @@
 #pragma once
 //インクルード
-#include <vector>
 #include "../Engine/GameObject.h"
 #include "../Engine/Camera.h"
 #include "../Button.h"
@@ -15,6 +14,8 @@ class SceneManager;
 class StageObjectManager;
 class SolidText;
 class Sky;
+class ActorAttackPlayer;
+class ActorCollectPlayer;
 
 class SelectScene : public GameObject
 {
@@ -32,7 +33,7 @@ private:
 	Transform pictureTrans_;
 	float solidTextRotate_;
 	bool isViewPicture_;
-	std::vector<std::pair<int,bool>> padID_;
+	bool padIDNum_;
 	XMFLOAT3 skyPos_;
 	XMFLOAT3 skyPosFly_;
 	XMFLOAT3 camPos_;
@@ -42,6 +43,8 @@ private:
 	Button* buttonStart_;
 	Button* buttonBack_;
 	Sky* pSky_;
+	ActorAttackPlayer* pActorAttackPlayer_;
+	ActorCollectPlayer* pActorCollectPlayer_;
 public:
 	SelectScene(GameObject* _pParent);
 	void Initialize() override;
@@ -49,6 +52,5 @@ public:
 	void Draw() override;
 	void Release() override;
 	void ShowCursor() { while (::ShowCursor(true) < 0); }
-	std::vector<std::pair<int,bool>> GetPadID() { return padID_; }
 };
 

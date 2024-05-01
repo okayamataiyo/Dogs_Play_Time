@@ -204,7 +204,10 @@
     <ClCompile Include="State\StateManager.cpp">
       <Filter>State</Filter>
     </ClCompile>
-    <ClCompile Include="State\PlayerState.cpp">
+    <ClCompile Include="State\AttackPlayerState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="State\CollectPlayerState.cpp">
       <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
@@ -381,7 +384,10 @@
     <ClInclude Include="State\StateManager.h">
       <Filter>State</Filter>
     </ClInclude>
-    <ClInclude Include="State\PlayerState.h">
+    <ClInclude Include="State\AttackPlayerState.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="State\CollectPlayerState.h">
       <Filter>State</Filter>
     </ClInclude>
   </ItemGroup>
