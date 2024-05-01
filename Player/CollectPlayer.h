@@ -12,6 +12,7 @@ class Stage;
 class StageBlock;
 class Floor;
 class SceneManager;
+class SelectScene;
 class ItemObjectManager;
 class StateManager;
 
@@ -69,6 +70,7 @@ private:
 	StageBlock* pStageBlock_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
+	SelectScene* pSelectScene_;
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
 public:

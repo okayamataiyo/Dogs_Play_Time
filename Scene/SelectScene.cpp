@@ -11,7 +11,7 @@
 #include "SelectScene.h"
 
 SelectScene::SelectScene(GameObject* _pParent)
-	:GameObject(_pParent, selectSceneName), hPict_{ -1 }, solidTextRotate_{ 0.3f }, isViewPicture_{ false }, skyPos_{ 0.0f,0.0f,0.0f },skyPosFly_{10000.0f,0.0f,10000.0f}
+	:GameObject(_pParent, selectSceneName), hPict_{ -1 }, solidTextRotate_{ 0.3f }, isViewPicture_{ false },padID_{0}, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
 	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}
 {
 
@@ -26,7 +26,7 @@ void SelectScene::Initialize()
 	pictureTrans_ = {};
 	ShowCursor();
 	pSolidText_ = Instantiate<SolidText>(this);
-	pSolidText_->SetMode(1);
+	pSolidText_->SetMode((int)TEXTSTATE::SELECT);
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
@@ -46,6 +46,16 @@ void SelectScene::Update()
 	transform_.rotate_.y += solidTextRotate_;
 
 	XMFLOAT3 pos = Input::GetMousePosition();
+	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, 0))
+	{
+		padID_ = 0;
+	}
+
+	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, 1))
+	{
+		padID_ = 1;
+	}
+
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
 	{
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)

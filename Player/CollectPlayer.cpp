@@ -1,5 +1,4 @@
 //インクルード
-#include "../Engine/SceneManager.h"
 #include "../Engine/Input.h"
 #include "../Engine/Model.h"
 #include "../Engine/Direct3D.h"
@@ -8,6 +7,8 @@
 #include "../Engine/Audio.h"
 #include "../Engine/VFX.h"
 #include "../Engine/Global.h"
+#include "../Engine/SceneManager.h"
+#include "../Scene/SelectScene.h"
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/Bone.h"
@@ -24,7 +25,8 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , decBoneCount_{ -1 }, isBoneDeath_{ false }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
     , gameState_{GAMESTATE::READY}
     , pParent_{ nullptr }, pPlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr },pItemObjectManager_{nullptr},pStateManager_{nullptr}
+    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }
+    , pSceneManager_{ nullptr },pSelectScene_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
     //▼UIに関する基底クラスメンバ変数
@@ -40,7 +42,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     score_ = 0;
     scoreAmount_ = 10;
     scoreMax_ = 150;
-    padID_ = 1;
+    padID_ = pSelectScene_->;
     playerInitPosY_ = 0.6f;
     //▼サウンドに関する基底クラスメンバ変数
     soundVolume_ = 0.5f;
@@ -274,6 +276,9 @@ void CollectPlayer::UpdatePlay()
     }
     IsMove();
     IsJump();
+    IsRun();
+    IsStun();
+    IsDive();
 }
 
 void CollectPlayer::UpdateGameOver()

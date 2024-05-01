@@ -38,7 +38,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     score_ = 0;
     scoreAmount_ = 10;
     scoreMax_ = 150;
-    padID_ = 0;
+    padID_ = 1;
     playerInitPosY_ = 0.6f;
     //▼サウンドに関する基底クラスメンバ変数
     soundVolume_ = 0.5f;
