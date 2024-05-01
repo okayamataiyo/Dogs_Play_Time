@@ -69,6 +69,7 @@ void PlayScene::Initialize()
 	camVec_[attackPlayerNumber].x = 0;
 	camVec_[attackPlayerNumber].y = 5;
 	camVec_[attackPlayerNumber].z = -10;
+	camVec_[attackPlayerNumber] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
 	camVec_[collectPlayerNumber].x = 0;
 	camVec_[collectPlayerNumber].y = 5;
@@ -128,8 +129,15 @@ void PlayScene::Update()
 			woodBoxCount_ += 1;
 		}
 	}
+	struct Vector2 {
+		float x, y;
+	};
+	Vector2 rotation;
 
-	static float RotationX[2] = {};
+	Vector2 collectRotation;
+	Vector2 attackRotation;
+
+	static float RotationX[playerNum] = {};
 	static float RotationY[2] = {};
 	static float vecLength[2] = {};
 	static float prevLen[2] = {};
@@ -164,7 +172,7 @@ void PlayScene::Update()
 	playerPos[collectPlayerNumber] = pCollectPlayer_->GetPosition();
 	playerPos[attackPlayerNumber] = pAttackPlayer_->GetPosition();
 
-	for (int i = 0u; i <= 1u; i++)
+	for (int i = 0u; i < playerNum; i++)
 	{
 
 		Dir[i] = XMLoadFloat3(&rDir);

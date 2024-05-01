@@ -6,6 +6,11 @@ namespace
 {
 	int collectPlayerNumber = 0;
 	int attackPlayerNumber = 1;
+	enum Player {
+		collectPlayer = 0,
+		attackPlayer,
+		playerNum
+	};
 }
 
 class  PlayerBase : public GameObject

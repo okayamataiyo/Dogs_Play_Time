@@ -114,6 +114,7 @@ void PlayerBase::PlayerMove()
         controllerMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
     //向き変更
+#if 0
     XMVECTOR vecLength = XMVector3Length(vecMove_);
     float length = XMVectorGetX(vecLength);
 
@@ -135,8 +136,12 @@ void PlayerBase::PlayerMove()
             angle_ *= angleInversion;
         }
     }
-
     transform_.rotate_.y = XMConvertToDegrees(angle_);
+#else
+    XMFLOAT3 m;
+    XMStoreFloat3(&m, vecMove_);
+    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+#endif
 
     float pi = 3.14f;					//円周率
     float halfPi = pi / 2;				//円周率の半分
@@ -275,8 +280,12 @@ XMVECTOR PlayerBase::GetVecPos()
 void PlayerBase::IsMove()
 {
     // プレイヤーが移動中かどうかを判定する処理
-    isMove_ = (transform_.position_.x != positionPrev_.x || 
-               transform_.position_.z != positionPrev_.z) ? true : false;
+    if (transform_.position_.x != positionPrev_.x)
+        isMove_ = true;
+    else if (transform_.position_.z != positionPrev_.z)
+        isMove_ = true;
+    else
+        isMove_ = false;
 }
 
 void PlayerBase::IsJump()
@@ -288,7 +297,7 @@ void PlayerBase::IsJump()
 
 void PlayerBase::IsRun()
 {
-    isRun_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_) ? true : false;
+    isRun_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_);
 }
 
 void PlayerBase::IsStun()
