@@ -114,34 +114,10 @@ void PlayerBase::PlayerMove()
         controllerMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
     //向き変更
-#if 0
-    XMVECTOR vecLength = XMVector3Length(vecMove_);
-    float length = XMVectorGetX(vecLength);
-
-    const float angleInversion = -1.0f;
-
-    if (length != 0.0f)
-    {
-        //プレイヤーが入力キーに応じて、その向きに変える(左向きには出来ない)
-        vecMove_ = XMVector3Normalize(vecMove_);
-
-        XMVECTOR vecDot = XMVector3Dot(vecFront, vecMove_);
-        float dot = XMVectorGetX(vecDot);
-        angle_ = acos(dot);
-
-        //右向きにしか向けなかったものを左向きにする事ができる
-        vecCross_ = XMVector3Cross(vecFront, vecMove_);
-        if (XMVectorGetY(vecCross_) < 0.0f)
-        {
-            angle_ *= angleInversion;
-        }
-    }
-    transform_.rotate_.y = XMConvertToDegrees(angle_);
-#else
     XMFLOAT3 m;
     XMStoreFloat3(&m, vecMove_);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-#endif
+    angle_ = transform_.rotate_.y;
 
     float pi = 3.14f;					//円周率
     float halfPi = pi / 2;				//円周率の半分
@@ -307,5 +283,9 @@ void PlayerBase::IsStun()
 
 void PlayerBase::IsDive()
 {
-    isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
+    //isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
+    if (Input::GetPadTrrigerR(padID_))
+    {
+        isDive_ = true;
+    }
 }
