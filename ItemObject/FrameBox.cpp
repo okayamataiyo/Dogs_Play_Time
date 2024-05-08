@@ -38,7 +38,7 @@ void FrameBox::Update()
 {
     transform_.position_ = pPlayScene_->GetAttackPlayerPosition();
     transform_.position_.y = transform_.position_.y + frameBoxInitPosY_;
-    transform_.rotate_.y = XMConvertToDegrees(pAttackPlayer_->GetAngle());
+    transform_.rotate_.y = pAttackPlayer_->GetAngle();
 }
 
 void FrameBox::Draw()

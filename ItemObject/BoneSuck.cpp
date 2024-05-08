@@ -63,7 +63,7 @@ void BoneSuck::PlayerSuckBoneSuck()
 {
 	XMFLOAT3 BoneSuckPosition_ = Model::GetBonePosition(pCollectPlayer_->GetModelHandle(), "joint3");
 	transform_.position_ = BoneSuckPosition_;
-	transform_.rotate_.y = XMConvertToDegrees(pCollectPlayer_->GetAngle());
+	transform_.rotate_.y = pCollectPlayer_->GetAngle();
 	transform_.scale_ = pickUpBoneSuckScale_;
 }
 
