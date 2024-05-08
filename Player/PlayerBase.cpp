@@ -117,7 +117,7 @@ void PlayerBase::PlayerMove()
     XMFLOAT3 m;
     XMStoreFloat3(&m, vecMove_);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    angle_ = transform_.rotate_.y;
+    angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 
     float pi = 3.14f;					//円周率
     float halfPi = pi / 2;				//円周率の半分
@@ -250,7 +250,9 @@ void PlayerBase::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackS
 XMVECTOR PlayerBase::GetVecPos()
 {
     // ベクトルの位置を取得する処理
-    return XMVECTOR(); // 仮の戻り値
+    XMVECTOR vecPos;
+    vecPos = XMLoadFloat3(&transform_.position_);
+    return vecPos; // 仮の戻り値
 }
 
 void PlayerBase::IsMove()
