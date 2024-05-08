@@ -50,6 +50,7 @@ private:
 	int number_;
 	int scoreTimeCounter_;
 	int scoreTimeCounterWait_;
+	int attackOrCollect_;
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	PlayScene* pPlayScene_;

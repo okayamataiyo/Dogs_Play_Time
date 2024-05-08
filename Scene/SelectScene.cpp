@@ -4,6 +4,7 @@
 #include "../Engine/Direct3D.h"
 #include "../Engine/Image.h"
 #include "../Engine/Global.h"
+#include "../Engine/Json/JsonReader.h"
 #include "../StageObject/StageObjectManager.h"
 #include "../StageObject/SolidText.h"
 #include "../StageObject/Sky.h"
@@ -23,6 +24,13 @@ SelectScene::SelectScene(GameObject* _pParent)
 
 void SelectScene::Initialize()
 {
+	//▼JSONファイルのロード
+	JsonReader::Load("PlayerSetting.json");
+	auto& playerPadID = JsonReader::GetSection("PlayerPadID");
+
+	//▼パラメータを取得
+	attackOrCollect_ = playerPadID["attackOrCollect"];
+
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
 	hPict_ = Image::Load(imageName);
@@ -58,7 +66,7 @@ void SelectScene::Update()
 	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
 	const XMFLOAT3 defaultScale = { 0.8f,0.8f,0.8f };
 
-	if (attackOrCollect == (bool)PLAYERSTATE::ATTACK)
+	if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
 	{
 		pActorAttackPlayer_->SetScale(bigScale);
 		pActorCollectPlayer_->SetScale(defaultScale);
@@ -76,11 +84,11 @@ void SelectScene::Update()
 	case (int)PADIDSTATE::FIRST:
 		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //右への移動
 		{
-			attackOrCollect = (bool)PLAYERSTATE::ATTACK;
+			attackOrCollect_ = (int)PADIDSTATE::FIRST;
 		}
 		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //右への移動
 		{
-			attackOrCollect = (bool)PLAYERSTATE::COLLECT;
+			attackOrCollect_ = (int)PADIDSTATE::SECONDS;
 		}
 		break;
 	case (int)PADIDSTATE::SECONDS:
@@ -88,12 +96,12 @@ void SelectScene::Update()
 	}
 	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST))
 	{
-		//padID_ = 0;
+		//padID_ = (int)PADIDSTATE::FIRST;
 	}
 
 	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
 	{
-		//padID_ = 1;
+		//padID_ = (int)PADIDSTATE::SECONDS;
 	}
 
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
@@ -139,6 +147,8 @@ void SelectScene::Update()
 		pSky_->SetPosition(skyPos_);
 		//pSolidText_->SetPosition(skyPos_);
 	}
+
+
 }
 
 void SelectScene::Draw()

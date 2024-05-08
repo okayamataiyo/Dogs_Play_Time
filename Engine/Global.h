@@ -11,12 +11,13 @@ namespace
 		LOSE,
 	};
 
-	enum class PLAYERSTATE
+	enum class PADIDSTATE
 	{
-		ATTACK = false,
-		COLLECT,
+		FIRST = 0,
+		SECONDS,
+		THIRD,
+		FOUR
 	};
-	bool attackOrCollect = false;	//é◊ñÇÇ∑ÇÈë§Ç©é˚èWÇ∑ÇÈë§Ç©
 
 	int PlayerScore_[2] = { 0,0 };
 	int winOrLose_ = (int)WINORLOSE::WIN;

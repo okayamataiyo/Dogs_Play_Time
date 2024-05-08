@@ -20,16 +20,8 @@ class ActorCollectPlayer;
 class SelectScene : public GameObject
 {
 private:
-
-	enum class PADIDSTATE
-	{
-		FIRST = 0,
-		SECONDS,
-		THIRD,
-		FOUR,
-	};
-
 	int hPict_;
+	int attackOrCollect_;	//×–‚‚·‚é‘¤‚©ûW‚·‚é‘¤‚©
 	Transform pictureTrans_;
 	float solidTextRotate_;
 	bool isViewPicture_;

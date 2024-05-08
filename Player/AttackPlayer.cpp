@@ -133,13 +133,13 @@ void AttackPlayer::Initialize()
     pText_ = new Text;
     pText_->Initialize();
 
-    if (attackOrCollect)
+    if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
     {
-        padID_ = (bool)PLAYERSTATE::COLLECT;
+        padID_ = (int)PADIDSTATE::FIRST;
     }
-    else
+    if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
     {
-        padID_ = (bool)PLAYERSTATE::ATTACK;
+        padID_ = (int)PADIDSTATE::SECONDS;
     }
 }
 

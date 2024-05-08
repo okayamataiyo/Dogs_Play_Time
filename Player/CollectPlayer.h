@@ -58,6 +58,7 @@ private:
 	int killTime_;
 	int killTimeWait_;
 	int killTimeMax_;
+	int attackOrCollect_;
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	PlayScene* pPlayScene_;

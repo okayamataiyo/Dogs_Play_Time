@@ -1,0 +1,8 @@
+{
+	"PlayerPadID":{
+		"プレイヤーパッドID":{
+			"attack": 0,
+			"collect": 1,	
+		}
+	}
+}
