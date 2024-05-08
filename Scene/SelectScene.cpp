@@ -25,11 +25,11 @@ SelectScene::SelectScene(GameObject* _pParent)
 void SelectScene::Initialize()
 {
 	//▼JSONファイルのロード
-	JsonReader::Load("PlayerSetting.json");
-	auto& playerPadID = JsonReader::GetSection("PlayerPadID");
+	//JsonReader::Load("PlayerSetting.json");
+	//auto& playerPadID = JsonReader::GetSection("PlayerPadID");
 
 	//▼パラメータを取得
-	attackOrCollect_ = playerPadID["attackOrCollect"];
+	//attackOrCollect_ = playerPadID["attackOrCollect"];
 
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
@@ -148,7 +148,10 @@ void SelectScene::Update()
 		//pSolidText_->SetPosition(skyPos_);
 	}
 
-
+	//nlohmann::json jsonData = {
+	//{"PlayerPadID",attackOrCollect_},
+	//};
+	//JsonReader::Save("PlayerSetting.json",jsonData);
 }
 
 void SelectScene::Draw()

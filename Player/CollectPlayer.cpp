@@ -8,6 +8,7 @@
 #include "../Engine/VFX.h"
 #include "../Engine/Global.h"
 #include "../Engine/SceneManager.h"
+#include "../Engine/Json/JsonReader.h"
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/Bone.h"
@@ -145,6 +146,7 @@ void CollectPlayer::Initialize()
     {
         padID_ = (int)PADIDSTATE::FIRST;
     }
+
 }
 
 void CollectPlayer::Update()

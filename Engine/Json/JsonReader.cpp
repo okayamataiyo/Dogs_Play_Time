@@ -32,18 +32,20 @@ namespace JsonReader
     }
 
     //▼JSONファイルへの書き込み
-    void Save(const std::string& _fileName , json _jsonData)
+    void Save(const std::string& _fileName, const nlohmann::json& _jsonData)
     {
+        // ファイルを書き込みモードで開く
         std::ofstream ofs(_fileName);
+
+        // ファイルが正しく開けなかった場合のエラーハンドリング
         if (!ofs.is_open())
         {
-            assert(false);
+            std::cerr << "Failed to open file: " << _fileName << std::endl;
             return;
         }
-        
-        ofs.open(_fileName, ios::out);
-        ofs << _jsonData..dump() << endl;
-        ofs.close();
+
+        // JSONデータをファイルに書き込む
+        ofs << _jsonData.dump() << std::endl;
     }
 
     const nlohmann::json& GetSection(const std::string& key)
