@@ -1,6 +1,6 @@
 {
 	"PlayerPadID":{
-		"プレイヤーパッドID":{
+		"PlayerPadID":{
 			"attack": 0,
 			"collect": 1,	
 		}
