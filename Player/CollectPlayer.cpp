@@ -406,11 +406,17 @@ void CollectPlayer::PlayerCamera()
 
     float2 padRotation;
     XMFLOAT3 floatDir;
+    float vecLength;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
 
     padRotation.x = padStickR.x;
-    padRotation.y = padStickR.y;
+    padRotation.y = -padStickR.y;
+
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, padID_))
+    {
+        vecLength
+    }
 }
 
 void CollectPlayer::PlayerFall()
