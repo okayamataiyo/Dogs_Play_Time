@@ -14,7 +14,7 @@
 #include "PlayScene.h"
 
 PlayScene::PlayScene(GameObject* _pParent)
-	:GameObject(_pParent, playSceneName),stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
+	:GameObject(_pParent, playSceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
 	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
 	, woodBoxCountMax_{5}
 	, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}
@@ -28,7 +28,10 @@ PlayScene::PlayScene(GameObject* _pParent)
 
 void PlayScene::Initialize()
 {
-	//サウンドデータのロード
+	//▼INIファイルからデータのロード
+	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
+	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
+	//▼サウンドデータのロード
 	std::string soundName;
 	for (int i = 0u; i < sizeof(soundPlaySceneNames) / sizeof(soundPlaySceneNames[initZeroInt]); i++)
 	{
@@ -66,14 +69,14 @@ void PlayScene::Initialize()
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
-	camVec_[attackPlayerNumber].x = 0;
-	camVec_[attackPlayerNumber].y = 5;
-	camVec_[attackPlayerNumber].z = -10;
-	camVec_[attackPlayerNumber] = XMFLOAT3(0, 5, -10);
+	camVec_[attackOrCollect_].x = 0;
+	camVec_[attackOrCollect_].y = 5;
+	camVec_[attackOrCollect_].z = -10;
+	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
-	camVec_[collectPlayerNumber].x = 0;
-	camVec_[collectPlayerNumber].y = 5;
-	camVec_[collectPlayerNumber].z = -10;
+	camVec_[attackOrCollectInverse_].x = 0;
+	camVec_[attackOrCollectInverse_].y = 5;
+	camVec_[attackOrCollectInverse_].z = -10;
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX,DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
@@ -104,14 +107,14 @@ void PlayScene::Update()
 	}
 	//木箱が邪魔側の犬の前にくるための計算
 	attackPlayerPosition_ = pAttackPlayer_->GetPosition();
-	attackPlayerDirection_ = XMLoadFloat3(&attackPlayerPosition_) - Camera::VecGetPosition(attackPlayerNumber);
+	attackPlayerDirection_ = XMLoadFloat3(&attackPlayerPosition_) - Camera::VecGetPosition(pAttackPlayer_->GetPadID());
 	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, 0);	//y座標の初期化
 	attackPlayerDirection_ = XMVector3Normalize(attackPlayerDirection_);
 	attackPlayerPosition_.x = attackPlayerPosition_.x + woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
 	attackPlayerPosition_.z = attackPlayerPosition_.z + woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
 	//骨が収集側の犬の口にくるための計算
 	collectPlayerPosition_ = pCollectPlayer_->GetPosition();
-	collectPlayerDirection_ = XMLoadFloat3(&collectPlayerPosition_) - Camera::VecGetPosition(collectPlayerNumber);
+	collectPlayerDirection_ = XMLoadFloat3(&collectPlayerPosition_) - Camera::VecGetPosition(pCollectPlayer_->GetPadID());
 	collectPlayerDirection_ = XMVectorSetY(collectPlayerDirection_, 0);	//y座標の初期化
 	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
 	collectPlayerPosition_.x = collectPlayerPosition_.x + boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
@@ -146,42 +149,42 @@ void PlayScene::Update()
 	mouse = Input::GetMouseMove();
 	controller[((int)PADIDSTATE::FIRST)] = Input::GetPadStickR(pCollectPlayer_->GetPadID());
 	controller[((int)PADIDSTATE::SECONDS)] = Input::GetPadStickR(pAttackPlayer_->GetPadID());
-	RotationX[collectPlayerNumber] = controller[((int)PADIDSTATE::FIRST)].x;
-	RotationY[collectPlayerNumber] = -controller[((int)PADIDSTATE::FIRST)].y;
-	RotationX[attackPlayerNumber] = controller[((int)PADIDSTATE::SECONDS)].x;
-	RotationY[attackPlayerNumber] = -controller[((int)PADIDSTATE::SECONDS)].y;
+	RotationX[attackOrCollectInverse_] = controller[((int)PADIDSTATE::FIRST)].x;
+	RotationY[attackOrCollectInverse_] = -controller[((int)PADIDSTATE::FIRST)].y;
+	RotationX[attackOrCollect_] = controller[((int)PADIDSTATE::SECONDS)].x;
+	RotationY[attackOrCollect_] = -controller[((int)PADIDSTATE::SECONDS)].y;
 	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP,pAttackPlayer_->GetPadID()))
 	{
-		vecLength[attackPlayerNumber] -= vecLengthRecedes_;
+		vecLength[attackOrCollect_] -= vecLengthRecedes_;
 	}
 	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN,pAttackPlayer_->GetPadID()))
 	{
-		vecLength[attackPlayerNumber] += vecLengthApproach_;
+		vecLength[attackOrCollect_] += vecLengthApproach_;
 	}
 	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, pCollectPlayer_->GetPadID()))
 	{
-		vecLength[collectPlayerNumber] -= vecLengthRecedes_;
+		vecLength[attackOrCollectInverse_] -= vecLengthRecedes_;
 	}
 	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, pCollectPlayer_->GetPadID()))
 	{
-		vecLength[collectPlayerNumber] += vecLengthApproach_;
+		vecLength[attackOrCollectInverse_] += vecLengthApproach_;
 	}
 
-	vPos[collectPlayerNumber] = pCollectPlayer_->GetVecPos();
-	vPos[attackPlayerNumber] = pAttackPlayer_->GetVecPos();
-	playerPos[collectPlayerNumber] = pCollectPlayer_->GetPosition();
-	playerPos[attackPlayerNumber] = pAttackPlayer_->GetPosition();
+	vPos[pCollectPlayer_->GetPadID()] = pCollectPlayer_->GetVecPos();
+	vPos[pAttackPlayer_->GetPadID()] = pAttackPlayer_->GetVecPos();
+	playerPos[pCollectPlayer_->GetPadID()] = pCollectPlayer_->GetPosition();
+	playerPos[pAttackPlayer_->GetPadID()] = pAttackPlayer_->GetPosition();
 
 	for (int i = 0u; i < playerNum; i++)
 	{
 
 		Dir[i] = XMLoadFloat3(&rDir);
 
-		camVec_[collectPlayerNumber].x += RotationY[collectPlayerNumber] / controllerSens;
-		camVec_[collectPlayerNumber].y += RotationX[collectPlayerNumber] / controllerSens;
+		camVec_[attackOrCollectInverse_].x += RotationY[attackOrCollectInverse_] / controllerSens;
+		camVec_[attackOrCollectInverse_].y += RotationX[attackOrCollectInverse_] / controllerSens;
 
-		camVec_[attackPlayerNumber].x += RotationY[attackPlayerNumber] / controllerSens;
-		camVec_[attackPlayerNumber].y += RotationX[attackPlayerNumber] / controllerSens;
+		camVec_[attackOrCollect_].x += RotationY[attackOrCollect_] / controllerSens;
+		camVec_[attackOrCollect_].y += RotationX[attackOrCollect_] / controllerSens;
 
 		sigmaRotY[i]				= camVec_[i].y;
 		sigmaRotX[i]				= -camVec_[i].x;
@@ -189,14 +192,14 @@ void PlayScene::Update()
 		if (sigmaRotX[i] > degreesMin_ * degreesToRadians_)
 		{
 			sigmaRotX[i]			= degreesMin_;
-			camVec_[attackPlayerNumber].x -= RotationY[attackPlayerNumber] / controllerSens;
-			camVec_[collectPlayerNumber].x -= RotationY[collectPlayerNumber] / controllerSens;
+			camVec_[attackOrCollectInverse_].x -= RotationY[attackOrCollectInverse_] / controllerSens;
+			camVec_[attackOrCollect_].x -= RotationY[attackOrCollect_] / controllerSens;
 		}
 		if (sigmaRotX[i] < degreesMax_ * degreesToRadians_)
 		{
 			sigmaRotX[i] = degreesMax_ * degreesToRadians_;
-			camVec_[attackPlayerNumber].x -= RotationY[attackPlayerNumber] / controllerSens;
-			camVec_[collectPlayerNumber].x -= RotationY[collectPlayerNumber] / controllerSens;
+			camVec_[attackOrCollectInverse_].x -= RotationY[attackOrCollectInverse_] / controllerSens;
+			camVec_[attackOrCollect_].x -= RotationY[attackOrCollect_] / controllerSens;
 		}
 
 		prevRotX[i] = sigmaRotX[i];
@@ -229,8 +232,8 @@ void PlayScene::Update()
 		Camera::SetPosition(floatDir[i], i);
 		prevLen[i] = vecLength[i];
 	}
-	Camera::SetTarget(pAttackPlayer_->GetPosition(), attackPlayerNumber);
-	Camera::SetTarget(pCollectPlayer_->GetPosition(), collectPlayerNumber);
+	Camera::SetTarget(pAttackPlayer_->GetPosition(), pAttackPlayer_->GetPadID());
+	Camera::SetTarget(pCollectPlayer_->GetPosition(), pCollectPlayer_->GetPadID());
 	if (Input::IsKeyDown(DIK_L))
 	{
 		pSceneManager_->ChangeScene(SCENE_ID_SELECT);

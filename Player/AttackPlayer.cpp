@@ -53,7 +53,6 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     //▼向き変えに関する基底クラスメンバ変数
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
     vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(attackPlayerNumber);
     angle_ = 0.0f;
     //▼邪魔側プレイヤージャンプに関する基底クラスメンバ変数
     gravity_ = 0.007f;
@@ -143,6 +142,7 @@ void AttackPlayer::Initialize()
     {
         padID_ = (int)PADIDSTATE::SECONDS;
     }
+    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
 }
 
 void AttackPlayer::Update()
@@ -274,11 +274,9 @@ void AttackPlayer::UpdatePlay()
 void AttackPlayer::UpdateGameOver()
 {
     Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, padID_))
     {
         pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
-        PlayerScore_[collectPlayerNumber] = pCollectPlayer_->GetScore();
-        PlayerScore_[attackPlayerNumber] = this->GetScore();
     }
 }
 
@@ -366,13 +364,13 @@ void AttackPlayer::PlayerFall()
 
 void AttackPlayer::PlayerMove()
 {
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(attackPlayerNumber);
+    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
     PlayerBase::PlayerMove();
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, padID_)))
     {
         XMVECTOR vecCam = {};
-        CamPositionVec_ = Camera::VecGetPosition(attackPlayerNumber);
-        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(attackPlayerNumber));
+        CamPositionVec_ = Camera::VecGetPosition(padID_);
+        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(padID_));
         XMFLOAT3 camRot = {};
         XMStoreFloat3(&camRot, vecCam);
         camRot.y = 0;

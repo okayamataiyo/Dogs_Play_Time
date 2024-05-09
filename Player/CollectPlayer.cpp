@@ -57,7 +57,6 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     //▼向き変えに関する基底クラスメンバ変数
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
     vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
     angle_ = 0.0f;
     //▼収集側プレイヤージャンプに関する基底クラスメンバ変数
     gravity_ = 0.007f;
@@ -106,7 +105,7 @@ CollectPlayer::~CollectPlayer()
 void CollectPlayer::Initialize()
 {
     //▼INIファイルからデータのロード
-    attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
+    attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
     for (int i = initZeroInt; i < sizeof(soundCollectPlayerNames) / sizeof(soundCollectPlayerNames[initZeroInt]); i++)
@@ -140,15 +139,15 @@ void CollectPlayer::Initialize()
     pText_ = new Text;
     pText_->Initialize();
 
-    if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
-    {
-        padID_ = (int)PADIDSTATE::SECONDS;
-    }
-    if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
+    if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
     {
         padID_ = (int)PADIDSTATE::FIRST;
     }
-
+    if (attackOrCollectInverse_ == (int)PADIDSTATE::SECONDS)
+    {
+        padID_ = (int)PADIDSTATE::SECONDS;
+    }
+    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
 }
 
 void CollectPlayer::Update()
@@ -300,11 +299,9 @@ void CollectPlayer::UpdatePlay()
 void CollectPlayer::UpdateGameOver()
 {
     Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFTVIEW);
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, padID_))
     {
         pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
-        PlayerScore_[collectPlayerNumber] = this->GetScore();
-        PlayerScore_[attackPlayerNumber] = pAttackPlayer_->GetScore();
     }
 }
 
@@ -394,6 +391,28 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     }
 }
 
+void CollectPlayer::PlayerCamera()
+{
+    XMVECTOR PlayerDirection;
+    struct float2
+    {
+        float x, y;
+    };
+
+    struct XMMATRIX2
+    {
+        XMMATRIX x, y;
+    };
+
+    float2 padRotation;
+    XMFLOAT3 floatDir;
+    XMFLOAT3 mouseMove = Input::GetMouseMove();
+    XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
+
+    padRotation.x = padStickR.x;
+    padRotation.y = padStickR.y;
+}
+
 void CollectPlayer::PlayerFall()
 {
     PlayerBase::PlayerFall();
@@ -401,13 +420,13 @@ void CollectPlayer::PlayerFall()
 
 void CollectPlayer::PlayerMove()
 {
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(collectPlayerNumber);
+    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
     PlayerBase::PlayerMove();
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, padID_)))
     {
         XMVECTOR vecCam = {};
-        CamPositionVec_ = Camera::VecGetPosition(collectPlayerNumber);
-        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(collectPlayerNumber));
+        CamPositionVec_ = Camera::VecGetPosition(padID_);
+        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(padID_));
         XMFLOAT3 camRot = {};
         XMStoreFloat3(&camRot, vecCam);
         camRot.y = 0;

@@ -47,6 +47,8 @@ private:
         THIRD,
         FOUR,
     };
+    int attackOrCollect_;
+    int attackOrCollectInverse_;
     int stageBlockNum_;             //ステージブロックの数
     int lengthRecedes_;
     float degreesMin_;

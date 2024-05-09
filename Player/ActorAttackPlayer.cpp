@@ -234,7 +234,7 @@ void ActorAttackPlayer::PlayerJumpPower()
 
 void ActorAttackPlayer::PlayerDive()
 {
-    XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(attackPlayerNumber);
+    XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition((int)PADIDSTATE::SECONDS);
     vecDirection = XMVectorSetY(vecDirection, normalizationInt);
     vecDirection = XMVector3Normalize(vecDirection);
     transform_.position_.x = transform_.position_.x + diveSpeed_ * XMVectorGetX(vecDirection);

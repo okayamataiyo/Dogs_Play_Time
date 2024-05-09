@@ -40,11 +40,11 @@ void GameTitleScene::Initialize()
 void GameTitleScene::Update()
 {
 	Audio::Play(hSound_, soundVolume_);
-	Camera::SetPosition(camPos_, attackPlayerNumber);
-	Camera::SetTarget(pSolidText_->GetPosition(), attackPlayerNumber);
-	Camera::SetPosition(camPos_, collectPlayerNumber);
-	Camera::SetTarget(pSolidText_->GetPosition(), collectPlayerNumber);
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A,attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A,collectPlayerNumber))
+	Camera::SetPosition(camPos_, (int)PADIDSTATE::SECONDS);
+	Camera::SetTarget(pSolidText_->GetPosition(), (int)PADIDSTATE::SECONDS);
+	Camera::SetPosition(camPos_, (int)PADIDSTATE::FIRST);
+	Camera::SetTarget(pSolidText_->GetPosition(), (int)PADIDSTATE::FIRST);
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A,(int)PADIDSTATE::FIRST))
 	{
 		pSceneManager_->ChangeScene(SCENE_ID_SELECT);
 	}

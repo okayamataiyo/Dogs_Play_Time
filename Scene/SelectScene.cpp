@@ -14,7 +14,7 @@
 #include "SelectScene.h"
 
 SelectScene::SelectScene(GameObject* _pParent)
-	:GameObject(_pParent, selectSceneName), hPict_{ -1 },attackOrCollect_{0}, solidTextRotate_{0.3f}, isViewPicture_{false}, padIDNum_{0}
+	:GameObject(_pParent, selectSceneName), hPict_{ -1 },attackOrCollect_{0},attackOrCollectInverse_{0}, solidTextRotate_{0.3f}, isViewPicture_{false}, padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
 	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }, pActorCollectPlayer_{ nullptr }
 {
@@ -25,6 +25,16 @@ void SelectScene::Initialize()
 {
 	//▼INIファイルからデータのロード
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
+	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
+	if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+	{
+		attackOrCollectInverse_ = (int)PADIDSTATE::SECONDS;
+	}
+	else
+	{
+		attackOrCollectInverse_ = (int)PADIDSTATE::FIRST;
+	}
+
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
 	hPict_ = Image::Load(imageName);
@@ -52,9 +62,9 @@ void SelectScene::Initialize()
 
 void SelectScene::Update()
 {
-	Camera::SetPosition(camPos_, attackPlayerNumber);
+	Camera::SetPosition(camPos_, attackOrCollect_);
 	//Camera::SetTarget(pSolidText_->GetPosition(), attackPlayerNumber);
-	Camera::SetPosition(camPos_, collectPlayerNumber);
+	Camera::SetPosition(camPos_, attackOrCollectInverse_);
 	//Camera::SetTarget(pSolidText_->GetPosition(), collectPlayerNumber);
 
 	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
@@ -98,7 +108,7 @@ void SelectScene::Update()
 		//padID_ = (int)PADIDSTATE::SECONDS;
 	}
 
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, collectPlayerNumber))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackOrCollect_) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackOrCollectInverse_))
 	{
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)
 		{
@@ -110,6 +120,7 @@ void SelectScene::Update()
 		}
 		//▼INIファイルへの書き込み
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");
+		WritePrivateProfileString("PLAYERPADID", "AttackOrCollectInverse", std::to_string(attackOrCollectInverse_).c_str(), "Setting/PlayerSetting.ini");
 		pSceneManager_->ChangeScene(SCENE_ID_PLAY);
 	}
 	if (Input::IsKeyDown(DIK_R))
@@ -129,7 +140,7 @@ void SelectScene::Update()
 		Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFTVIEW);
 	}
 
-	if (Input::IsMouseButtonDown((int)MOUSESTATE::RIGHTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_X, attackPlayerNumber) || Input::IsPadButtonDown(XINPUT_GAMEPAD_X, collectPlayerNumber))
+	if (Input::IsMouseButtonDown((int)MOUSESTATE::RIGHTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_X, attackOrCollect_) || Input::IsPadButtonDown(XINPUT_GAMEPAD_X, attackOrCollectInverse_))
 	{
 		isViewPicture_ = !isViewPicture_;
 	}

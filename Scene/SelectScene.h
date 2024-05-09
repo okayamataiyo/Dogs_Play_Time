@@ -22,6 +22,7 @@ class SelectScene : public GameObject
 private:
 	int hPict_;
 	int attackOrCollect_;	//×–‚‚·‚é‘¤‚©ûW‚·‚é‘¤‚©
+	int attackOrCollectInverse_;
 	Transform pictureTrans_;
 	float solidTextRotate_;
 	bool isViewPicture_;
