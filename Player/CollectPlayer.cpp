@@ -105,6 +105,8 @@ CollectPlayer::~CollectPlayer()
 
 void CollectPlayer::Initialize()
 {
+    //▼INIファイルからデータのロード
+    attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
     for (int i = initZeroInt; i < sizeof(soundCollectPlayerNames) / sizeof(soundCollectPlayerNames[initZeroInt]); i++)

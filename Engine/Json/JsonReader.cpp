@@ -10,10 +10,10 @@ namespace JsonReader
     nlohmann::json data_;
 
     // JSONƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
-    void Load(const std::string& fileName)
+    void Load(const std::string& _fileName)
     {
 
-        std::ifstream ifs(fileName);
+        std::ifstream ifs(_fileName);
         if (!ifs.is_open())
         {
             assert(false);
@@ -48,8 +48,8 @@ namespace JsonReader
         ofs << _jsonData.dump() << std::endl;
     }
 
-    const nlohmann::json& GetSection(const std::string& key)
+    const nlohmann::json& GetSection(const std::string& _key)
     {
-        return data_[key];
+        return data_[_key];
     }
 }

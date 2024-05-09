@@ -191,7 +191,7 @@ namespace Direct3D
 		pContext_->OMSetRenderTargets(1, &pRenderTargetView_, pDepthStencilView);            // 描画先を設定（今後はレンダーターゲットビューを介して描画してね）
 
 		//コリジョン表示するか
-		isDrawCollision_ = GetPrivateProfileInt("DEBUG", "ViewCollider", 0, ".\\setup.ini") != 0;
+		isDrawCollision_ = GetPrivateProfileInt("DEBUG", "ViewCollider", 0, "Setting/SystemSetting.ini") != 0;
 
 		screenWidthHaif_ = screenWidth / 2;
 		screenWidth_ = screenWidth;

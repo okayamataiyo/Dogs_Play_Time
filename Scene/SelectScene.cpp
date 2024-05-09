@@ -4,7 +4,6 @@
 #include "../Engine/Direct3D.h"
 #include "../Engine/Image.h"
 #include "../Engine/Global.h"
-#include "../Engine/Json/JsonReader.h"
 #include "../StageObject/StageObjectManager.h"
 #include "../StageObject/SolidText.h"
 #include "../StageObject/Sky.h"
@@ -15,7 +14,7 @@
 #include "SelectScene.h"
 
 SelectScene::SelectScene(GameObject* _pParent)
-	:GameObject(_pParent, selectSceneName), hPict_{ -1 }, solidTextRotate_{ 0.3f }, isViewPicture_{ false },padIDNum_{0}
+	:GameObject(_pParent, selectSceneName), hPict_{ -1 },attackOrCollect_{0}, solidTextRotate_{0.3f}, isViewPicture_{false}, padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
 	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }, pActorCollectPlayer_{ nullptr }
 {
@@ -24,13 +23,8 @@ SelectScene::SelectScene(GameObject* _pParent)
 
 void SelectScene::Initialize()
 {
-	//▼JSONファイルのロード
-	//JsonReader::Load("PlayerSetting.json");
-	//auto& playerPadID = JsonReader::GetSection("PlayerPadID");
-
-	//▼パラメータを取得
-	//attackOrCollect_ = playerPadID["attackOrCollect"];
-
+	//▼INIファイルからデータのロード
+	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
 	hPict_ = Image::Load(imageName);
@@ -114,6 +108,8 @@ void SelectScene::Update()
 		{
 			Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::RIGHT_BOTHVIEW);
 		}
+		//▼INIファイルへの書き込み
+		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");
 		pSceneManager_->ChangeScene(SCENE_ID_PLAY);
 	}
 	if (Input::IsKeyDown(DIK_R))
@@ -148,10 +144,6 @@ void SelectScene::Update()
 		//pSolidText_->SetPosition(skyPos_);
 	}
 
-	//nlohmann::json jsonData = {
-	//{"PlayerPadID",attackOrCollect_},
-	//};
-	//JsonReader::Save("PlayerSetting.json",jsonData);
 }
 
 void SelectScene::Draw()
@@ -162,4 +154,5 @@ void SelectScene::Draw()
 
 void SelectScene::Release()
 {
+
 }

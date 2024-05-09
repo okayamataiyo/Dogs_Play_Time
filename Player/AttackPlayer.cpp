@@ -101,6 +101,8 @@ AttackPlayer::~AttackPlayer()
 
 void AttackPlayer::Initialize()
 {
+    //▼INIファイルからデータのロード
+    attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
     for (int i = 0; i < sizeof(soundAttackPlayerNames) / sizeof(soundAttackPlayerNames[initZeroInt]); i++)
