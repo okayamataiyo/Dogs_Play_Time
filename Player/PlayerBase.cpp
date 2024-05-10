@@ -5,7 +5,7 @@
 #include "PlayerBase.h"
 
 PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)
-    :GameObject(_pParent, _name),vecKnockbackDirection_ {}
+    :GameObject(_pParent, _name),vecKnockbackDirection_ {},floDir_{}
 {
 
 }
@@ -105,15 +105,16 @@ void PlayerBase::PlayerCamera()
     float2 sigmaRot = {};
     XMMATRIX2 mat2Rot = {};
     XMMATRIX matRot = {};
-    XMFLOAT3 floDir = {};
+
     XMVECTOR vecDir = {};
     float floLen = 0.0f;
-    float floLenPrev = 0.0f;
+    float floCameraLen = 30.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
     const float padSens = 50;
     const float floKnockbackLenRecedes = 5.0f;
     const float floLenRecedes = 1.0f;
+    const float floLenApproach = 1.0f;
     XMFLOAT3 vecCam = XMFLOAT3(0, 5, -10);
     const float degreesMin = 0.0f;
     const float degreesMax = -88.0f;
@@ -127,7 +128,7 @@ void PlayerBase::PlayerCamera()
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, padID_))
     {
-        floLen += floLenRecedes;
+        floLen += floLenApproach;
     }
 
     vecDir = vecFront;
@@ -155,27 +156,28 @@ void PlayerBase::PlayerCamera()
     matRot = mat2Rot.x * mat2Rot.y;
     vecDir = XMVector3Transform(vecDir, matRot);
     vecDir = XMVector3Normalize(vecDir);
-
+    float floCameraLenPrev = 0.0f;
     if (isStun_)
     {
-        if (floLen <= floLenPrev + floKnockbackLenRecedes)
+        floCameraLenPrev = floCameraLen;
+        if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
         {
-            ++floLen;
+            ++floCameraLen;
         }
     }
     else
     {
-        if (floLen >= floLenPrev - floKnockbackLenRecedes)
+        floCameraLenPrev = floCameraLen;
+        if (floCameraLen >= floCameraLenPrev - floKnockbackLenRecedes)
         {
-            --floLen;
+            --floCameraLen;
         }
     }
-    vecDir = vecDir * (floLen + floLen);
+    vecDir = vecDir * (floLen + floCameraLen);
     vecDir += XMLoadFloat3(&transform_.position_);
-    XMStoreFloat3(&floDir, vecDir);
-    Camera::SetPosition(floDir, padID_);
+    XMStoreFloat3(&floDir_, vecDir);
+    Camera::SetPosition(floDir_, padID_);
     Camera::SetTarget(transform_.position_, padID_);
-    floLenPrev = floLen;
 }
 
 void PlayerBase::PlayerFall()
