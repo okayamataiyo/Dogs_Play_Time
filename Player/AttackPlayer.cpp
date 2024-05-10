@@ -226,6 +226,7 @@ void AttackPlayer::UpdatePlay()
     {
         score_ += scoreAmount_;
     }
+    PlayerCamera();
     PlayerFall();
     PlayerRayCast();
     PlayerKnockback();
@@ -355,6 +356,11 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pCollectPlayer_->GetVecPos());
         vecKnockbackDirection_ = XMVector3Normalize(vecKnockbackDirection_);
     }
+}
+
+void AttackPlayer::PlayerCamera()
+{
+    PlayerBase::PlayerCamera();
 }
 
 void AttackPlayer::PlayerFall()

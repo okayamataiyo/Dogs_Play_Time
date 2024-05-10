@@ -226,9 +226,8 @@ void CollectPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-
+    PlayerCamera();
     PlayerFall();
-    PlayerJump();
     PlayerRayCast();
     PlayerKnockback();
     transform_.position_.y = positionY_;
@@ -393,30 +392,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
 
 void CollectPlayer::PlayerCamera()
 {
-    XMVECTOR PlayerDirection;
-    struct float2
-    {
-        float x, y;
-    };
-
-    struct XMMATRIX2
-    {
-        XMMATRIX x, y;
-    };
-
-    float2 padRotation;
-    XMFLOAT3 floatDir;
-    float vecLength;
-    XMFLOAT3 mouseMove = Input::GetMouseMove();
-    XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
-
-    padRotation.x = padStickR.x;
-    padRotation.y = -padStickR.y;
-
-    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, padID_))
-    {
-        vecLength
-    }
+    PlayerBase::PlayerCamera();
 }
 
 void CollectPlayer::PlayerFall()
@@ -593,12 +569,6 @@ void CollectPlayer::PlayerRevival()
     PlayerBase::PlayerRevival();
 }
 
-void CollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
-{
-    transform_.position_.x = transform_.position_.x + _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
-    transform_.position_.z = transform_.position_.z + _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
-}
-
 void CollectPlayer::IsMove()
 {
     PlayerBase::IsMove();
@@ -622,4 +592,10 @@ void CollectPlayer::IsStun()
 void CollectPlayer::IsDive()
 {
     PlayerBase::IsDive();
+}
+
+void CollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
+{
+    transform_.position_.x = transform_.position_.x + _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
+    transform_.position_.z = transform_.position_.z + _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
 }

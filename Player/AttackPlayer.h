@@ -112,22 +112,14 @@ public:
 	/// <param name="_pTarget">当たった相手</param>
 	void OnCollision(GameObject* _pTarget) override;
 
+	void PlayerCamera() override;
+
 	void PlayerFall() override;
 
 	/// <summary>
 	/// プレイヤーの移動関数
 	/// </summary>
 	void PlayerMove() override;
-
-	void IsMove() override;
-
-	void IsJump() override;
-
-	void IsRun() override;
-
-	void IsStun() override;
-
-	void IsDive() override;
 
 	void PlayerJump() override;
 
@@ -154,6 +146,16 @@ public:
 	/// </summary>
 	/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
 	void PlayerStun(int _timeLimit = 60) override;
+
+	void IsMove() override;
+
+	void IsJump() override;
+
+	void IsRun() override;
+
+	void IsStun() override;
+
+	void IsDive() override;
 
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
 

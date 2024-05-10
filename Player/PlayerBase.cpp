@@ -88,6 +88,96 @@ void PlayerBase::PlayerStunStateFunc()
     animSpeed_ = 0.5f;
 }
 
+void PlayerBase::PlayerCamera()
+{
+    struct float2
+    {
+        float x, y;
+    };
+
+    struct XMMATRIX2
+    {
+        XMMATRIX x, y;
+    };
+
+    float2 padRot = {};
+    float2 padRotPrev = {};
+    float2 sigmaRot = {};
+    XMMATRIX2 mat2Rot = {};
+    XMMATRIX matRot = {};
+    XMFLOAT3 floDir = {};
+    XMVECTOR vecDir = {};
+    float floLen = 0.0f;
+    float floLenPrev = 0.0f;
+    XMFLOAT3 mouseMove = Input::GetMouseMove();
+    XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
+    const float padSens = 50;
+    const float floKnockbackLenRecedes = 5.0f;
+    const float floLenRecedes = 1.0f;
+    XMFLOAT3 vecCam = XMFLOAT3(0, 5, -10);
+    const float degreesMin = 0.0f;
+    const float degreesMax = -88.0f;
+    const float degreesToRadians = 3.14f / 180.0f;
+    padRot.x = padStickR.x;
+    padRot.y = -padStickR.y;
+
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, padID_))
+    {
+        floLen -= floLenRecedes;
+    }
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, padID_))
+    {
+        floLen += floLenRecedes;
+    }
+
+    vecDir = vecFront;
+    vecCam.x += padRot.y / padSens;
+    vecCam.y += padRot.x / padSens;
+
+    sigmaRot.y = vecCam.y;
+    sigmaRot.x = -vecCam.x;
+
+    if (sigmaRot.x > degreesMin * degreesToRadians)
+    {
+        sigmaRot.x = degreesMin;
+        vecCam.x -= padRot.y / padSens;
+    }
+    if (sigmaRot.x < degreesMax * degreesToRadians)
+    {
+        sigmaRot.x = degreesMax * degreesToRadians;
+        vecCam.x -= padRot.y / padSens;
+    }
+
+    padRotPrev.x = sigmaRot.x;
+    mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
+    mat2Rot.y = XMMatrixRotationY(sigmaRot.y);
+
+    matRot = mat2Rot.x * mat2Rot.y;
+    vecDir = XMVector3Transform(vecDir, matRot);
+    vecDir = XMVector3Normalize(vecDir);
+
+    if (isStun_)
+    {
+        if (floLen <= floLenPrev + floKnockbackLenRecedes)
+        {
+            ++floLen;
+        }
+    }
+    else
+    {
+        if (floLen >= floLenPrev - floKnockbackLenRecedes)
+        {
+            --floLen;
+        }
+    }
+    vecDir = vecDir * (floLen + floLen);
+    vecDir += XMLoadFloat3(&transform_.position_);
+    XMStoreFloat3(&floDir, vecDir);
+    Camera::SetPosition(floDir, padID_);
+    Camera::SetTarget(transform_.position_, padID_);
+    floLenPrev = floLen;
+}
+
 void PlayerBase::PlayerFall()
 {
     // ƒvƒŒƒCƒ„[‚ª—‰º‚·‚éˆ—

@@ -69,14 +69,9 @@ void PlayScene::Initialize()
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
-	camVec_[attackOrCollect_].x = 0;
-	camVec_[attackOrCollect_].y = 5;
-	camVec_[attackOrCollect_].z = -10;
 	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
-	camVec_[attackOrCollectInverse_].x = 0;
-	camVec_[attackOrCollectInverse_].y = 5;
-	camVec_[attackOrCollectInverse_].z = -10;
+	camVec_[attackOrCollectInverse_] = XMFLOAT3(0, 5, -10);
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX,DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
@@ -131,112 +126,6 @@ void PlayScene::Update()
 			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::WOODBOX, attackPlayerPosition_, woodBoxRotate, XMFLOAT3(0.5f, 0.5f, 0.5f));
 			woodBoxCount_ += 1;
 		}
-	}
-	struct Vector2 {
-		float x, y;
-	};
-	Vector2 rotation;
-
-	Vector2 collectRotation;
-	Vector2 attackRotation;
-
-	static float RotationX[playerNum] = {};
-	static float RotationY[2] = {};
-	static float vecLength[2] = {};
-	static float prevLen[2] = {};
-	static float prevRotX[2] = {};
-
-	mouse = Input::GetMouseMove();
-	controller[((int)PADIDSTATE::FIRST)] = Input::GetPadStickR(pCollectPlayer_->GetPadID());
-	controller[((int)PADIDSTATE::SECONDS)] = Input::GetPadStickR(pAttackPlayer_->GetPadID());
-	RotationX[attackOrCollectInverse_] = controller[((int)PADIDSTATE::FIRST)].x;
-	RotationY[attackOrCollectInverse_] = -controller[((int)PADIDSTATE::FIRST)].y;
-	RotationX[attackOrCollect_] = controller[((int)PADIDSTATE::SECONDS)].x;
-	RotationY[attackOrCollect_] = -controller[((int)PADIDSTATE::SECONDS)].y;
-	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP,pAttackPlayer_->GetPadID()))
-	{
-		vecLength[attackOrCollect_] -= vecLengthRecedes_;
-	}
-	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN,pAttackPlayer_->GetPadID()))
-	{
-		vecLength[attackOrCollect_] += vecLengthApproach_;
-	}
-	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, pCollectPlayer_->GetPadID()))
-	{
-		vecLength[attackOrCollectInverse_] -= vecLengthRecedes_;
-	}
-	if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, pCollectPlayer_->GetPadID()))
-	{
-		vecLength[attackOrCollectInverse_] += vecLengthApproach_;
-	}
-
-	vPos[pCollectPlayer_->GetPadID()] = pCollectPlayer_->GetVecPos();
-	vPos[pAttackPlayer_->GetPadID()] = pAttackPlayer_->GetVecPos();
-	playerPos[pCollectPlayer_->GetPadID()] = pCollectPlayer_->GetPosition();
-	playerPos[pAttackPlayer_->GetPadID()] = pAttackPlayer_->GetPosition();
-
-	for (int i = 0u; i < playerNum; i++)
-	{
-
-		Dir[i] = XMLoadFloat3(&rDir);
-
-		camVec_[attackOrCollectInverse_].x += RotationY[attackOrCollectInverse_] / controllerSens;
-		camVec_[attackOrCollectInverse_].y += RotationX[attackOrCollectInverse_] / controllerSens;
-
-		camVec_[attackOrCollect_].x += RotationY[attackOrCollect_] / controllerSens;
-		camVec_[attackOrCollect_].y += RotationX[attackOrCollect_] / controllerSens;
-
-		sigmaRotY[i]				= camVec_[i].y;
-		sigmaRotX[i]				= -camVec_[i].x;
-
-		if (sigmaRotX[i] > degreesMin_ * degreesToRadians_)
-		{
-			sigmaRotX[i]			= degreesMin_;
-			camVec_[attackOrCollectInverse_].x -= RotationY[attackOrCollectInverse_] / controllerSens;
-			camVec_[attackOrCollect_].x -= RotationY[attackOrCollect_] / controllerSens;
-		}
-		if (sigmaRotX[i] < degreesMax_ * degreesToRadians_)
-		{
-			sigmaRotX[i] = degreesMax_ * degreesToRadians_;
-			camVec_[attackOrCollectInverse_].x -= RotationY[attackOrCollectInverse_] / controllerSens;
-			camVec_[attackOrCollect_].x -= RotationY[attackOrCollect_] / controllerSens;
-		}
-
-		prevRotX[i] = sigmaRotX[i];
-		mxRotX[i] = XMMatrixRotationX(sigmaRotX[i]);
-		mxRotY[i] = XMMatrixRotationY(sigmaRotY[i]);
-
-		rot[i] = mxRotX[i] * mxRotY[i];
-
-		Dir[i] = XMVector3Transform(Dir[i], rot[i]);
-		Dir[i] = XMVector3Normalize(Dir[i]);
-		if (pAttackPlayer_->GetIsStun())
-		{
-			static int lengthPrev = length_;
-			if (length_ <= lengthPrev + lengthRecedes_)
-			{
-				++length_;
-			}
-		}
-		else
-		{
-			static int lengthPrev = length_;
-			if (length_ >= lengthPrev - lengthRecedes_)
-			{
-				--length_;
-			}
-		}
-		Dir[i] = Dir[i] * (vecLength[i] + length_);
-		Dir[i] += XMLoadFloat3(&playerPos[i]);
-		XMStoreFloat3(&floatDir[i], Dir[i]);
-		Camera::SetPosition(floatDir[i], i);
-		prevLen[i] = vecLength[i];
-	}
-	Camera::SetTarget(pAttackPlayer_->GetPosition(), pAttackPlayer_->GetPadID());
-	Camera::SetTarget(pCollectPlayer_->GetPosition(), pCollectPlayer_->GetPadID());
-	if (Input::IsKeyDown(DIK_L))
-	{
-		pSceneManager_->ChangeScene(SCENE_ID_SELECT);
 	}
 }
 

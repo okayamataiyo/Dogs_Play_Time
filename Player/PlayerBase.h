@@ -119,19 +119,11 @@ protected:
 	virtual void PlayerJumpStateFunc();
 	virtual void PlayerStunStateFunc();
 
+	virtual void PlayerCamera();
+
 	virtual void PlayerFall() = 0;
 
 	virtual void PlayerMove() = 0;
-
-	virtual void IsMove();
-
-	virtual void IsJump();
-
-	virtual void IsRun();
-
-	virtual void IsStun();
-
-	virtual void IsDive();
 
 	virtual void PlayerJump() = 0;
 
@@ -148,6 +140,16 @@ protected:
 	virtual void PlayerRevival();
 
 	virtual void PlayerStun(int _timeLimit = 60) = 0;
+
+	virtual void IsMove();
+
+	virtual void IsJump();
+
+	virtual void IsRun();
+
+	virtual void IsStun();
+
+	virtual void IsDive();
 
 	virtual void SetVecPos(XMVECTOR _vecMove) = 0;
 
