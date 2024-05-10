@@ -101,14 +101,13 @@ void PlayerBase::PlayerCamera()
     };
 
     float2 padRot = {};
-    float2 padRotPrev = {};
     float2 sigmaRot = {};
     XMMATRIX2 mat2Rot = {};
     XMMATRIX matRot = {};
 
     XMVECTOR vecDir = {};
-    float floLen = 0.0f;
-    float floCameraLen = 30.0f;
+    static float floLen = 0.0f;
+    static float floCameraLen = 30.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
     const float padSens = 50;
@@ -149,7 +148,6 @@ void PlayerBase::PlayerCamera()
         vecCam.x -= padRot.y / padSens;
     }
 
-    padRotPrev.x = sigmaRot.x;
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
     mat2Rot.y = XMMatrixRotationY(sigmaRot.y);
 
