@@ -5,7 +5,8 @@
 #include "PlayerBase.h"
 
 PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)
-    :GameObject(_pParent, _name),vecKnockbackDirection_ {},floDir_{}
+    :GameObject(_pParent, _name),vecKnockbackDirection_ {},floDir_{},floCameraLen_{30.0f}
+    ,floKnockbackLenRecedes_{5.0f}
 {
 
 }
@@ -106,12 +107,10 @@ void PlayerBase::PlayerCamera()
     XMMATRIX matRot = {};
 
     XMVECTOR vecDir = {};
-    static float floLen = 0.0f;
-    static float floCameraLen = 30.0f;
+    float floLen = 0.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
     const float padSens = 50;
-    const float floKnockbackLenRecedes = 5.0f;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
     XMFLOAT3 vecCam = XMFLOAT3(0, 5, -10);
@@ -154,24 +153,23 @@ void PlayerBase::PlayerCamera()
     matRot = mat2Rot.x * mat2Rot.y;
     vecDir = XMVector3Transform(vecDir, matRot);
     vecDir = XMVector3Normalize(vecDir);
-    float floCameraLenPrev = 0.0f;
     if (isStun_)
     {
-        floCameraLenPrev = floCameraLen;
-        if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
+        static float floCameraLenPrev = floCameraLen_;
+        if (floCameraLen_ <= floCameraLenPrev + floKnockbackLenRecedes_)
         {
-            ++floCameraLen;
+            ++floCameraLen_;
         }
     }
     else
     {
-        floCameraLenPrev = floCameraLen;
-        if (floCameraLen >= floCameraLenPrev - floKnockbackLenRecedes)
+        static float floCameraLenPrev = floCameraLen_;
+        if (floCameraLen_ >= floCameraLenPrev - floKnockbackLenRecedes_)
         {
-            --floCameraLen;
+            --floCameraLen_;
         }
     }
-    vecDir = vecDir * (floLen + floCameraLen);
+    vecDir = vecDir * (floLen + floCameraLen_);
     vecDir += XMLoadFloat3(&transform_.position_);
     XMStoreFloat3(&floDir_, vecDir);
     Camera::SetPosition(floDir_, padID_);
