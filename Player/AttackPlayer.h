@@ -51,6 +51,18 @@ private:
 	int scoreTimeCounter_;
 	int scoreTimeCounterWait_;
 	int attackOrCollect_;
+
+	GameData gameData_;
+	SoundData soundData_;
+	MoveData moveData_;
+	DirData dirData_;
+	JumpData jumpData_;
+	DiveData diveData_;
+	FloorData floorData_;
+	WoodBoxData woodBoxData_;
+	StunData stunData_;
+	WallData wallData_;
+	AnimData animData_;
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	PlayScene* pPlayScene_;

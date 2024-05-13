@@ -34,69 +34,6 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     drawScoreTextY_ = 60;
     drawScoreNumberX_ = 360;
     drawScoreNumberY_ = 60;
-    //▼ゲーム演出に関する基底クラスメンバ変数
-    FPS_ = 600;
-    timeCounter_ = 0;
-    timeLimit_ = 60;
-    fallLimit_ = 100.0f;
-    score_ = 0;
-    scoreAmount_ = 10;
-    scoreMax_ = 150;
-    //padID_ = pSelectScene_->;
-    playerInitPosY_ = 0.6f;
-    //▼サウンドに関する基底クラスメンバ変数
-    soundVolume_ = 0.5f;
-    soundVolumeHalf_ = soundVolume_ / 2;
-    //▼収集側プレイヤー移動に関する基底クラスメンバ変数
-    CamPositionVec_ = {};
-    positionPrev_ = { 0.0f,0.0f,0.0f };
-    controllerMoveSpeed_ = { 0.3f,0.0f,0.3f };
-    positionY_ = 0.0f;
-    isRun_ = false;
-    isFling_ = 1.0f;
-    //▼向き変えに関する基底クラスメンバ変数
-    vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
-    angle_ = 0.0f;
-    vecCam_ = XMFLOAT3(0.0f, 5.0f, -10.0f);
-    //▼収集側プレイヤージャンプに関する基底クラスメンバ変数
-    gravity_ = 0.007f;
-    positionTempY_ = 0.0f;
-    positionPrevY_ = 0.0f;
-    jumpPower_ = 0.3f;
-    isJump_ = false;
-    //▼飛びつきに関するメンバ変数
-    divePower_ = 0.1f;
-    diveSpeed_ = 0.6f;
-    isDive_ = false;
-    isDived_ = false;
-    diveTime_ = 0;
-    diveDuration_ = 1;
-    diveTimeWait_ = 30;
-    //▼すり抜け床に関する基底クラスメンバ変数
-    isOnFloor_ = false;
-    //▼木箱に関する基底クラスメンバ変数
-    woodBoxNumber_ = "";
-    dotProduct_ = 0.0f;
-    angleDegrees_ = 0.0f;
-    angleDegreesMax_ = 80.0f;
-    //▼スタンに関する基底クラスメンバ変数
-    stunTimeCounter_ = 0;
-    stunLimit_ = 0;
-    hitStopTime_ = 10;
-    getUpTime_ = 30;
-    knockbackSpeed_ = 0.3f;
-    isStun_ = false;
-    isKnockBack_ = false;
-    //▼壁判定に関する基底クラスメンバ変数
-    distMax_ = 99999.0f;
-    inTheWall_ = 1.5f;
-    rayFloorDistDown_ = 0.0f;
-    rayStageDistDown_ = 0.0f;
-    //▼アニメーションに関する基底クラスメンバ変数
-    startFrame_ = 0;
-    endFrame_ = 0;
-    animSpeed_ = 0.0f;
 }
 
 CollectPlayer::~CollectPlayer()
