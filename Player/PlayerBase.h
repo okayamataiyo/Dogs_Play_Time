@@ -26,14 +26,22 @@ protected:
 	int drawScoreNumberX_;
 	int drawScoreNumberY_;
 	//▼ゲーム演出に関するメンバ変数
-	int FPS_;
-	int timeCounter_;
-	int timeLimit_;
-	float fallLimit_;
-	int score_;			//得点
-	int scoreAmount_;	//得点の量
-	int scoreMax_;		//最大得点量
-	int padID_;
+	struct GamePro
+	{
+		int FPS_;
+		int timeCounter_;
+		int timeLimit_;
+		float fallLimit_;
+		int score_;			//得点
+		int scoreAmount_;	//得点の量
+		int scoreMax_;		//最大得点量
+		int padID_;
+		GamePro()
+			:FPS_{ 60 * 10 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 }, padID_{ 0 }
+		{
+
+		}
+	};
 	//▼サウンドに関するメンバ変数
 	float soundVolume_;
 	float soundVolumeHalf_;
