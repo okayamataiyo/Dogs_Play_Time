@@ -49,9 +49,7 @@ protected:
 	XMVECTOR vecCross_;
 	XMVECTOR vecDirection_;
 	float angle_;
-	XMFLOAT3 floDir_;
-	float floCameraLen_;
-	float floKnockbackLenRecedes_;
+	XMFLOAT3 vecCam_;
 	//▼ジャンプに関するメンバ変数
 	float gravity_;				//重力
 	float playerInitPosY_;

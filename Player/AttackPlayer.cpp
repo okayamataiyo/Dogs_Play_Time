@@ -54,7 +54,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
     vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
     angle_ = 0.0f;
-    floDir_ = XMFLOAT3(0.0f,0.0f,0.0f);
+    vecCam_ = XMFLOAT3(0.0f, 5.0f, -10.0f);
     //▼邪魔側プレイヤージャンプに関する基底クラスメンバ変数
     gravity_ = 0.007f;
     positionTempY_ = 0.0f;

@@ -5,8 +5,7 @@
 #include "PlayerBase.h"
 
 PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)
-    :GameObject(_pParent, _name),vecKnockbackDirection_ {},floDir_{},floCameraLen_{30.0f}
-    ,floKnockbackLenRecedes_{5.0f}
+    :GameObject(_pParent, _name),vecKnockbackDirection_ {},vecCam_{XMFLOAT3(0.0f,5.0f,-10.0f)}
 {
 
 }
@@ -101,24 +100,26 @@ void PlayerBase::PlayerCamera()
         XMMATRIX x, y;
     };
 
-    float2 padRot = {};
+    static float2 padRotMove = {};
     float2 sigmaRot = {};
     XMMATRIX2 mat2Rot = {};
     XMMATRIX matRot = {};
 
     XMVECTOR vecDir = {};
-    float floLen = 0.0f;
+    XMFLOAT3 floDir_ = {};
+    static float floLen = 0.0f;
+    float floCameraLen = 30.0f;
+    float floKnockbackLenRecedes = 5.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
     const float padSens = 50;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
-    XMFLOAT3 vecCam = XMFLOAT3(0, 5, -10);
     const float degreesMin = 0.0f;
     const float degreesMax = -88.0f;
     const float degreesToRadians = 3.14f / 180.0f;
-    padRot.x = padStickR.x;
-    padRot.y = -padStickR.y;
+    padRotMove.x = padStickR.x;
+    padRotMove.y = -padStickR.y;
 
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, padID_))
     {
@@ -130,21 +131,21 @@ void PlayerBase::PlayerCamera()
     }
 
     vecDir = vecFront;
-    vecCam.x += padRot.y / padSens;
-    vecCam.y += padRot.x / padSens;
+    vecCam_.x += padRotMove.y / padSens;
+    vecCam_.y += padRotMove.x / padSens;
 
-    sigmaRot.y = vecCam.y;
-    sigmaRot.x = -vecCam.x;
+    sigmaRot.y = vecCam_.y;
+    sigmaRot.x = -vecCam_.x;
 
     if (sigmaRot.x > degreesMin * degreesToRadians)
     {
         sigmaRot.x = degreesMin;
-        vecCam.x -= padRot.y / padSens;
+        vecCam_.x -= padRotMove.y / padSens;
     }
     if (sigmaRot.x < degreesMax * degreesToRadians)
     {
         sigmaRot.x = degreesMax * degreesToRadians;
-        vecCam.x -= padRot.y / padSens;
+        vecCam_.x -= padRotMove.y / padSens;
     }
 
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
@@ -155,21 +156,21 @@ void PlayerBase::PlayerCamera()
     vecDir = XMVector3Normalize(vecDir);
     if (isStun_)
     {
-        static float floCameraLenPrev = floCameraLen_;
-        if (floCameraLen_ <= floCameraLenPrev + floKnockbackLenRecedes_)
+        static int floCameraLenPrev = floCameraLen;
+        if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
         {
-            ++floCameraLen_;
+            ++floCameraLen;
         }
     }
     else
     {
-        static float floCameraLenPrev = floCameraLen_;
-        if (floCameraLen_ >= floCameraLenPrev - floKnockbackLenRecedes_)
+        static int floCameraLenPrev = floCameraLen;
+        if (floCameraLen >= floCameraLenPrev - floKnockbackLenRecedes)
         {
-            --floCameraLen_;
+            --floCameraLen;
         }
     }
-    vecDir = vecDir * (floLen + floCameraLen_);
+    vecDir = vecDir * (floLen + floCameraLen);
     vecDir += XMLoadFloat3(&transform_.position_);
     XMStoreFloat3(&floDir_, vecDir);
     Camera::SetPosition(floDir_, padID_);
