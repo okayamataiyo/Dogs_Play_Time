@@ -41,7 +41,7 @@ protected:
 		{
 
 		}
-	};
+	}gameData_;
 	//▼サウンドに関するメンバ変数
 	struct SoundData
 	{
@@ -52,7 +52,7 @@ protected:
 		{
 
 		}
-	};
+	}soundData_;
 	//▼プレイヤー移動に関するメンバ変数
 	struct MoveData
 	{
@@ -63,11 +63,11 @@ protected:
 		bool isMove_;
 		float isFling_;				//地面から離れているか
 		MoveData()
-			:CamPositionVec_{},positionPrev_{0.0f,0.0f,0.0f},padMoveSpeed_{0.3f,0.0f,0.3f},isRun_{false},isMove_{false}, isFling_{1.0f}
+			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
 		{
 
 		}
-	};
+	}moveData_;
 	//▼向き変えに関するメンバ変数
 	struct DirData
 	{
@@ -81,7 +81,7 @@ protected:
 		{
 
 		}
-	};
+	}dirData_;
 	//▼ジャンプに関するメンバ変数
 	struct JumpData
 	{
@@ -93,11 +93,11 @@ protected:
 		float jumpPower_;			//ジャンプの時の力
 		bool  isJump_;				//ジャンプしてるかしていないか
 		JumpData()
-			:gravity_{0.007f},playerInitPosY_{},positionY_{}, positionTempY_{0.0f}, positionPrevY_{0.0f}, jumpPower_{0.3f},isJump_{false}
+			:gravity_{ 0.007f }, playerInitPosY_{}, positionY_{}, positionTempY_{ 0.0f }, positionPrevY_{ 0.0f }, jumpPower_{ 0.3f }, isJump_{ false }
 		{
 
 		}
-	};
+	}jumpData_;
 	//▼飛びつきに関するメンバ変数
 	struct DiveData
 	{
@@ -109,21 +109,21 @@ protected:
 		int diveDuration_;	//飛びつきが継続する時間
 		int diveTimeWait_;	//飛びつきが終わるまでの時間
 		DiveData()
-			:divePower_{0.1f},diveSpeed_{0.6f},isDive_{false}, isDived_{false},diveTime_{0},diveDuration_{1},diveTimeWait_{30}
+			:divePower_{ 0.1f }, diveSpeed_{ 0.6f }, isDive_{ false }, isDived_{ false }, diveTime_{ 0 }, diveDuration_{ 1 }, diveTimeWait_{ 30 }
 		{
 
 		}
-	};
+	}diveData_;
 	//▼すり抜け床に関するメンバ変数
 	struct FloorData
 	{
 		bool isOnFloor_;		//すり抜け床にレイを飛ばしているかどうか
 		FloorData()
-			:isOnFloor_{false}
+			:isOnFloor_{ false }
 		{
 
 		}
-	};
+	}floorData_;
 	//▼木箱に関するメンバ変数
 	struct WoodBoxData
 	{
@@ -133,11 +133,11 @@ protected:
 		float angleDegrees_;
 		float angleDegreesMax_;	//ジャンプになるか壁になるかの境目の変数
 		WoodBoxData()
-			:woodBoxNumber_{""},dotProduct_{0.0f},angleDegrees_{0.0f},angleDegreesMax_{80.0f}
+			:woodBoxNumber_{ "" }, dotProduct_{ 0.0f }, angleDegrees_{ 0.0f }, angleDegreesMax_{ 80.0f }
 		{
 
 		}
-	};
+	}woodBoxData_;
 	//▼スタンに関するメンバ変数
 	struct StunData
 	{
@@ -150,11 +150,11 @@ protected:
 		bool isStun_;		//スタンしているかどうか
 		bool isKnockBack_;	//ノックバックしているかどうか
 		StunData()
-			:stunTimeCounter_{0},stunLimit_{0},hitStopTime_{10},getUpTime_{30},knockbackSpeed_{0.3f},vecKnockbackDirection_{},isStun_{false},isKnockBack_{false}
+			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, hitStopTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.3f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
 		{
 
 		}
-	};
+	}stunData_;
 	//▼慣性に関するメンバ変数
 
 	//▼壁判定に関するメンバ変数
@@ -165,11 +165,11 @@ protected:
 		float rayFloorDistDown_;
 		float rayStageDistDown_;
 		WallData()
-			:distMax_{99999.0f},inTheWall_{1.5f},rayFloorDistDown_{0.0f},rayStageDistDown_{0.0f}
+			:distMax_{ 99999.0f }, inTheWall_{ 1.5f }, rayFloorDistDown_{ 0.0f }, rayStageDistDown_{ 0.0f }
 		{
 
 		}
-	};
+	}wallData_;
 	//▼アニメーションに関するメンバ変数
 	struct AnimData
 	{
@@ -177,11 +177,11 @@ protected:
 		int endFrame_;
 		float animSpeed_;
 		AnimData()
-			:startFrame_{0},endFrame_{0},animSpeed_{0.0f}
+			:startFrame_{ 0 }, endFrame_{ 0 }, animSpeed_{ 0.0f }
 		{
 
 		}
-	};
+	}animData_;
 protected:
 	PlayerBase(GameObject* _parent, std::string _name);
 	//初期化

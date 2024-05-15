@@ -19,64 +19,6 @@ ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
     drawScoreNumberX_ = 360;
     drawScoreNumberY_ = 30;
     //▼ゲーム演出に関する基底クラスメンバ変数
-    FPS_ = 60 * 10;
-    timeCounter_ = 0;
-    timeLimit_ = 60;
-    fallLimit_ = 100.0f;
-    score_ = 0;
-    scoreAmount_ = 10;
-    scoreMax_ = 150;
-    padID_ = 0;
-    playerInitPosY_ = 0.6f;
-    //▼サウンドに関する基底クラスメンバ変数
-    soundVolume_ = 0.5f;
-    soundVolumeHalf_ = soundVolume_ / 2;
-    //▼邪魔側プレイヤー移動に関する基底クラスメンバ変数
-    CamPositionVec_ = {};
-    positionPrev_ = { 0.0f,0.0f,0.0f };
-    controllerMoveSpeed_ = { 0.3f,0.0f,0.3f };
-    positionY_ = 0.0f;
-    isRun_ = false;
-    isFling_ = 1.0f;
-    //▼向き変えに関する基底クラスメンバ変数
-    vecMove_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecCross_ = { 0.0f,0.0f,0.0f,0.0f };
-    vecDirection_ = { 0.0f,0.0f,0.0f,0.0f };
-    angle_ = 0.0f;
-    //▼邪魔側プレイヤージャンプに関する基底クラスメンバ変数
-    gravity_ = 0.007f;
-    positionTempY_ = 0.0f;
-    positionPrevY_ = 0.0f;
-    jumpPower_ = 0.3f;
-    isJump_ = false;
-    //▼飛びつきに関する基底クラスメンバ変数
-    divePower_ = 0.1f;
-    diveSpeed_ = 0.2f;
-    isDive_ = false;
-    isDived_ = false;
-    diveTime_ = 0;
-    diveDuration_ = 1;
-    diveTimeWait_ = 30;
-    //▼すり抜け床に関する基底クラスメンバ変数
-    isOnFloor_ = false;
-    //▼木箱に関する基底クラスメンバ変数
-    woodBoxNumber_ = "";
-    dotProduct_ = 0.0f;
-    angleDegrees_ = 0.0f;
-    angleDegreesMax_ = 80.0f;
-    //▼スタンに関する基底クラスメンバ変数
-    stunTimeCounter_ = 0;
-    stunLimit_ = 0;
-    hitStopTime_ = 10;
-    getUpTime_ = 30;
-    knockbackSpeed_ = 0.3f;
-    isStun_ = false;
-    isKnockBack_ = false;
-    //▼壁判定に関する基底クラスメンバ変数
-    distMax_ = 99999.0f;
-    inTheWall_ = 1.5f;
-    rayFloorDistDown_ = 0.0f;
-    rayStageDistDown_ = 0.0f;
 }
 
 ActorCollectPlayer::~ActorCollectPlayer()
@@ -90,7 +32,7 @@ void ActorCollectPlayer::Initialize()
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
-    positionY_ = transform_.position_.y;
+    jumpData_.positionY_ = transform_.position_.y;
     pPlayScene_ = (PlayScene*)FindObject(playSceneName);
     pStage_ = (Stage*)FindObject(stageName);
 }
@@ -98,19 +40,19 @@ void ActorCollectPlayer::Initialize()
 void ActorCollectPlayer::Update()
 {
     //落ちた時の処理
-    if (transform_.position_.y <= -fallLimit_)
+    if (transform_.position_.y <= -gameData_.fallLimit_)
     {
         transform_.position_ = initZeroXMFLOAT3;
     }
 
     if (!isSelect_)
     {
-        isDive_ = true;
+        diveData_.isDive_ = true;
     }
-    if (isDive_ && !isDived_)
+    if (diveData_.isDive_ && !diveData_.isDived_)
     {
-        ++diveTime_;
-        if (diveTime_ <= diveDuration_)
+        ++diveData_.diveTime_;
+        if (diveData_.diveTime_ <= diveData_.diveDuration_)
         {
             PlayerDivePower();
         }
@@ -119,31 +61,12 @@ void ActorCollectPlayer::Update()
 
     PlayerFall();
     PlayerMove();
+    PlayerKnockback();
     if (!isSelect_)
     {
         PlayerRayCast();
     }
-    transform_.position_.y = positionY_;
-    if (isMove_ && !isJump_ && !isRun_)
-    {
-    }
-    if (!isMove_ && !isJump_)
-    {
-    }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
-    {
-        isRun_ = true;
-    }
-    else
-    {
-        isRun_ = false;
-    }
-    if (isJump_)
-    {
-    }
-    if (isStun_)
-    {
-    }
+    transform_.position_.y = jumpData_.positionY_;
 }
 
 void ActorCollectPlayer::PlayerStun(int _timeLimit)
@@ -180,13 +103,12 @@ void ActorCollectPlayer::OnCollision(GameObject* _pTarget)
 
 void ActorCollectPlayer::PlayerFall()
 {
-    if (isJump_)
+    if (jumpData_.isJump_)
     {
         //放物線に下がる処理
-        positionTempY_ = positionY_;
-        positionY_ += (positionY_ - positionPrevY_) - gravity_;
-        positionPrevY_ = positionTempY_;
-        isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
+        jumpData_.positionTempY_ = jumpData_.positionY_;
+        jumpData_.positionY_ += (jumpData_.positionY_ - jumpData_.positionPrevY_) - jumpData_.gravity_;
+        jumpData_.positionPrevY_ = jumpData_.positionTempY_;
     }
 }
 
@@ -194,8 +116,8 @@ void ActorCollectPlayer::PlayerMove()
 {
     PlayerBase::PlayerMove();
     
-    transform_.position_.x +=controllerMoveSpeed_.x;
-    transform_.position_.z +=controllerMoveSpeed_.z;
+    transform_.position_.x += moveData_.padMoveSpeed_.x;
+    transform_.position_.z += moveData_.padMoveSpeed_.z;
 }
 
 void ActorCollectPlayer::PlayerJump()
@@ -211,22 +133,22 @@ void ActorCollectPlayer::PlayerDive()
     XMVECTOR vecDirection = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition((int)PADIDSTATE::SECONDS);
     vecDirection = XMVectorSetY(vecDirection, normalizationInt);
     vecDirection = XMVector3Normalize(vecDirection);
-    transform_.position_.x = transform_.position_.x + diveSpeed_ * XMVectorGetX(vecDirection);
-    transform_.position_.z = transform_.position_.z + diveSpeed_ * XMVectorGetZ(vecDirection);
-    if (diveTime_ >= diveTimeWait_)
+    transform_.position_.x = transform_.position_.x + diveData_.diveSpeed_ * XMVectorGetX(vecDirection);
+    transform_.position_.z = transform_.position_.z + diveData_.diveSpeed_ * XMVectorGetZ(vecDirection);
+    if (diveData_.diveTime_ >= diveData_.diveTimeWait_)
     {
-        isDive_ = false;
-        isDived_ = true;
-        diveTime_ = initZeroInt;
+        diveData_.isDive_ = false;
+        diveData_.isDived_ = true;
+        diveData_.diveTime_ = initZeroInt;
     }
 }
 
 void ActorCollectPlayer::PlayerDivePower()
 {
     //とびつきの処理
-    isJump_ = true;
-    positionPrevY_ = positionY_;
-    positionY_ = positionY_ + divePower_;
+    jumpData_.isJump_ = true;
+    jumpData_.positionPrevY_ = jumpData_.positionY_;
+    jumpData_.positionY_ += diveData_.divePower_;
 }
 
 void ActorCollectPlayer::PlayerKnockback()
@@ -242,23 +164,23 @@ void ActorCollectPlayer::PlayerRayCast()
     stageDataDown.start.y = initZeroFloat;
     XMStoreFloat3(&stageDataDown.dir, vecDown);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataDown); //レイを発射
-    rayStageDistDown_ = stageDataDown.dist;
+    wallData_.rayStageDistDown_ = stageDataDown.dist;
     //プレイヤーが浮いていないとき
-    if (rayStageDistDown_ + positionY_ <= isFling_)
+    if (wallData_.rayStageDistDown_ + jumpData_.positionY_ <= moveData_.isFling_)
     {
         //ジャンプしてない＆すり抜け床の上にいない
-        if (!isJump_ && !isOnFloor_)
+        if (!jumpData_.isJump_ && !floorData_.isOnFloor_)
         {
             //地面に張り付き
-            isDived_ = false;
-            positionY_ = -rayStageDistDown_ + playerInitPosY_;
-            positionTempY_ = positionY_;
-            positionPrevY_ = positionTempY_;
+            diveData_.isDived_ = false;
+            jumpData_.positionY_ = -wallData_.rayStageDistDown_ + jumpData_.playerInitPosY_;
+            jumpData_.positionTempY_ = jumpData_.positionY_;
+            jumpData_.positionPrevY_ = jumpData_.positionTempY_;
         }
     }
-    else if (!isOnFloor_)
+    else if (!floorData_.isOnFloor_)
     {
-        isJump_ = true;
+        jumpData_.isJump_ = true;
     }
 }
 

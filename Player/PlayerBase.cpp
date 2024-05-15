@@ -5,9 +5,10 @@
 #include "PlayerBase.h"
 
 PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)
-    :GameObject(_pParent, _name),vecKnockbackDirection_ {},vecCam_{XMFLOAT3(0.0f,5.0f,-10.0f)}
+    :GameObject(_pParent, _name)
 {
-
+    stunData_.vecKnockbackDirection_ = {};
+    dirData_.vecCam_ = { XMFLOAT3(0.0f,5.0f,-10.0f) };
 }
 
 // 初期化
@@ -55,37 +56,37 @@ void PlayerBase::UpdateGameOver()
 
 void PlayerBase::PlayerWaitStateFunc()
 {
-    startFrame_ = 0;
-    endFrame_ = 0;
-    animSpeed_ = 1.0f;
+    animData_.startFrame_ = 0;
+    animData_.endFrame_ = 0;
+    animData_.animSpeed_ = 1.0f;
 }
 
 void PlayerBase::PlayerWalkStateFunc()
 {
-    startFrame_ = 20;
-    endFrame_ = 60;
-    animSpeed_ = 0.5f;
+    animData_.startFrame_ = 20;
+    animData_.endFrame_ = 60;
+    animData_.animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerRunStateFunc()
 {
-    startFrame_ = 80;
-    endFrame_ = 120;
-    animSpeed_ = 0.5f;
+    animData_.startFrame_ = 80;
+    animData_.endFrame_ = 120;
+    animData_.animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerJumpStateFunc()
 {
-    startFrame_ = 120;
-    endFrame_ = 120;
-    animSpeed_ = 1.0f;
+    animData_.startFrame_ = 120;
+    animData_.endFrame_ = 120;
+    animData_.animSpeed_ = 1.0f;
 }
 
 void PlayerBase::PlayerStunStateFunc()
 {
-    startFrame_ = 140;
-    endFrame_ = 200;
-    animSpeed_ = 0.5f;
+    animData_.startFrame_ = 140;
+    animData_.endFrame_ = 200;
+    animData_.animSpeed_ = 0.5f;
 }
 
 void PlayerBase::PlayerCamera()
@@ -111,7 +112,7 @@ void PlayerBase::PlayerCamera()
     float floCameraLen = 30.0f;
     float floKnockbackLenRecedes = 5.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
-    XMFLOAT3 padStickR = Input::GetPadStickR(padID_);
+    XMFLOAT3 padStickR = Input::GetPadStickR(gameData_.padID_);
     const float padSens = 50;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
@@ -121,31 +122,31 @@ void PlayerBase::PlayerCamera()
     padRotMove.x = padStickR.x;
     padRotMove.y = -padStickR.y;
 
-    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, padID_))
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
     {
         floLen -= floLenRecedes;
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, padID_))
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, gameData_.padID_))
     {
         floLen += floLenApproach;
     }
 
     vecDir = vecFront;
-    vecCam_.x += padRotMove.y / padSens;
-    vecCam_.y += padRotMove.x / padSens;
+    dirData_.vecCam_.x += padRotMove.y / padSens;
+    dirData_.vecCam_.y += padRotMove.x / padSens;
 
-    sigmaRot.y = vecCam_.y;
-    sigmaRot.x = -vecCam_.x;
+    sigmaRot.y = dirData_.vecCam_.y;
+    sigmaRot.x = -dirData_.vecCam_.x;
 
     if (sigmaRot.x > degreesMin * degreesToRadians)
     {
         sigmaRot.x = degreesMin;
-        vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSens;
     }
     if (sigmaRot.x < degreesMax * degreesToRadians)
     {
         sigmaRot.x = degreesMax * degreesToRadians;
-        vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSens;
     }
 
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
@@ -154,7 +155,7 @@ void PlayerBase::PlayerCamera()
     matRot = mat2Rot.x * mat2Rot.y;
     vecDir = XMVector3Transform(vecDir, matRot);
     vecDir = XMVector3Normalize(vecDir);
-    if (isStun_)
+    if (stunData_.isStun_)
     {
         static int floCameraLenPrev = floCameraLen;
         if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
@@ -173,18 +174,18 @@ void PlayerBase::PlayerCamera()
     vecDir = vecDir * (floLen + floCameraLen);
     vecDir += XMLoadFloat3(&transform_.position_);
     XMStoreFloat3(&floDir_, vecDir);
-    Camera::SetPosition(floDir_, padID_);
-    Camera::SetTarget(transform_.position_, padID_);
+    Camera::SetPosition(floDir_, gameData_.padID_);
+    Camera::SetTarget(transform_.position_, gameData_.padID_);
 }
 
 void PlayerBase::PlayerFall()
 {
     // プレイヤーが落下する処理
-    if (isJump_)
+    if (jumpData_.isJump_)
     {
-        positionTempY_ = positionY_;
-        positionY_ += (positionY_ - positionPrevY_) - gravity_;
-        positionPrevY_ = positionTempY_;
+        jumpData_.positionTempY_ = jumpData_.positionY_;
+        jumpData_.positionY_ += (jumpData_.positionY_ - jumpData_.positionPrevY_) - jumpData_.gravity_;
+        jumpData_.positionPrevY_ = jumpData_.positionTempY_;
         IsJump();
     }
 }
@@ -194,19 +195,19 @@ void PlayerBase::PlayerMove()
     const float walkSpeed = 0.4f;
     const float runSpeed = 0.5f;
     // プレイヤーの移動処理
-    if (!isRun_)
+    if (!moveData_.isRun_)
     {
-        controllerMoveSpeed_ = XMFLOAT3(walkSpeed ,0.0f,walkSpeed);
+        moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed ,0.0f,walkSpeed);
     }
     else
     {
-        controllerMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
+        moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
     //向き変更
     XMFLOAT3 m;
-    XMStoreFloat3(&m, vecMove_);
+    XMStoreFloat3(&m, dirData_.vecMove_);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 
     float pi = 3.14f;					//円周率
     float halfPi = pi / 2;				//円周率の半分
@@ -214,36 +215,36 @@ void PlayerBase::PlayerMove()
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
     const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
-    vecDirection_ = XMVectorSetY(vecDirection_, 0);
-    vecDirection_ = XMVector3Normalize(vecDirection_);
+    dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
+    dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
     const float deadZone = 0.3f;			//コントローラーのデットゾーン
-    controllerMoveSpeed_.x *= XMVectorGetX(vecDirection_);
-    controllerMoveSpeed_.z *= XMVectorGetZ(vecDirection_);
-    XMVECTOR tempvec = XMVector3Transform(vecDirection_, rotmat);
-    if (Input::GetPadStickL(padID_).y > deadZone)   //前への移動
+    moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
+    moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
+    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
+    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
     {
-        transform_.position_.x += controllerMoveSpeed_.x;
-        transform_.position_.z += controllerMoveSpeed_.z;
+        transform_.position_.x += moveData_.padMoveSpeed_.x;
+        transform_.position_.z += moveData_.padMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).y < -deadZone)  //後ろへの移動
+    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
     {
-        transform_.position_.x -= controllerMoveSpeed_.x;
-        transform_.position_.z -= controllerMoveSpeed_.z;
+        transform_.position_.x -= moveData_.padMoveSpeed_.x;
+        transform_.position_.z -= moveData_.padMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).x > deadZone)   //右への移動
+    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
     {
-        controllerMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        controllerMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        transform_.position_.x += controllerMoveSpeed_.x;
-        transform_.position_.z += controllerMoveSpeed_.z;
+        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        transform_.position_.x += moveData_.padMoveSpeed_.x;
+        transform_.position_.z += moveData_.padMoveSpeed_.z;
     }
-    if (Input::GetPadStickL(padID_).x < -deadZone)  //左への移動
+    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
     {
-        controllerMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        controllerMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        transform_.position_.x -= controllerMoveSpeed_.x;
-        transform_.position_.z -= controllerMoveSpeed_.z;
+        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        transform_.position_.x -= moveData_.padMoveSpeed_.x;
+        transform_.position_.z -= moveData_.padMoveSpeed_.z;
     }
 
     const float outerWallPosFront = 99.0f;		//前の外壁の位置
@@ -253,11 +254,11 @@ void PlayerBase::PlayerMove()
 
     if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
     {
-        transform_.position_.z = positionPrev_.z;
+        transform_.position_.z = moveData_.positionPrev_.z;
     }
     if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
     {
-        transform_.position_.x = positionPrev_.x;
+        transform_.position_.x = moveData_.positionPrev_.x;
     }
 }
 
@@ -269,42 +270,42 @@ void PlayerBase::PlayerJump()
 void PlayerBase::PlayerJumpPower()
 {
     // ジャンプ時の力を計算する処理
-    isJump_ = true;
-    positionPrevY_ = positionY_;
-    positionY_ = positionY_ + jumpPower_;
+    jumpData_.isJump_ = true;
+    jumpData_.positionPrevY_ = jumpData_.positionY_;
+    jumpData_.positionY_ = jumpData_.positionY_ + jumpData_.jumpPower_;
 }
 
 void PlayerBase::PlayerDive()
 {
     // プレイヤーのダイブ処理
-    vecDirection_ = XMVectorSetY(vecDirection_, normalizationInt);
-    vecDirection_ = XMVector3Normalize(vecDirection_);
-    transform_.position_.x += diveSpeed_ * XMVectorGetX(vecDirection_);
-    transform_.position_.z += diveSpeed_ * XMVectorGetZ(vecDirection_);
+    dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, normalizationInt);
+    dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
+    transform_.position_.x += diveData_.diveSpeed_ * XMVectorGetX(dirData_.vecDirection_);
+    transform_.position_.z += diveData_.diveSpeed_ * XMVectorGetZ(dirData_.vecDirection_);
 
-    if (diveTime_ >= diveTimeWait_)
+    if (diveData_.diveTime_ >= diveData_.diveTimeWait_)
     {
-        isDive_ = false;
-        isDived_ = true;
-        diveTime_ = 0;
+        diveData_.isDive_ = false;
+        diveData_.isDived_ = true;
+        diveData_.diveTime_ = 0;
     }
 }
 
 void PlayerBase::PlayerDivePower()
 {
     // ダイブ時の力を計算する処理
-    isJump_ = true;
-    positionPrevY_ = positionY_;
-    positionY_ = positionY_ + divePower_;
+    jumpData_.isJump_ = true;
+    jumpData_.positionPrevY_ = jumpData_.positionY_;
+    jumpData_.positionY_ += diveData_.divePower_;
 }
 
 void PlayerBase::PlayerKnockback()
 {
     // プレイヤーのノックバック処理
-    if (isKnockBack_)
+    if (stunData_.isKnockBack_)
     {
-        SetKnockback(vecKnockbackDirection_, knockbackSpeed_);
-        PlayerStun(getUpTime_);
+        SetKnockback(stunData_.vecKnockbackDirection_, stunData_.knockbackSpeed_);
+        PlayerStun(stunData_.getUpTime_);
     }
 }
 
@@ -322,8 +323,8 @@ void PlayerBase::PlayerRevival()
 void PlayerBase::PlayerStun(int _timeLimit)
 {
     // スタンの処理
-    isStun_ = true;
-    stunLimit_ = _timeLimit;
+    stunData_.isStun_ = true;
+    stunData_.stunLimit_ = _timeLimit;
 }
 
 void PlayerBase::SetVecPos(XMVECTOR _vecMove)
@@ -347,24 +348,39 @@ XMVECTOR PlayerBase::GetVecPos()
 void PlayerBase::IsMove()
 {
     // プレイヤーが移動中かどうかを判定する処理
-    if (transform_.position_.x != positionPrev_.x)
-        isMove_ = true;
-    else if (transform_.position_.z != positionPrev_.z)
-        isMove_ = true;
+    if (transform_.position_.x != moveData_.positionPrev_.x)
+    {
+        moveData_.isMove_ = true;
+    }
+    else if (transform_.position_.z != moveData_.positionPrev_.z)
+    {
+        moveData_.isMove_ = true;
+    }
     else
-        isMove_ = false;
+    {
+        moveData_.isMove_ = false;
+    }
 }
 
 void PlayerBase::IsJump()
 {
-    isJump_ = (rayStageDistDown_ + positionY_ > isFling_ && !isOnFloor_) ? true : isJump_;
-    isJump_ = (positionY_ <= -rayFloorDistDown_ + playerInitPosY_) ? false : isJump_;
-    isJump_ = (positionY_ <= -rayStageDistDown_ + playerInitPosY_) ? false : isJump_;
+    if (wallData_.rayStageDistDown_ + jumpData_.positionY_ > moveData_.isFling_ && !floorData_.isOnFloor_)
+    {
+        jumpData_.isJump_ = true;
+    }
+    if (jumpData_.positionY_ <= -wallData_.rayFloorDistDown_ + jumpData_.playerInitPosY_)
+    {
+        jumpData_.isJump_ = false;
+    }
+    if (jumpData_.positionY_ <= -wallData_.rayStageDistDown_ + jumpData_.playerInitPosY_)
+    {
+        jumpData_.isJump_ = false;
+    }
 }
 
 void PlayerBase::IsRun()
 {
-    isRun_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_);
+    moveData_.isRun_ = (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, gameData_.padID_) && !jumpData_.isJump_ && moveData_.isMove_);
 }
 
 void PlayerBase::IsStun()
@@ -374,9 +390,8 @@ void PlayerBase::IsStun()
 
 void PlayerBase::IsDive()
 {
-    //isDive_ = Input::GetPadTrrigerR(padID_) ? true : isDive_;
-    if (Input::GetPadTrrigerR(padID_))
+    if (Input::GetPadTrrigerR(gameData_.padID_))
     {
-        isDive_ = true;
+        diveData_.isDive_ = true;
     }
 }

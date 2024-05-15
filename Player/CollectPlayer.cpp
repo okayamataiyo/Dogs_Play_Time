@@ -57,7 +57,7 @@ void CollectPlayer::Initialize()
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 0.4f,0.4f,0.4f};
-    positionY_ = transform_.position_.y;
+    jumpData_.positionY_ = transform_.position_.y;
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
@@ -79,13 +79,13 @@ void CollectPlayer::Initialize()
 
     if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
     {
-        padID_ = (int)PADIDSTATE::FIRST;
+        gameData_.padID_ = (int)PADIDSTATE::FIRST;
     }
     if (attackOrCollectInverse_ == (int)PADIDSTATE::SECONDS)
     {
-        padID_ = (int)PADIDSTATE::SECONDS;
+        gameData_.padID_ = (int)PADIDSTATE::SECONDS;
     }
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
+    dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
 }
 
 void CollectPlayer::Update()
@@ -104,7 +104,7 @@ void CollectPlayer::Update()
 void CollectPlayer::Draw()
 {
     pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=");
-    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, score_);
+    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_);
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
@@ -125,18 +125,18 @@ void CollectPlayer::UpdateReady()
     stageDataDown.start.y = initZeroInt;
     XMStoreFloat3(&stageDataDown.dir, vecDown);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataDown); //レイを発射
-    rayStageDistDown_ = stageDataDown.dist;
+    wallData_.rayStageDistDown_ = stageDataDown.dist;
     if (stageDataDown.hit)
     {
-        transform_.position_.y = -stageDataDown.dist + playerInitPosY_;
+        transform_.position_.y = -stageDataDown.dist + jumpData_.playerInitPosY_;
     }
-    ++timeCounter_;
-    if (timeCounter_ >= timeLimit_)
+    ++gameData_.timeCounter_;
+    if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
         gameState_ = GAMESTATE::PLAY;
-        timeCounter_ = initZeroInt;
+        gameData_.timeCounter_ = initZeroInt;
     }
-    positionY_ = transform_.position_.y;
+    jumpData_.positionY_ = transform_.position_.y;
 }
 
 void CollectPlayer::UpdatePlay()
@@ -148,17 +148,17 @@ void CollectPlayer::UpdatePlay()
         gameState_ = GAMESTATE::GAMEOVER;
     }
     //落ちた時の処理
-    if (transform_.position_.y <= -fallLimit_)
+    if (transform_.position_.y <= -gameData_.fallLimit_)
     {
         int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
     }
 
-    if (isDive_ && !isDived_)
+    if (diveData_.isDive_ && !diveData_.isDived_)
     {
-        ++diveTime_;
-        if (diveTime_ <= diveDuration_)
+        ++diveData_.diveTime_;
+        if (diveData_.diveTime_ <= diveData_.diveDuration_)
         {
             PlayerDivePower();
         }
@@ -168,45 +168,40 @@ void CollectPlayer::UpdatePlay()
     PlayerFall();
     PlayerRayCast();
     PlayerKnockback();
-    transform_.position_.y = positionY_;
-    if (isStun_)
+    transform_.position_.y = jumpData_.positionY_;
+    if (stunData_.isStun_)
     {
-        stunTimeCounter_++;
-        if (stunTimeCounter_ >= stunLimit_)
+        stunData_.stunTimeCounter_++;
+        if (stunData_.stunTimeCounter_ >= stunData_.stunLimit_)
         {
+            stunData_.isStun_ = false;
+            stunData_.isKnockBack_ = false;
             gameState_ = GAMESTATE::PLAY;
-            isStun_ = false;
-            isKnockBack_ = false;
-            stunTimeCounter_ = initZeroInt;
+            stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
-    if (!isStun_)
+    if (!stunData_.isStun_)
     {
         PlayerMove();
     }
-    if (score_ >= scoreMax_)
+    if (gameData_.score_ >= gameData_.scoreMax_)
     {
         pPlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
-    if (isMove_ && !isJump_ && !isRun_)
+    if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
     {
-        Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundVolume_);
+        Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundData_.soundVolume_);
     }
-    if (!isMove_ && !isJump_)
+    if (!moveData_.isMove_ && !jumpData_.isJump_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, padID_) && !isJump_ && isMove_)
+    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, gameData_.padID_) && !jumpData_.isJump_ && moveData_.isMove_)
     {
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundVolumeHalf_);
-        isRun_ = true;
-    }
-    else
-    {
-        isRun_ = false;
+        Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundData_.soundVolumeHalf_);
     }
 
     if (isBoneTatch_)
@@ -219,7 +214,7 @@ void CollectPlayer::UpdatePlay()
 
     if (killTime_ <= initZeroInt && isBoneTatch_)
     {
-        score_ += scoreAmount_;
+        gameData_.score_ += gameData_.scoreAmount_;
         pPlayScene_->AddBoneCount(decBoneCount_);
         isBoneDeath_ = true;
         isBoneTatch_ = false;
@@ -236,7 +231,7 @@ void CollectPlayer::UpdatePlay()
 void CollectPlayer::UpdateGameOver()
 {
     Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFTVIEW);
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, padID_))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, gameData_.padID_))
     {
         pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
     }
@@ -245,65 +240,65 @@ void CollectPlayer::UpdateGameOver()
 void CollectPlayer::PlayerWaitStateFunc()
 {
     PlayerBase::PlayerWaitStateFunc();
-    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void CollectPlayer::PlayerWalkStateFunc()
 {
     PlayerBase::PlayerWalkStateFunc();
-    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void CollectPlayer::PlayerRunStateFunc()
 {
     PlayerBase::PlayerRunStateFunc();
-    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void CollectPlayer::PlayerJumpStateFunc()
 {
     PlayerBase::PlayerJumpStateFunc();
-    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void CollectPlayer::PlayerStunStateFunc()
 {
     PlayerBase::PlayerStunStateFunc();
-    Model::SetAnimFrame(hModel_, startFrame_, endFrame_, animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void CollectPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
-    Audio::Play(hSound_[((int)SOUNDSTATE::STUN)], soundVolume_);
+    Audio::Play(hSound_[((int)SOUNDSTATE::STUN)], soundData_.soundVolume_);
 }
 
 void CollectPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = pPlayScene_->GetWoodBoxs();
-    woodBoxNumber_ = woodBoxName + std::to_string(number_);
-    if (_pTarget->GetObjectName() == woodBoxNumber_)
+    woodBoxData_.woodBoxNumber_ = woodBoxName + std::to_string(number_);
+    if (_pTarget->GetObjectName() == woodBoxData_.woodBoxNumber_)
     {
-        pWoodBox_ = (WoodBox*)FindObject(woodBoxNumber_);
+        pWoodBox_ = (WoodBox*)FindObject(woodBoxData_.woodBoxNumber_);
         XMVECTOR vecPos = XMLoadFloat3(&transform_.position_) - pWoodBox_->GetVecPos();
         vecPos = XMVector3Normalize(vecPos);
-        dotProduct_ = XMVectorGetX(XMVector3Dot(vecPos, vecUp));
-        float angleRadians = acosf(dotProduct_);
-        angleDegrees_ = XMConvertToDegrees(angleRadians);
-        if (angleDegrees_ <= angleDegreesMax_)
+        woodBoxData_.dotProduct_ = XMVectorGetX(XMVector3Dot(vecPos, vecUp));
+        float angleRadians = acosf(woodBoxData_.dotProduct_);
+        woodBoxData_.angleDegrees_ = XMConvertToDegrees(angleRadians);
+        if (woodBoxData_.angleDegrees_ <= woodBoxData_.angleDegreesMax_)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            pPlayScene_->AddWoodBoxCount(-woodBoxDeath_);
+            pPlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
 
         }
     }
     //WoodBoxという名前を持つ全てのオブジェクトを参照
     if (_pTarget->GetObjectName().find(woodBoxName) != std::string::npos)
     {
-        if (angleDegrees_ > angleDegreesMax_)
+        if (woodBoxData_.angleDegrees_ > woodBoxData_.angleDegreesMax_)
         {
-            transform_.position_ = positionPrev_;
+            transform_.position_ = moveData_.positionPrev_;
         }
     }
 
@@ -321,10 +316,10 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
 
     if (_pTarget->GetObjectName() == attackPlayerName)
     {
-        PlayerStun(hitStopTime_);
-        isKnockBack_ = true;
-        vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
-        vecKnockbackDirection_ = XMVector3Normalize(vecKnockbackDirection_);
+        PlayerStun(stunData_.hitStopTime_);
+        stunData_.isKnockBack_ = true;
+        stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+        stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
     }
 }
 
@@ -340,27 +335,27 @@ void CollectPlayer::PlayerFall()
 
 void CollectPlayer::PlayerMove()
 {
-    vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(padID_);
+    dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     PlayerBase::PlayerMove();
-    if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, padID_)))
+    if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
     {
         XMVECTOR vecCam = {};
-        CamPositionVec_ = Camera::VecGetPosition(padID_);
-        vecCam = -(CamPositionVec_ - Camera::VecGetTarget(padID_));
+        moveData_.CamPositionVec_ = Camera::VecGetPosition(gameData_.padID_);
+        vecCam = -(moveData_.CamPositionVec_ - Camera::VecGetTarget(gameData_.padID_));
         XMFLOAT3 camRot = {};
         XMStoreFloat3(&camRot, vecCam);
         camRot.y = 0;
         vecCam = XMLoadFloat3(&camRot);
         vecCam = XMVector3Normalize(vecCam);
-        vecMove_ = vecCam;
+        dirData_.vecMove_ = vecCam;
     }
 
-    if (Input::IsPadButton(XINPUT_GAMEPAD_A, padID_) && !isJump_)
+    if (Input::IsPadButton(XINPUT_GAMEPAD_A, gameData_.padID_) && !jumpData_.isJump_)
     {
         PlayerJumpPower();
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)], soundVolumeHalf_);
+        Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)], soundData_.soundVolumeHalf_);
     }
 }
 
@@ -421,25 +416,25 @@ void CollectPlayer::PlayerRayCast()
         floorDataDown.start = transform_.position_;    //レイの発射位置
         floorDataDown.start.y = 0;
         XMStoreFloat3(&floorDataDown.dir, vecDown);     //レイの方向
-        if (floorDataUp.dist == distMax_)
+        if (floorDataUp.dist == wallData_.distMax_)
         {
             Model::RayCast(floorHModel_ + i, &floorDataDown);  //レイを発射
         }
-        rayFloorDistDown_ = floorDataDown.dist;
-        if (rayFloorDistDown_ + positionY_ <= isFling_)
+        wallData_.rayFloorDistDown_ = floorDataDown.dist;
+        if (wallData_.rayFloorDistDown_ + jumpData_.positionY_ <= moveData_.isFling_)
         {
-            if (!isJump_)
+            if (!jumpData_.isJump_)
             {
-                isOnFloor_ = true;
-                isDived_ = false;
-                positionY_ = -floorDataDown.dist + playerInitPosY_;
-                positionTempY_ = positionY_;
-                positionPrevY_ = positionTempY_;
+                floorData_.isOnFloor_ = true;
+                diveData_.isDived_ = false;
+                jumpData_.positionY_ = -floorDataDown.dist + jumpData_.playerInitPosY_;
+                jumpData_.positionTempY_ = jumpData_.positionY_;
+                jumpData_.positionPrevY_ = jumpData_.positionTempY_;
             }
         }
         else
         {
-            isOnFloor_ = false;
+            floorData_.isOnFloor_ = false;
         }
 
     }
@@ -449,18 +444,18 @@ void CollectPlayer::PlayerRayCast()
     stageDataDown.start.y = initZeroFloat;
     XMStoreFloat3(&stageDataDown.dir, vecDown);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataDown);   //レイを発射
-    rayStageDistDown_ = stageDataDown.dist;
+    wallData_.rayStageDistDown_ = stageDataDown.dist;
     //プレイヤーが浮いていないとき
-    if (rayStageDistDown_ + positionY_ <= isFling_)
+    if (wallData_.rayStageDistDown_ + jumpData_.positionY_ <= moveData_.isFling_)
     {
         //ジャンプしてない＆すり抜け床の上にいない
-        if (!isJump_ && !isOnFloor_)
+        if (!jumpData_.isJump_ && !floorData_.isOnFloor_)
         {
             //地面に張り付き
-            isDived_ = false;
-            positionY_ = -stageDataDown.dist + playerInitPosY_;
-            positionTempY_ = positionY_;
-            positionPrevY_ = positionTempY_;
+            diveData_.isDived_ = false;
+            jumpData_.positionY_ = -stageDataDown.dist + jumpData_.playerInitPosY_;
+            jumpData_.positionTempY_ = jumpData_.positionY_;
+            jumpData_.positionPrevY_ = jumpData_.positionTempY_;
         }
     }
     //▼前の法線(壁の当たり判定)
@@ -468,38 +463,38 @@ void CollectPlayer::PlayerRayCast()
     XMStoreFloat3(&stageDataFront.dir, vecFrontUp);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataFront);    //レイを発射
     rayStageDistFront = stageDataFront.dist;
-    if (rayStageDistFront <= inTheWall_)
+    if (rayStageDistFront <= wallData_.inTheWall_)
     {
-        transform_.position_.z = positionPrev_.z;
+        transform_.position_.z = moveData_.positionPrev_.z;
     }
     //▼後ろの法線(壁の当たり判定)
     stageDataBack.start = transform_.position_;       //レイの発射位置
     XMStoreFloat3(&stageDataBack.dir, vecBackUp);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataBack);     //レイを発射
     rayStageDistBack = stageDataBack.dist;
-    if (rayStageDistBack <= inTheWall_)
+    if (rayStageDistBack <= wallData_.inTheWall_)
     {
-        transform_.position_.z = positionPrev_.z;
+        transform_.position_.z = moveData_.positionPrev_.z;
     }
     //▼左の法線(壁の当たり判定)
     stageDataLeft.start = transform_.position_;       //レイの発射位置
     XMStoreFloat3(&stageDataLeft.dir, vecLeftUp);     //レイの方向
     Model::RayCast(stageHModel_, &stageDataLeft);     //レイを発射
     rayStageDistLeft = stageDataLeft.dist;
-    if (rayStageDistLeft <= inTheWall_)
+    if (rayStageDistLeft <= wallData_.inTheWall_)
     {
-        transform_.position_.x = positionPrev_.x;
+        transform_.position_.x = moveData_.positionPrev_.x;
     }
     //▼右の法線(壁の当たり判定)
     stageDataRight.start = transform_.position_;       //レイの発射位置
     XMStoreFloat3(&stageDataRight.dir, vecRightUp);    //レイの方向
     Model::RayCast(stageHModel_, &stageDataRight);     //レイを発射
     rayStageDistRight = stageDataRight.dist;
-    if (rayStageDistRight <= inTheWall_)
+    if (rayStageDistRight <= wallData_.inTheWall_)
     {
-        transform_.position_.x = positionPrev_.x;
+        transform_.position_.x = moveData_.positionPrev_.x;
     }
-    positionPrev_ = transform_.position_;
+    moveData_.positionPrev_ = transform_.position_;
 }
 
 void CollectPlayer::PlayerRevival()

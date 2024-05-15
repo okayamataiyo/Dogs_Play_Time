@@ -177,27 +177,27 @@ public:
 
 	void SetKillTime(int _killTime) { killTime_ = _killTime; }
 
-	bool GetIsMove() override { return isMove_; }
+	bool GetIsMove() override { return moveData_.isMove_; }
 
-	bool GetIsJump() override { return isJump_; }
+	bool GetIsJump() override { return jumpData_.isJump_; }
 
-	bool GetIsRun() override { return isRun_; }
+	bool GetIsRun() override { return moveData_.isRun_; }
 
-	bool GetIsStun() override { return isStun_; }
+	bool GetIsStun() override { return stunData_.isStun_; }
 
-	bool GetIsDive() override { return isDive_; }
+	bool GetIsDive() override { return diveData_.isDive_; }
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
-	int GetPadID()override { return padID_; }
+	int GetPadID()override { return gameData_.padID_; }
 
 	int GetModelHandle() override { return hModel_; }
 
 	bool GetIsBoneDeath() { return isBoneDeath_; }
 
-	float GetAngle() { return angle_; }
+	float GetAngle() { return dirData_.angle_; }
 
-	int GetScore() { return score_; }
+	int GetScore() { return gameData_.score_; }
 
 	bool GetIsBoneTatch() { return isBoneTatch_; }
 };

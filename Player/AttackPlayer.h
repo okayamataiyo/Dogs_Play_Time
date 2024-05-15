@@ -52,17 +52,6 @@ private:
 	int scoreTimeCounterWait_;
 	int attackOrCollect_;
 
-	GameData gameData_;
-	SoundData soundData_;
-	MoveData moveData_;
-	DirData dirData_;
-	JumpData jumpData_;
-	DiveData diveData_;
-	FloorData floorData_;
-	WoodBoxData woodBoxData_;
-	StunData stunData_;
-	WallData wallData_;
-	AnimData animData_;
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	PlayScene* pPlayScene_;
@@ -175,23 +164,23 @@ public:
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
-	bool GetIsMove() override { return isMove_; }
+	bool GetIsMove() override { return moveData_.isMove_; }
 
-	bool GetIsJump() override { return isJump_; }
+	bool GetIsJump() override { return jumpData_.isJump_; }
 
-	bool GetIsRun() override { return isRun_; }
+	bool GetIsRun() override { return moveData_.isRun_; }
 
-	bool GetIsStun() override { return isStun_; }
+	bool GetIsStun() override { return stunData_.isStun_; }
 
-	bool GetIsDive() override { return isDive_; }
+	bool GetIsDive() override { return diveData_.isDive_; }
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
-	float GetAngle() { return angle_; }
+	float GetAngle() { return dirData_.angle_; }
 
-	int GetPadID()override { return padID_; }
+	int GetPadID()override { return gameData_.padID_; }
 
-	int GetScore() { return score_; }
+	int GetScore() { return gameData_.score_; }
 
 	int GetModelHandle() override { return hModel_; };
 
