@@ -26,14 +26,6 @@ void SelectScene::Initialize()
 	//▼INIファイルからデータのロード
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
-	if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
-	{
-		attackOrCollectInverse_ = (int)PADIDSTATE::SECONDS;
-	}
-	else
-	{
-		attackOrCollectInverse_ = (int)PADIDSTATE::FIRST;
-	}
 
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
@@ -108,7 +100,7 @@ void SelectScene::Update()
 		//padID_ = (int)PADIDSTATE::SECONDS;
 	}
 
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackOrCollect_) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, attackOrCollectInverse_))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
 	{
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)
 		{
@@ -117,6 +109,14 @@ void SelectScene::Update()
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::RIGHTVIEW)
 		{
 			Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::RIGHT_BOTHVIEW);
+		}
+		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+		{
+			attackOrCollectInverse_ = (int)PADIDSTATE::SECONDS;
+		}
+		else
+		{
+			attackOrCollectInverse_ = (int)PADIDSTATE::FIRST;
 		}
 		//▼INIファイルへの書き込み
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");

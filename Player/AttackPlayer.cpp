@@ -213,7 +213,7 @@ void AttackPlayer::UpdatePlay()
 void AttackPlayer::UpdateGameOver()
 {
     Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, gameData_.padID_))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
     {
         pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
     }
@@ -475,8 +475,7 @@ void AttackPlayer::PlayerRevival()
 
 void AttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
-    transform_.position_.x = transform_.position_.x + _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
-    transform_.position_.z = transform_.position_.z + _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
+    PlayerBase::SetKnockback(_vecKnockbackDirection, _knockbackSpeed);
 }
 
 void AttackPlayer::IsMove()

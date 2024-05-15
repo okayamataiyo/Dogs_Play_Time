@@ -93,7 +93,7 @@ protected:
 		float jumpPower_;			//ジャンプの時の力
 		bool  isJump_;				//ジャンプしてるかしていないか
 		JumpData()
-			:gravity_{ 0.007f }, playerInitPosY_{}, positionY_{}, positionTempY_{ 0.0f }, positionPrevY_{ 0.0f }, jumpPower_{ 0.3f }, isJump_{ false }
+			:gravity_{ 0.007f }, playerInitPosY_{0.6f}, positionY_{}, positionTempY_{ 0.0f }, positionPrevY_{ 0.0f }, jumpPower_{ 0.3f }, isJump_{ false }
 		{
 
 		}
@@ -242,7 +242,7 @@ protected:
 
 	virtual void SetVecPos(XMVECTOR _vecMove) = 0;
 
-	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) = 0;
+	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f);
 
 	virtual bool GetIsMove() = 0;
 

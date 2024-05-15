@@ -20,7 +20,6 @@ void PlayerBase::Initialize()
 // 更新
 void PlayerBase::Update()
 {
-
     PlayerMove();
     PlayerJump();
     PlayerDive();
@@ -218,7 +217,7 @@ void PlayerBase::PlayerMove()
     dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
-    const float deadZone = 0.3f;			//コントローラーのデットゾーン
+    const float deadZone = 0.3f;		//コントローラーのデットゾーン
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
@@ -272,7 +271,7 @@ void PlayerBase::PlayerJumpPower()
     // ジャンプ時の力を計算する処理
     jumpData_.isJump_ = true;
     jumpData_.positionPrevY_ = jumpData_.positionY_;
-    jumpData_.positionY_ = jumpData_.positionY_ + jumpData_.jumpPower_;
+    jumpData_.positionY_ += + jumpData_.jumpPower_;
 }
 
 void PlayerBase::PlayerDive()
@@ -335,6 +334,8 @@ void PlayerBase::SetVecPos(XMVECTOR _vecMove)
 void PlayerBase::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
     // ノックバックの方向と速度を設定する処理
+    transform_.position_.x += _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
+    transform_.position_.z += _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
 }
 
 XMVECTOR PlayerBase::GetVecPos()
