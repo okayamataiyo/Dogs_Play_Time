@@ -105,15 +105,15 @@ void PlayScene::Update()
 	attackPlayerDirection_ = XMLoadFloat3(&attackPlayerPosition_) - Camera::VecGetPosition(pAttackPlayer_->GetPadID());
 	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, 0);	//y座標の初期化
 	attackPlayerDirection_ = XMVector3Normalize(attackPlayerDirection_);
-	attackPlayerPosition_.x = attackPlayerPosition_.x + woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
-	attackPlayerPosition_.z = attackPlayerPosition_.z + woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
+	attackPlayerPosition_.x += woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
+	attackPlayerPosition_.z += woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
 	//骨が収集側の犬の口にくるための計算
 	collectPlayerPosition_ = pCollectPlayer_->GetPosition();
 	collectPlayerDirection_ = XMLoadFloat3(&collectPlayerPosition_) - Camera::VecGetPosition(pCollectPlayer_->GetPadID());
 	collectPlayerDirection_ = XMVectorSetY(collectPlayerDirection_, 0);	//y座標の初期化
 	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
-	collectPlayerPosition_.x = collectPlayerPosition_.x + boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
-	collectPlayerPosition_.z = collectPlayerPosition_.z + boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
+	collectPlayerPosition_.x += boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
+	collectPlayerPosition_.z += boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
 	SetCursorPos(mousePosX_, mousePosY_);
 	HideCursor();
 	BoneSummons();
@@ -148,8 +148,14 @@ void PlayScene::BoneSummons()
 	float boneSummonsPosLimitMaxZ = 100.0f;
 	bool isCreateBone = false;     //骨を作ったかどうか
 
-	isCreateBone = (boneCount_ == boneCountNone) ? true : isCreateBone;
-	isCreateBone = (boneCount_ == boneCountMax) ? false : isCreateBone;
+	if (boneCount_ == boneCountNone)
+	{
+		isCreateBone = true;
+	}
+	if (boneCount_ == boneCountMax)
+	{
+		isCreateBone = false;
+	}
 
 	if (isCreateBone)
 	{

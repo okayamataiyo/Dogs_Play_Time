@@ -170,7 +170,7 @@ void PlayerBase::PlayerCamera()
             --floCameraLen;
         }
     }
-    vecDir = vecDir * (floLen + floCameraLen);
+    vecDir *= floLen + floCameraLen;
     vecDir += XMLoadFloat3(&transform_.position_);
     XMStoreFloat3(&floDir_, vecDir);
     Camera::SetPosition(floDir_, gameData_.padID_);
