@@ -229,6 +229,8 @@ protected:
 	virtual void PlayerRevival();
 
 	virtual void PlayerStun(int _timeLimit = 60) = 0;
+	
+	void ApplyMovement(float moveX, float moveZ);
 
 	virtual void IsMove();
 

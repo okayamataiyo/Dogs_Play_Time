@@ -18,7 +18,7 @@ Stage::~Stage()
 void Stage::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("Model&Picture/OldStage.fbx");
+    hModel_ = Model::Load("Model&Picture/NewStage.fbx");
     assert(hModel_ >= 0);
     //aaaaaaaaatransform_.position_.y = -10;
     //transform_.rotate_.x= 90;

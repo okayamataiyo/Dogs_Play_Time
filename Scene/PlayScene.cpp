@@ -103,9 +103,10 @@ void PlayScene::Update()
 	//木箱が邪魔側の犬の前にくるための計算
 	attackPlayerPosition_ = pAttackPlayer_->GetPosition();
 	attackPlayerDirection_ = XMLoadFloat3(&attackPlayerPosition_) - Camera::VecGetPosition(pAttackPlayer_->GetPadID());
-	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, 0);	//y座標の初期化
+	attackPlayerDirection_ = XMVectorSetY(attackPlayerDirection_, 0.0f);	//y座標の初期化
 	attackPlayerDirection_ = XMVector3Normalize(attackPlayerDirection_);
 	attackPlayerPosition_.x += woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
+	attackPlayerPosition_.y += -2.0f;
 	attackPlayerPosition_.z += woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
 	//骨が収集側の犬の口にくるための計算
 	collectPlayerPosition_ = pCollectPlayer_->GetPosition();
@@ -114,12 +115,12 @@ void PlayScene::Update()
 	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
 	collectPlayerPosition_.x += boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
 	collectPlayerPosition_.z += boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
-	SetCursorPos(mousePosX_, mousePosY_);
-	HideCursor();
+	//SetCursorPos(mousePosX_, mousePosY_);
+	//HideCursor();
 	BoneSummons();
 	if (woodBoxCount_ <= woodBoxCountMax_)
 	{
-		if (Input::IsPadButtonDown(XINPUT_GAMEPAD_Y,pAttackPlayer_->GetPadID()) && !pAttackPlayer_->GetIsJump())
+		if (Input::IsPadButtonDown(XINPUT_GAMEPAD_Y,pAttackPlayer_->GetPadID()) && pAttackPlayer_->GetIsJump())
 		{
 			XMFLOAT3 woodBoxRotate = {};
 			woodBoxRotate.y = pAttackPlayer_->GetAngle();

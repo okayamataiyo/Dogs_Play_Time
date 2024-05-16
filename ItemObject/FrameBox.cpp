@@ -45,7 +45,7 @@ void FrameBox::Draw()
 {
     Direct3D::SetShader(Direct3D::SHADER_UNLIT);
     Model::SetTransform(hModel_, transform_);
-    if (!pAttackPlayer_->GetIsJump())
+    if (pAttackPlayer_->GetIsJump())
     {
         Model::Draw(hModel_);
     }

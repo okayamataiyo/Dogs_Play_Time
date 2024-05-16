@@ -112,6 +112,7 @@ void AttackPlayer::Release()
 
 void AttackPlayer::UpdateReady()
 {
+    PlayerCamera();
     RayCastData stageDataDown;
     stageHModel_ = pStage_->GetModelHandle();         //ƒ‚ƒfƒ‹”Ô†‚ðŽæ“¾
     floorHModel_ = pFloor_->GetModelHandle();

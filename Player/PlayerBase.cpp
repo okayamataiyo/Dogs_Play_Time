@@ -218,32 +218,30 @@ void PlayerBase::PlayerMove()
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
     const float deadZone = 0.3f;		//コントローラーのデットゾーン
+    const float plusDir = 1.0f;
+    const float minusDir = -1.0f;
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
     if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
     {
-        transform_.position_.x += moveData_.padMoveSpeed_.x;
-        transform_.position_.z += moveData_.padMoveSpeed_.z;
+        ApplyMovement(plusDir, plusDir);
     }
     if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
     {
-        transform_.position_.x -= moveData_.padMoveSpeed_.x;
-        transform_.position_.z -= moveData_.padMoveSpeed_.z;
+        ApplyMovement(minusDir, minusDir);
     }
     if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        transform_.position_.x += moveData_.padMoveSpeed_.x;
-        transform_.position_.z += moveData_.padMoveSpeed_.z;
+        ApplyMovement(plusDir, plusDir);
     }
     if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        transform_.position_.x -= moveData_.padMoveSpeed_.x;
-        transform_.position_.z -= moveData_.padMoveSpeed_.z;
+        ApplyMovement(minusDir, minusDir);
     }
 
     const float outerWallPosFront = 99.0f;		//前の外壁の位置
@@ -271,7 +269,7 @@ void PlayerBase::PlayerJumpPower()
     // ジャンプ時の力を計算する処理
     jumpData_.isJump_ = true;
     jumpData_.positionPrevY_ = jumpData_.positionY_;
-    jumpData_.positionY_ += + jumpData_.jumpPower_;
+    jumpData_.positionY_ += jumpData_.jumpPower_;
 }
 
 void PlayerBase::PlayerDive()
@@ -324,6 +322,12 @@ void PlayerBase::PlayerStun(int _timeLimit)
     // スタンの処理
     stunData_.isStun_ = true;
     stunData_.stunLimit_ = _timeLimit;
+}
+
+void PlayerBase::ApplyMovement(float moveX, float moveZ)
+{
+    transform_.position_.x += moveX * moveData_.padMoveSpeed_.x;
+    transform_.position_.z += moveZ * moveData_.padMoveSpeed_.z;
 }
 
 void PlayerBase::SetVecPos(XMVECTOR _vecMove)

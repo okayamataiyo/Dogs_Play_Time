@@ -13,8 +13,8 @@
 
 WoodBox::WoodBox(GameObject* _pParent)
     :ItemObjectBase(_pParent, woodBoxName), hModel_{ -1 }, hSound_{ -1 },soundVolume_{0.3f}
-    , isBreak_{ false }, woodBoxs_{}, gravity_{ 0.007f },woodBoxInitposY_{0.6f}, positionY_{0.0f}, positionPrevY_{0.0f}, positionTempY_{0.0f}
-    , isJump_{ false },isOnWoodBox_ {false}, rayWoodBoxDist_{ 0.0f }, rayStageDistDown_{ 0.0f }, isFling_{ 0.6f }
+    , isBreak_{ false }, woodBoxs_{}, gravity_{ 0.007f },woodBoxInitposY_{1.2f}, positionY_{0.0f}, positionPrevY_{0.0f}, positionTempY_{0.0f}
+    , isJump_{ false },isOnWoodBox_ {false}, rayWoodBoxDist_{ 0.0f }, rayStageDistDown_{ 0.0f }, isFling_{ 1.1f }
     ,pParent_{nullptr},pPlayScene_{nullptr}, pAttackPlayer_{ nullptr },pCollision_{nullptr}
 {
     pParent_ = _pParent;
@@ -35,20 +35,21 @@ void WoodBox::Initialize()
     std::string modelName = modelFolderName + woodBoxName + modelModifierName;
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= initZeroInt);
-    pCollision_ = new SphereCollider(initZeroXMFLOAT3, 3.0f);
+    XMFLOAT3 collisionPos = XMFLOAT3(0.0f,2.5f,0.0f);
+    pCollision_ = new SphereCollider(collisionPos, 3.0f);
     AddCollider(pCollision_);
     pPlayScene_ = (PlayScene*)FindObject(playSceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
-    positionY_ = transform_.position_.y;
 }
 
 void WoodBox::Update()
 {
-    transform_.position_.y = positionY_;
+    positionY_ = transform_.position_.y;
     woodBoxs_ = pPlayScene_->GetWoodBoxs();
-    WoodBoxFall();
     WoodBoxMove();
+    WoodBoxFall();
     WoodBoxRayCast();
+    //transform_.position_.y = positionY_;
     if (isBreak_)
     {
         WoodBoxDeath();
@@ -75,7 +76,7 @@ void WoodBox::WoodBoxFall()
         positionTempY_ = positionY_;
         positionY_ += (positionY_ - positionPrevY_) - gravity_;
         positionPrevY_ = positionTempY_;
-        if (isFling_ <= -rayStageDistDown_)
+        if (isFling_ >= rayStageDistDown_)
         {
             isJump_ = false;
         }
@@ -100,22 +101,19 @@ void WoodBox::WoodBoxRayCast()
     stageDataDown.start = transform_.position_;         //レイの発射位置
     XMStoreFloat3(&stageDataDown.dir, vecDown);         //レイの方向
     Model::RayCast(stageHModel, &stageDataDown);        //レイを発射
-    rayStageDistDown_ = stageDataDown.dist + woodBoxInitposY_;
-
+    rayStageDistDown_ = stageDataDown.dist;
     if (rayStageDistDown_ <= isFling_)
     {
-        if (!isJump_ && !isOnWoodBox_)
+        if (!isJump_)
         {
-            //positionY_ += -rayStageDistDown_;  //地面の張り付き
-            //positionTempY_ = positionY_;
-            //positionPrevY_ = positionTempY_;
+            //positionY_ += woodBoxInitposY_;
         }
     }
-    if(rayStageDistDown_ >= isFling_ && !isOnWoodBox_)
+
+    if(isFling_ <= rayStageDistDown_ && !isOnWoodBox_)
     {
-        isJump_ = true;
+        //isJump_ = true;
     }
-    positionY_ = transform_.position_.y;
 }
 
 void WoodBox::WoodBoxDeath()

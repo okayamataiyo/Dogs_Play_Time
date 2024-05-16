@@ -117,6 +117,7 @@ void CollectPlayer::Release()
 
 void CollectPlayer::UpdateReady()
 {
+    PlayerCamera();
     RayCastData stageDataDown;
     stageHModel_ = pStage_->GetModelHandle();         //ƒ‚ƒfƒ‹”Ô†‚ðŽæ“¾
     floorHModel_ = pFloor_->GetModelHandle();
