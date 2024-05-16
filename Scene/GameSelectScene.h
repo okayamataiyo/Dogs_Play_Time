@@ -34,5 +34,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+	void ShowCursor() { while (::ShowCursor(true) < 0); }
 };
 

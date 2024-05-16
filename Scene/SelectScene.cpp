@@ -55,9 +55,7 @@ void SelectScene::Initialize()
 void SelectScene::Update()
 {
 	Camera::SetPosition(camPos_, attackOrCollect_);
-	//Camera::SetTarget(pSolidText_->GetPosition(), attackPlayerNumber);
 	Camera::SetPosition(camPos_, attackOrCollectInverse_);
-	//Camera::SetTarget(pSolidText_->GetPosition(), collectPlayerNumber);
 
 	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
 	const XMFLOAT3 defaultScale = { 0.8f,0.8f,0.8f };
@@ -147,12 +145,10 @@ void SelectScene::Update()
 	if (isViewPicture_)
 	{
 		pSky_->SetPosition(skyPosFly_);
-		//pSolidText_->SetPosition(skyPosFly_);
 	}
 	else
 	{
 		pSky_->SetPosition(skyPos_);
-		//pSolidText_->SetPosition(skyPos_);
 	}
 
 }
