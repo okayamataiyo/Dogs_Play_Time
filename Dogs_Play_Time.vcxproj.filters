@@ -210,6 +210,9 @@
     <ClCompile Include="State\CollectPlayerState.cpp">
       <Filter>State</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\GameSelectScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -389,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="State\CollectPlayerState.h">
       <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameSelectScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

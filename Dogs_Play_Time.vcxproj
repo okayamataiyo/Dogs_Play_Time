@@ -175,6 +175,7 @@
     <ClCompile Include="Player\CollectPlayer.cpp" />
     <ClCompile Include="Player\PlayerBase.cpp" />
     <ClCompile Include="Scene\GameOverScene.cpp" />
+    <ClCompile Include="Scene\GameSelectScene.cpp" />
     <ClCompile Include="Scene\GameTitleScene.cpp" />
     <ClCompile Include="Scene\PlayScene.cpp" />
     <ClCompile Include="Scene\SelectScene.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Player\CollectPlayer.h" />
     <ClInclude Include="Player\PlayerBase.h" />
     <ClInclude Include="Scene\GameOverScene.h" />
+    <ClInclude Include="Scene\GameSelectScene.h" />
     <ClInclude Include="Scene\GameTitleScene.h" />
     <ClInclude Include="Scene\PlayScene.h" />
     <ClInclude Include="Scene\SelectScene.h" />
