@@ -44,12 +44,12 @@ void WoodBox::Initialize()
 
 void WoodBox::Update()
 {
-    positionY_ = transform_.position_.y;
+
     woodBoxs_ = pPlayScene_->GetWoodBoxs();
     WoodBoxMove();
     WoodBoxFall();
     WoodBoxRayCast();
-    //transform_.position_.y = positionY_;
+    transform_.position_.y = positionY_;
     if (isBreak_)
     {
         WoodBoxDeath();
@@ -109,10 +109,13 @@ void WoodBox::WoodBoxRayCast()
             //positionY_ += woodBoxInitposY_;
         }
     }
-
-    if(isFling_ <= rayStageDistDown_ && !isOnWoodBox_)
+    if (rayStageDistDown_ == 99999.0f)
     {
-        //isJump_ = true;
+        rayStageDistDown_ = 0;
+    }
+    if(isFling_ <= rayStageDistDown_ && !isOnWoodBox_)// && stageDataDown.hit)
+    {
+        isJump_ = true;
     }
 }
 

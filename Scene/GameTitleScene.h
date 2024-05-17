@@ -19,6 +19,7 @@ private:
 	int hSound_;
 	float soundVolume_;
 	XMFLOAT3 camPos_;
+	XMFLOAT3 camTar_;
 	SolidText* pSolidText_;
 	StageObjectManager* pStageObjectManager_;
 	SceneManager* pSceneManager_;

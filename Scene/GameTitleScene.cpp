@@ -24,10 +24,9 @@ void GameTitleScene::Initialize()
 	std::string soundName = soundFolderName + soundGameTitleSceneName + soundModifierName;
 	hSound_ = Audio::Load(soundName);
 	assert(hSound_ >= 0);
-	//Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFTVIEW);
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode(2);
-	XMFLOAT3 positionStage = { 0.0f,0.0f,120.0f };
+	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
 	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);
@@ -35,15 +34,19 @@ void GameTitleScene::Initialize()
 	camPos_ = pSolidText_->GetPosition();
 	camPos_.y += 2;
 	camPos_.z -= 15;
+	camTar_ = pSolidText_->GetPosition();
+	camTar_.y += 2;
 }
 
 void GameTitleScene::Update()
 {
 	Audio::Play(hSound_, soundVolume_);
+
+
 	Camera::SetPosition(camPos_, (int)PADIDSTATE::SECONDS);
-	Camera::SetTarget(pSolidText_->GetPosition(), (int)PADIDSTATE::SECONDS);
+	Camera::SetTarget(camTar_, (int)PADIDSTATE::SECONDS);
 	Camera::SetPosition(camPos_, (int)PADIDSTATE::FIRST);
-	Camera::SetTarget(pSolidText_->GetPosition(), (int)PADIDSTATE::FIRST);
+	Camera::SetTarget(camTar_, (int)PADIDSTATE::FIRST);
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A,(int)PADIDSTATE::FIRST))
 	{
 		pSceneManager_->ChangeScene(SCENE_ID_SELECT);

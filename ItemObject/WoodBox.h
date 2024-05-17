@@ -41,6 +41,7 @@ private:
     float isFling_;
 
 
+
     GameObject* pParent_;
     PlayScene* pPlayScene_;
     AttackPlayer* pAttackPlayer_;

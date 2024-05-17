@@ -17,6 +17,7 @@ void SolidText::Initialize()
 		hModel_[i] = Model::Load(modelName);
 	}
 	transform_.rotate_.y = SetRotateInitialize_;
+	transform_.scale_ = { 0.6f,0.6f,0.6f };
 }
 
 void SolidText::Update()
@@ -32,10 +33,8 @@ void SolidText::Draw()
 		Model::Draw(hModel_[static_cast<int>(TEXTSTATE::GAMEOVER)]);
 		break;
 	case TEXTSTATE::SELECT:
-		Direct3D::SetShader(Direct3D::SHADER_CULLNONEBOARD);
 		Model::SetTransform(hModel_[static_cast<int>(TEXTSTATE::SELECT)], transform_);
 		Model::Draw(hModel_[static_cast<int>(TEXTSTATE::SELECT)]);
-		Direct3D::SetShader(Direct3D::SHADER_3D);
 		break;
 	case TEXTSTATE::GAMETITLE:
 		Model::SetTransform(hModel_[static_cast<int>(TEXTSTATE::GAMETITLE)], transform_);
