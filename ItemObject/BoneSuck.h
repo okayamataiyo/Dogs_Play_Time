@@ -2,7 +2,7 @@
 //インクルード
 #include "ItemObjectBase.h"
 
-class PlayScene;
+class Dogs_Walk_PlayScene;
 class SphereCollider;
 class Stage;
 class CollectPlayer;
@@ -27,7 +27,7 @@ protected:
 	int killTimeWait_;
 	int killTimeMax_;
 	XMFLOAT3 pickUpBoneSuckScale_;
-	PlayScene* pPlayScene_;
+	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	SphereCollider* pCollision_;
 	Stage* pStage_;
 	CollectPlayer* pCollectPlayer_;

@@ -4,14 +4,14 @@
 #include "../Engine/Global.h"
 #include "../Player/PlayerBase.h"
 #include "../Player/CollectPlayer.h"
-#include "../Scene/PlayScene.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../StageObject/Stage.h"
 #include "BoneSuck.h"
 #include "Bone.h"
 BoneSuck::BoneSuck(GameObject* _parent)
 	:ItemObjectBase(_parent, boneSuckName), hModel_{ -1 }, rayDist_{ 0.0f }, positionRotate_{ 1.0f }
 	, BoneSuckInitPosY_{ 0.6f },killTime_{9999},killTimeWait_{30},killTimeMax_{9999}, pickUpBoneSuckScale_{0.2f,0.2f,0.2f}
-	, pPlayScene_{ nullptr }, pCollision_{ nullptr }, pStage_{ nullptr }, pCollectPlayer_{ nullptr },pBone_{nullptr}
+	, pDogs_Walk_PlayScene_{ nullptr }, pCollision_{ nullptr }, pStage_{ nullptr }, pCollectPlayer_{ nullptr },pBone_{nullptr}
 {
 }
 
@@ -25,7 +25,7 @@ void BoneSuck::Initialize()
 	std::string ModelName = modelFolderName + boneSuckName + modelModifierName;
 	hModel_ = Model::Load(ModelName);
 	assert(hModel_ >= initZeroInt);
-	pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+	pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
 	pBone_ = (Bone*)FindObject(boneName);
 	transform_.scale_ = { 0.5,0.5,0.5 };

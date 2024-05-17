@@ -3,7 +3,7 @@
 #include "../Engine/Model.h"
 #include "../Engine/Input.h"
 #include "../Engine/ImGui/imgui.h"
-#include "../Scene/PlayScene.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../StageObject/Stage.h"
 #include "ActorAttackPlayer.h"
 #include "AttackPlayer.h"
@@ -11,7 +11,7 @@
 
 ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, actorAttackPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMESTATE::READY}
-    ,pPlayScene_{nullptr},pStage_{nullptr}
+    ,pDogs_Walk_PlayScene_{nullptr},pStage_{nullptr}
 {
     //¥UI‚ÉŠÖ‚·‚éŠî’êƒNƒ‰ƒXƒƒ“ƒo•Ï”
     drawScoreTextX_ = 30;
@@ -32,7 +32,7 @@ void ActorAttackPlayer::Initialize()
     assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
-    pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+    pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);
 }
 
@@ -67,6 +67,11 @@ void ActorAttackPlayer::Update()
         PlayerRayCast();
     }
     transform_.position_.y = jumpData_.positionY_;
+    IsMove();
+    IsJump();
+    IsRun();
+    IsStun();
+    IsDive();
 }
 
 void ActorAttackPlayer::PlayerStun(int _timeLimit)

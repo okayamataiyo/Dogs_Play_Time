@@ -7,7 +7,7 @@
 
 namespace
 {
-    std::string soundPlaySceneNames[] =
+    std::string soundDogs_Walk_PlaySceneNames[] =
     {
         "BGM",
         "LastBGM",
@@ -15,7 +15,7 @@ namespace
         "GameStop",
     };
 
-    std::string playSceneName = "PlayScene";
+    std::string Dogs_Walk_PlaySceneName = "Dogs_Walk_PlayScene";
 }
 
 class SceneManager;
@@ -27,7 +27,7 @@ class StageObjectManager;
 /// <summary>
 /// 遊べるシーン
 /// </summary>
-class PlayScene : public GameObject
+class Dogs_Walk_PlayScene : public GameObject
 {
 private:
 
@@ -110,7 +110,7 @@ public:
     /// コンストラクタ
     /// </summary>
     /// <param name="pParent">親オブジェクト</param>
-    PlayScene(GameObject* _pParent);
+    Dogs_Walk_PlayScene(GameObject* _pParent);
     void Initialize() override;
     void Update() override;
     void Draw() override;

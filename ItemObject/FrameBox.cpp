@@ -14,7 +14,7 @@
 FrameBox::FrameBox(GameObject* _pParent)
     :ItemObjectBase(_pParent, frameBoxName), hModel_{ -1 }, isBreak_{false}
     , frameBoxInitPosY_{2.0f}
-    , pAttackPlayer_{nullptr},pPlayScene_{nullptr}
+    , pAttackPlayer_{nullptr},pDogs_Walk_PlayScene_{nullptr}
 {
 }
 
@@ -30,13 +30,13 @@ void FrameBox::Initialize()
     modelName = debugCollisionName + boxColliderName + modelModifierName;
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= initZeroInt);
-    pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+    pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 }
 
 void FrameBox::Update()
 {
-    transform_.position_ = pPlayScene_->GetAttackPlayerPosition();
+    transform_.position_ = pDogs_Walk_PlayScene_->GetAttackPlayerPosition();
     transform_.position_.y = transform_.position_.y + frameBoxInitPosY_;
     transform_.rotate_.y = pAttackPlayer_->GetAngle();
 }

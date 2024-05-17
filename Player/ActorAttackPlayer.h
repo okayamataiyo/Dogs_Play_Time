@@ -3,7 +3,7 @@
 #include "../Engine/GameObject.h"
 #include "PlayerBase.h"
 
-class PlayScene;
+class Dogs_Walk_PlayScene;
 class Stage;
 
 namespace
@@ -18,7 +18,7 @@ private:
 	int stageHModel_;
 	bool isSelect_;		//セレクトシーンで呼ばれているかどうか
 	GAMESTATE gameState_;
-	PlayScene* pPlayScene_;
+	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	Stage* pStage_;
 public:
 

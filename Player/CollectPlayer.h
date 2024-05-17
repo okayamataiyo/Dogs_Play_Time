@@ -3,7 +3,7 @@
 #include "../Engine/GameObject.h"
 #include "PlayerBase.h"
 
-class PlayScene;
+class Dogs_Walk_PlayScene;
 class AttackPlayer;
 class SphereCollider;
 class WoodBox;
@@ -62,7 +62,7 @@ private:
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
-	PlayScene* pPlayScene_;
+	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	AttackPlayer* pAttackPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;

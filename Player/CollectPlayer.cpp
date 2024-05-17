@@ -24,7 +24,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
     , decBoneCount_{ -1 }, isBoneDeath_{ false }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
     , gameState_{GAMESTATE::READY}
-    , pParent_{ nullptr }, pPlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
+    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
@@ -61,11 +61,11 @@ void CollectPlayer::Initialize()
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
-    pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+    pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);      //ステージオブジェクト
     pStageBlock_ = (StageBlock*)FindObject(stageBlockName);
     pFloor_ = (Floor*)FindObject(floorName);
-    pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
+    pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
     pStateManager_ = new StateManager(this);
     pStateManager_->AddState("WalkState", new CollectPlayerWalkState(pStateManager_));
     pStateManager_->AddState("WaitState", new CollectPlayerWaitState(pStateManager_));
@@ -145,7 +145,7 @@ void CollectPlayer::UpdatePlay()
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_D))
     {
-        pPlayScene_->SetGameStop();
+        pDogs_Walk_PlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
     //落ちた時の処理
@@ -187,7 +187,7 @@ void CollectPlayer::UpdatePlay()
     }
     if (gameData_.score_ >= gameData_.scoreMax_)
     {
-        pPlayScene_->SetGameStop();
+        pDogs_Walk_PlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
     if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
@@ -216,7 +216,7 @@ void CollectPlayer::UpdatePlay()
     if (killTime_ <= initZeroInt && isBoneTatch_)
     {
         gameData_.score_ += gameData_.scoreAmount_;
-        pPlayScene_->AddBoneCount(decBoneCount_);
+        pDogs_Walk_PlayScene_->AddBoneCount(decBoneCount_);
         isBoneDeath_ = true;
         isBoneTatch_ = false;
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
@@ -276,7 +276,7 @@ void CollectPlayer::PlayerStun(int _timeLimit)
 
 void CollectPlayer::OnCollision(GameObject* _pTarget)
 {
-    std::vector<int> woodBoxs = pPlayScene_->GetWoodBoxs();
+    std::vector<int> woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     woodBoxData_.woodBoxNumber_ = woodBoxName + std::to_string(number_);
     if (_pTarget->GetObjectName() == woodBoxData_.woodBoxNumber_)
     {
@@ -290,7 +290,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            pPlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+            pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
 
         }
     }

@@ -2,7 +2,7 @@
 //インクルード
 #include "ItemObjectBase.h"
 
-class PlayScene;
+class Dogs_Walk_PlayScene;
 class SphereCollider;
 class Stage;
 class CollectPlayer;
@@ -23,7 +23,7 @@ protected:
 	float positionRotate_;
 	float boneInitPosY_;
 	XMFLOAT3 pickUpBoneScale_;
-	PlayScene* pPlayScene_;
+	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	SphereCollider* pCollision_;
 	Stage* pStage_;
 	CollectPlayer* pCollectPlayer_;

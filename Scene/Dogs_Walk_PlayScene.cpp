@@ -11,10 +11,10 @@
 #include "../ItemObject/BoneSuck.h"
 #include "../ItemObject/Bone.h"
 #include "../StageObject/StageObjectManager.h"
-#include "PlayScene.h"
+#include "Dogs_Walk_PlayScene.h"
 
-PlayScene::PlayScene(GameObject* _pParent)
-	:GameObject(_pParent, playSceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
+Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
+	:GameObject(_pParent, Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
 	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
 	, woodBoxCountMax_{5}
 	, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}
@@ -26,16 +26,16 @@ PlayScene::PlayScene(GameObject* _pParent)
 
 }
 
-void PlayScene::Initialize()
+void Dogs_Walk_PlayScene::Initialize()
 {
 	//▼INIファイルからデータのロード
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
 	//▼サウンドデータのロード
 	std::string soundName;
-	for (int i = 0u; i < sizeof(soundPlaySceneNames) / sizeof(soundPlaySceneNames[initZeroInt]); i++)
+	for (int i = 0u; i < sizeof(soundDogs_Walk_PlaySceneNames) / sizeof(soundDogs_Walk_PlaySceneNames[initZeroInt]); i++)
 	{
-		soundName = soundFolderName + soundPlaySceneNames[i] + soundModifierName;
+		soundName = soundFolderName + soundDogs_Walk_PlaySceneNames[i] + soundModifierName;
 		hSound_[i] = Audio::Load(soundName);
 		assert(hSound_[i] >= 0u);
 	}
@@ -89,7 +89,7 @@ void PlayScene::Initialize()
 	random_value_ = dis(gen);
 }
 
-void PlayScene::Update()
+void Dogs_Walk_PlayScene::Update()
 {
 	if((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
@@ -130,15 +130,15 @@ void PlayScene::Update()
 	}
 }
 
-void PlayScene::Draw()
+void Dogs_Walk_PlayScene::Draw()
 {
 }
 
-void PlayScene::Release()
+void Dogs_Walk_PlayScene::Release()
 {
 }
 
-void PlayScene::BoneSummons()
+void Dogs_Walk_PlayScene::BoneSummons()
 {
 	int boneCountNone = 0;
 	int boneCountMax = 3;
@@ -168,7 +168,7 @@ void PlayScene::BoneSummons()
 	}
 }
 
-void PlayScene::SetGameStop()
+void Dogs_Walk_PlayScene::SetGameStop()
 {
 	isGameStop_ = true;
 	Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);

@@ -1,6 +1,6 @@
 #include "sceneManager.h"
 
-#include "../Scene/PlayScene.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/GameOverScene.h"
 #include "../Scene/SelectScene.h"
 #include "../Scene/GameTitleScene.h"
@@ -41,7 +41,7 @@ void SceneManager::Update()
 		//Ÿ‚ÌƒV[ƒ“‚ğì¬
 		switch (nextSceneID_)
 		{
-		case SCENE_ID_PLAY: Instantiate<PlayScene>(this); break;
+		case SCENE_ID_DOGS_WALK_PLAY: Instantiate<Dogs_Walk_PlayScene>(this); break;
 		case SCENE_ID_GAMEOVER:Instantiate<GameOverScene>(this); break;
 		case SCENE_ID_SELECT: Instantiate<SelectScene>(this); break;
 		case SCENE_ID_GAMETITLE: Instantiate<GameTitleScene>(this); break;

@@ -4,7 +4,7 @@
 #include "../Engine/Global.h"
 #include "../Player/PlayerBase.h"
 #include "../Player/CollectPlayer.h"
-#include "../Scene/PlayScene.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../StageObject/Stage.h"
 #include "BoneSuck.h"
 #include "Bone.h"
@@ -12,7 +12,7 @@
 Bone::Bone(GameObject* _parent)
 	:ItemObjectBase(_parent, boneName), hModel_{-1},rayDist_{0.0f},positionRotate_{1.0f}
 	, boneInitPosY_{ 1.0f },pickUpBoneScale_{0.2f,0.2f,0.2f}
-	,pPlayScene_{nullptr},pCollision_{nullptr},pStage_{nullptr},pCollectPlayer_{nullptr}
+	,pDogs_Walk_PlayScene_{nullptr},pCollision_{nullptr},pStage_{nullptr},pCollectPlayer_{nullptr}
 {
 }
 
@@ -30,7 +30,7 @@ void Bone::Initialize()
 
 	pCollision_ = new SphereCollider(initZeroXMFLOAT3, 1.0f);
 	AddCollider(pCollision_);
-	pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+	pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
 	transform_.scale_ = { 0.7f,0.7f,0.7f };
 	transform_.position_ = { 10.0,0.0,0.0 };
@@ -74,7 +74,7 @@ void Bone::OnCollision(GameObject* _pTarget)
 {
 	if(_pTarget->GetObjectName() == collectPlayerName)
 	{
-		Instantiate<BoneSuck>(pPlayScene_);
+		Instantiate<BoneSuck>(pDogs_Walk_PlayScene_);
 		BoneDeath();
 	}
 }

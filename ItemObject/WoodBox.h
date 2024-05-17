@@ -2,7 +2,7 @@
 //インクルード
 #include <string>
 #include "../Engine/Direct3D.h"
-#include "../Scene/PlayScene.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "ItemObjectBase.h"
 
 namespace
@@ -12,7 +12,6 @@ namespace
 }
 
 class GameObject;
-class PlayScene;
 class AttackPlayer;
 class SphereCollider;
 
@@ -43,7 +42,7 @@ private:
 
 
     GameObject* pParent_;
-    PlayScene* pPlayScene_;
+    Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
     AttackPlayer* pAttackPlayer_;
     SphereCollider* pCollision_;
 

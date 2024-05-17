@@ -7,7 +7,6 @@
 #include "../Engine/Audio.h"
 #include "../Engine/SceneManager.h"
 #include "../Engine/Global.h"
-#include "../Engine/SceneManager.h"
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/ItemObjectManager.h"
@@ -21,7 +20,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{0}, floorHModel_{0}
     , number_{ 0 },  scoreTimeCounter_{ 0 }, scoreTimeCounterWait_{ 1 }
     , gameState_{ GAMESTATE::READY }
-    , pParent_{ nullptr }, pPlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
+    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pFloor_{ nullptr }, pSceneManager_{ nullptr }, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
@@ -57,10 +56,10 @@ void AttackPlayer::Initialize()
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
-    pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+    pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);
     pFloor_ = (Floor*)FindObject(floorName);
-    pItemObjectManager_ = pPlayScene_->GetItemObjectManager();
+    pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
     pStateManager_ = new StateManager(this);
     pStateManager_->AddState("WalkState", new AttackPlayerWalkState(pStateManager_));
     pStateManager_->AddState("WaitState", new AttackPlayerWaitState(pStateManager_));
@@ -140,7 +139,7 @@ void AttackPlayer::UpdatePlay()
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_A))
     {
-        pPlayScene_->SetGameStop();
+        pDogs_Walk_PlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
     //落ちた時の処理
@@ -187,7 +186,7 @@ void AttackPlayer::UpdatePlay()
     }
     if (gameData_.score_ >= gameData_.scoreMax_)
     {
-        pPlayScene_->SetGameStop();
+        pDogs_Walk_PlayScene_->SetGameStop();
         gameState_ = GAMESTATE::GAMEOVER;
     }
     if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
@@ -257,7 +256,7 @@ void AttackPlayer::PlayerStun(int _timeLimit)
 
 void AttackPlayer::OnCollision(GameObject* _pTarget)
 {
-    std::vector<int> woodBoxs = pPlayScene_->GetWoodBoxs();
+    std::vector<int> woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     woodBoxData_.woodBoxNumber_ = woodBoxName + std::to_string(number_);
     if (_pTarget->GetObjectName() == woodBoxData_.woodBoxNumber_)
     {
@@ -271,7 +270,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            pPlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+            pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
         }
     }
     //WoodBoxという名前を持つ全てのオブジェクトを参照

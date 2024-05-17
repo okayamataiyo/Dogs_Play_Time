@@ -15,7 +15,7 @@ WoodBox::WoodBox(GameObject* _pParent)
     :ItemObjectBase(_pParent, woodBoxName), hModel_{ -1 }, hSound_{ -1 },soundVolume_{0.3f}
     , isBreak_{ false }, woodBoxs_{}, gravity_{ 0.007f },woodBoxInitposY_{1.2f}, positionY_{0.0f}, positionPrevY_{0.0f}, positionTempY_{0.0f}
     , isJump_{ false },isOnWoodBox_ {false}, rayWoodBoxDist_{ 0.0f }, rayStageDistDown_{ 0.0f }, isFling_{ 1.1f }
-    ,pParent_{nullptr},pPlayScene_{nullptr}, pAttackPlayer_{ nullptr },pCollision_{nullptr}
+    ,pParent_{nullptr},pDogs_Walk_PlayScene_{nullptr}, pAttackPlayer_{ nullptr },pCollision_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -38,14 +38,14 @@ void WoodBox::Initialize()
     XMFLOAT3 collisionPos = XMFLOAT3(0.0f,2.5f,0.0f);
     pCollision_ = new SphereCollider(collisionPos, 3.0f);
     AddCollider(pCollision_);
-    pPlayScene_ = (PlayScene*)FindObject(playSceneName);
+    pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 }
 
 void WoodBox::Update()
 {
 
-    woodBoxs_ = pPlayScene_->GetWoodBoxs();
+    woodBoxs_ = pDogs_Walk_PlayScene_->GetWoodBoxs();
     WoodBoxMove();
     WoodBoxFall();
     WoodBoxRayCast();
