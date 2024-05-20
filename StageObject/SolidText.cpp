@@ -3,7 +3,7 @@
 #include "SolidText.h"
 
 SolidText::SolidText(GameObject* _pParent)
-	:GameObject(_pParent, solidTextName), hModel_{ -1,-1, -1 },textState_{TEXTSTATE::SELECT}, SetRotateInitialize_{180}
+	:GameObject(_pParent, solidTextName), hModel_{ -1,-1, -1 },textState_{TEXTSTATE::SELECT}
 {
 }
 
@@ -16,7 +16,7 @@ void SolidText::Initialize()
 		modelName = modelFolderName + solidTextModelNames[i] + modelModifierName;
 		hModel_[i] = Model::Load(modelName);
 	}
-	transform_.rotate_.y = SetRotateInitialize_;
+	transform_.rotate_.y = 180;
 	transform_.scale_ = { 0.6f,0.6f,0.6f };
 }
 
@@ -29,16 +29,20 @@ void SolidText::Draw()
 	switch (textState_)
 	{
 	case TEXTSTATE::GAMEOVER: 
-		Model::SetTransform(hModel_[static_cast<int>(TEXTSTATE::GAMEOVER)], transform_);
-		Model::Draw(hModel_[static_cast<int>(TEXTSTATE::GAMEOVER)]);
+		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMEOVER)], transform_);
+		Model::Draw(hModel_[(int)(TEXTSTATE::GAMEOVER)]);
+		break;
+	case TEXTSTATE::GAMESELECT:
+		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMESELECT)], transform_);
+		Model::Draw(hModel_[(int)(TEXTSTATE::GAMESELECT)]);
 		break;
 	case TEXTSTATE::SELECT:
-		Model::SetTransform(hModel_[static_cast<int>(TEXTSTATE::SELECT)], transform_);
-		Model::Draw(hModel_[static_cast<int>(TEXTSTATE::SELECT)]);
+		Model::SetTransform(hModel_[(int)(TEXTSTATE::SELECT)], transform_);
+		Model::Draw(hModel_[(int)(TEXTSTATE::SELECT)]);
 		break;
 	case TEXTSTATE::GAMETITLE:
-		Model::SetTransform(hModel_[static_cast<int>(TEXTSTATE::GAMETITLE)], transform_);
-		Model::Draw(hModel_[static_cast<int>(TEXTSTATE::GAMETITLE)]);
+		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMETITLE)], transform_);
+		Model::Draw(hModel_[(int)(TEXTSTATE::GAMETITLE)]);
 	}
 }
 
@@ -48,5 +52,5 @@ void SolidText::Release()
 
 void SolidText::SetMode(int _mode)
 {
-	textState_ = static_cast<TEXTSTATE>(_mode);
+	textState_ = (TEXTSTATE)(_mode);
 }

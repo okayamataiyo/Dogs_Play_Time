@@ -4,6 +4,7 @@
 #include "../Engine/Input.h"
 #include "../Engine/ImGui/imgui.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
+#include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../StageObject/Stage.h"
 #include "ActorAttackPlayer.h"
 #include "AttackPlayer.h"

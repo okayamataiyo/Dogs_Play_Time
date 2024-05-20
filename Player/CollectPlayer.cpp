@@ -17,6 +17,8 @@
 #include "../StageObject/StageBlock.h"
 #include "../State/StateManager.h"
 #include "../State/CollectPlayerState.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
+#include "../Scene/Dogs_Fight_PlayScene.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
@@ -62,6 +64,7 @@ void CollectPlayer::Initialize()
     AddCollider(pCollision_);
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
+    pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);      //ステージオブジェクト
     pStageBlock_ = (StageBlock*)FindObject(stageBlockName);
     pFloor_ = (Floor*)FindObject(floorName);

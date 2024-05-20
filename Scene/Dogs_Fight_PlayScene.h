@@ -1,13 +1,12 @@
 #pragma once
 //インクルード
-#include <vector>
 #include "../Engine/GameObject.h"
 #include "../Engine/Camera.h"
 #include "../ItemObject/ItemObjectManager.h"
 
 namespace
 {
-    std::string soundDogs_Walk_PlaySceneNames[] =
+    std::string soundDogs_Fight_PlaySceneNames[] =
     {
         "BGM",
         "LastBGM",
@@ -15,7 +14,7 @@ namespace
         "GameStop",
     };
 
-    std::string Dogs_Walk_PlaySceneName = "Dogs_Walk_PlayScene";
+    std::string Dogs_Fight_PlaySceneName = "Dogs_Fight_PlayScene";
 }
 
 class SceneManager;
@@ -25,9 +24,9 @@ class ItemObjectManager;
 class StageObjectManager;
 
 /// <summary>
-/// 骨一つ型プレイシーン
+/// 骨沢山型プレイシーン
 /// </summary>
-class Dogs_Walk_PlayScene : public GameObject
+class Dogs_Fight_PlayScene : public GameObject
 {
 private:
 
@@ -47,6 +46,7 @@ private:
         THIRD,
         FOUR,
     };
+
     int attackOrCollect_;
     int attackOrCollectInverse_;
     int stageBlockNum_;             //ステージブロックの数
@@ -105,12 +105,13 @@ private:
     CollectPlayer* pCollectPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
+
 public:
     /// <summary>
     /// コンストラクタ
     /// </summary>
     /// <param name="pParent">親オブジェクト</param>
-    Dogs_Walk_PlayScene(GameObject* _pParent);
+    Dogs_Fight_PlayScene(GameObject* _pParent);
     void Initialize() override;
     void Update() override;
     void Draw() override;

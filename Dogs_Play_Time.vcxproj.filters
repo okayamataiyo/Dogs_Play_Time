@@ -147,9 +147,6 @@
     <ClCompile Include="Scene\GameTitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\PlayScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SelectScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -211,6 +208,12 @@
       <Filter>State</Filter>
     </ClCompile>
     <ClCompile Include="Scene\GameSelectScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Dogs_Fight_PlayScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Dogs_Walk_PlayScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -321,9 +324,6 @@
     <ClInclude Include="Scene\GameTitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\PlayScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SelectScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -394,6 +394,12 @@
       <Filter>State</Filter>
     </ClInclude>
     <ClInclude Include="Scene\GameSelectScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Dogs_Fight_PlayScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Dogs_Walk_PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>

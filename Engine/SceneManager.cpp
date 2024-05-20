@@ -1,8 +1,9 @@
 #include "sceneManager.h"
-
 #include "../Scene/Dogs_Walk_PlayScene.h"
+#include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../Scene/GameOverScene.h"
 #include "../Scene/SelectScene.h"
+#include "../Scene/GameSelectScene.h"
 #include "../Scene/GameTitleScene.h"
 #include "Model.h"
 #include "Image.h"
@@ -42,8 +43,10 @@ void SceneManager::Update()
 		switch (nextSceneID_)
 		{
 		case SCENE_ID_DOGS_WALK_PLAY: Instantiate<Dogs_Walk_PlayScene>(this); break;
+		case SCENE_ID_DOGS_FIGHT_PLAY: Instantiate<Dogs_Fight_PlayScene>(this); break;
 		case SCENE_ID_GAMEOVER:Instantiate<GameOverScene>(this); break;
 		case SCENE_ID_SELECT: Instantiate<SelectScene>(this); break;
+		case SCENE_ID_GAMESELECT: Instantiate<GameSelectScene>(this); break;
 		case SCENE_ID_GAMETITLE: Instantiate<GameTitleScene>(this); break;
 
 		}

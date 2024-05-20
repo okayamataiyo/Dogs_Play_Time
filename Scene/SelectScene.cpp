@@ -119,7 +119,7 @@ void SelectScene::Update()
 		//¥INIƒtƒ@ƒCƒ‹‚Ö‚Ì‘‚«ž‚Ý
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollectInverse", std::to_string(attackOrCollectInverse_).c_str(), "Setting/PlayerSetting.ini");
-		pSceneManager_->ChangeScene(SCENE_ID_DOGS_WALK_PLAY);
+		pSceneManager_->ChangeScene(SCENE_ID_DOGS_FIGHT_PLAY);
 	}
 	if (Input::IsKeyDown(DIK_R))
 	{

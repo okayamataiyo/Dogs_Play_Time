@@ -8,6 +8,7 @@ namespace
 	std::string solidTextModelNames[] =
 	{
 		"GameOverText",
+		"Dogs_Walk",
 		"SelectText",
 		"GameTitleText",
 	};
@@ -18,6 +19,7 @@ namespace
 enum class TEXTSTATE
 {
 	GAMEOVER = 0,
+	GAMESELECT,
 	SELECT,
 	GAMETITLE,
 };
@@ -27,8 +29,7 @@ class SolidText : public GameObject
 private:
 
 	TEXTSTATE textState_;
-	int SetRotateInitialize_;
-	int hModel_[3];
+	int hModel_[4];
 public:
 	SolidText(GameObject* _pParent);
 	void Initialize() override;

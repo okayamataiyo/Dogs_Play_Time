@@ -47,6 +47,19 @@ void GameSelectScene::Update()
 
 	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
 	const XMFLOAT3 defaultScale = { 0.8f,0.8f,0.8f };
+
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	{
+		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+		{
+			attackOrCollectInverse_ = (int)PADIDSTATE::SECONDS;
+		}
+		else
+		{
+			attackOrCollectInverse_ = (int)PADIDSTATE::FIRST;
+		}
+		pSceneManager_->ChangeScene(SCENE_ID_SELECT);
+	}
 }
 
 void GameSelectScene::Draw()
