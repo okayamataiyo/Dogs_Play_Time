@@ -8,7 +8,7 @@ namespace
 	std::string solidTextModelNames[] =
 	{
 		"GameOverText",
-		"Dogs_Walk",
+		"DogsWalkText",
 		"SelectText",
 		"GameTitleText",
 	};

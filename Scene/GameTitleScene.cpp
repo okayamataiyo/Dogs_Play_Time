@@ -25,7 +25,7 @@ void GameTitleScene::Initialize()
 	hSound_ = Audio::Load(soundName);
 	assert(hSound_ >= 0);
 	pSolidText_ = Instantiate<SolidText>(this);
-	pSolidText_->SetMode(2);
+	pSolidText_->SetMode((int)TEXTSTATE::GAMETITLE);
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);

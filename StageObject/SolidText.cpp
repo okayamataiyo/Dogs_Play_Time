@@ -29,20 +29,20 @@ void SolidText::Draw()
 	switch (textState_)
 	{
 	case TEXTSTATE::GAMEOVER: 
-		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMEOVER)], transform_);
-		Model::Draw(hModel_[(int)(TEXTSTATE::GAMEOVER)]);
+		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMEOVER], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::GAMEOVER]);
 		break;
 	case TEXTSTATE::GAMESELECT:
-		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMESELECT)], transform_);
-		Model::Draw(hModel_[(int)(TEXTSTATE::GAMESELECT)]);
+		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMESELECT], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::GAMESELECT]);
 		break;
 	case TEXTSTATE::SELECT:
-		Model::SetTransform(hModel_[(int)(TEXTSTATE::SELECT)], transform_);
-		Model::Draw(hModel_[(int)(TEXTSTATE::SELECT)]);
+		Model::SetTransform(hModel_[(int)TEXTSTATE::SELECT], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::SELECT]);
 		break;
 	case TEXTSTATE::GAMETITLE:
-		Model::SetTransform(hModel_[(int)(TEXTSTATE::GAMETITLE)], transform_);
-		Model::Draw(hModel_[(int)(TEXTSTATE::GAMETITLE)]);
+		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMETITLE], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::GAMETITLE]);
 	}
 }
 
@@ -52,5 +52,5 @@ void SolidText::Release()
 
 void SolidText::SetMode(int _mode)
 {
-	textState_ = (TEXTSTATE)(_mode);
+	textState_ = (TEXTSTATE)_mode;
 }

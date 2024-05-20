@@ -27,8 +27,9 @@ void GameSelectScene::Initialize()
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
 
 	ShowCursor();
-	//pSolidText_ = Instantiate<SolidText>(this);
-	//pSolidText_->SetMode((int)TEXTSTATE::SELECT);
+	pSolidText_ = Instantiate<SolidText>(this);
+	pSolidText_->SetMode((int)TEXTSTATE::GAMESELECT);
+	pSolidText_->SetRotateY(0.0f);
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
