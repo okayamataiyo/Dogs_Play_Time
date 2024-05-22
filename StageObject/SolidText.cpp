@@ -32,9 +32,9 @@ void SolidText::Draw()
 		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMEOVER], transform_);
 		Model::Draw(hModel_[(int)TEXTSTATE::GAMEOVER]);
 		break;
-	case TEXTSTATE::GAMESELECT:
-		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMESELECT], transform_);
-		Model::Draw(hModel_[(int)TEXTSTATE::GAMESELECT]);
+	case TEXTSTATE::DOGS_WALK:
+		Model::SetTransform(hModel_[(int)TEXTSTATE::DOGS_WALK], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::DOGS_WALK]);
 		break;
 	case TEXTSTATE::SELECT:
 		Model::SetTransform(hModel_[(int)TEXTSTATE::SELECT], transform_);

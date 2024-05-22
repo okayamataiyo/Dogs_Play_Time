@@ -9,6 +9,7 @@ namespace
 	{
 		"GameOverText",
 		"DogsWalkText",
+		"DogsFightText",
 		"SelectText",
 		"GameTitleText",
 	};
@@ -19,7 +20,8 @@ namespace
 enum class TEXTSTATE
 {
 	GAMEOVER = 0,
-	GAMESELECT,
+	DOGS_WALK,
+	DOGS_PLAY,
 	SELECT,
 	GAMETITLE,
 };

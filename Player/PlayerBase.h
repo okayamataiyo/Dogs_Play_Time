@@ -20,6 +20,12 @@ protected:
 		PLAY,
 		GAMEOVER,
 	};
+
+	enum class PLAYSCENESTATE
+	{
+		Dogs_Walk = 0,
+		Dogs_Fight,
+	};
 	//¥UI‚ÉŠÖ‚·‚éƒƒ“ƒo•Ï”
 	int drawScoreTextX_;
 	int drawScoreTextY_;
@@ -36,8 +42,9 @@ protected:
 		int scoreAmount_;	//“¾“_‚Ì—Ê
 		int scoreMax_;		//Å‘å“¾“_—Ê
 		int padID_;
+		bool isWalkOrFight_;
 		GameData()
-			:FPS_{ 60 * 10 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 }, padID_{ 0 }
+			:FPS_{ 60 * 10 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 }, padID_{ 0 },isWalkOrFight_{false}
 		{
 
 		}

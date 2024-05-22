@@ -28,8 +28,9 @@ void GameSelectScene::Initialize()
 
 	ShowCursor();
 	pSolidText_ = Instantiate<SolidText>(this);
-	pSolidText_->SetMode((int)TEXTSTATE::GAMESELECT);
+	pSolidText_->SetMode((int)TEXTSTATE::DOGS_WALK);
 	pSolidText_->SetRotateY(0.0f);
+	pSolidText_->SetPosition({ 5.0f,0.0f,0.0f });
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
