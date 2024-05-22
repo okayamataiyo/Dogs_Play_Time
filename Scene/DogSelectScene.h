@@ -17,12 +17,13 @@ class Sky;
 class ActorAttackPlayer;
 class ActorCollectPlayer;
 
-class SelectScene : public GameObject
+class DogSelectScene : public GameObject
 {
 private:
 	int hPict_;
 	int attackOrCollect_;	//é◊ñÇÇ∑ÇÈë§Ç©é˚èWÇ∑ÇÈë§Ç©
 	int attackOrCollectInverse_;
+	int walkOrFight_;
 	Transform pictureTrans_;
 	float solidTextRotate_;
 	bool isViewPicture_;
@@ -39,7 +40,7 @@ private:
 	ActorAttackPlayer* pActorAttackPlayer_;
 	ActorCollectPlayer* pActorCollectPlayer_;
 public:
-	SelectScene(GameObject* _pParent);
+	DogSelectScene(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

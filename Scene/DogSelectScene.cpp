@@ -11,35 +11,34 @@
 #include "../Player/CollectPlayer.h"
 #include "../Player/ActorAttackPlayer.h"
 #include "../Player/ActorCollectPlayer.h"
-#include "SelectScene.h"
+#include "DogSelectScene.h"
 
-SelectScene::SelectScene(GameObject* _pParent)
-	:GameObject(_pParent, selectSceneName), hPict_{ -1 },attackOrCollect_{0},attackOrCollectInverse_{0}, solidTextRotate_{0.3f}, isViewPicture_{false}, padIDNum_{0}
+DogSelectScene::DogSelectScene(GameObject* _pParent)
+	:GameObject(_pParent, selectSceneName), hPict_{ -1 },attackOrCollect_{0},attackOrCollectInverse_{0},walkOrFight_{0}, solidTextRotate_{0.3f}, isViewPicture_{false}, padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}, skyPosFly_{10000.0f,0.0f,10000.0f}
 	,pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }, pActorCollectPlayer_{ nullptr }
 {
 
 }
 
-void SelectScene::Initialize()
+void DogSelectScene::Initialize()
 {
 	//▼INIファイルからデータのロード
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
-
+	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlayScene.ini");
 	//▼画像データのロード
 	std::string imageName = modelFolderName + manualName + imageModifierName;
 	hPict_ = Image::Load(imageName);
-	assert(hPict_ >= initZeroInt);
+	assert(hPict_ >= 0);
 	pictureTrans_ = {};
 	ShowCursor();
-	//pSolidText_ = Instantiate<SolidText>(this);
-	//pSolidText_->SetMode((int)TEXTSTATE::SELECT);
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
-	//camPos_ = pSolidText_->GetPosition();
+	XMFLOAT3 positionStage = { 3.0f,38.0f,10.0f };
+	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);
 	camPos_.y += 2;
 	camPos_.z += 15;
 	pActorAttackPlayer_ = Instantiate<ActorAttackPlayer>(this);
@@ -52,7 +51,7 @@ void SelectScene::Initialize()
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 }
 
-void SelectScene::Update()
+void DogSelectScene::Update()
 {
 	Camera::SetPosition(camPos_, attackOrCollect_);
 	Camera::SetPosition(camPos_, attackOrCollectInverse_);
@@ -71,33 +70,15 @@ void SelectScene::Update()
 		pActorCollectPlayer_->SetScale(bigScale);
 	}
 
-	XMFLOAT3 pos = Input::GetMousePosition();
 	const float deadZone = 0.3f;
-	switch (padIDNum_)
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //右への移動
 	{
-	case (int)PADIDSTATE::FIRST:
-		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //右への移動
-		{
-			attackOrCollect_ = (int)PADIDSTATE::FIRST;
-		}
-		if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //右への移動
-		{
-			attackOrCollect_ = (int)PADIDSTATE::SECONDS;
-		}
-		break;
-	case (int)PADIDSTATE::SECONDS:
-		break;
+		attackOrCollect_ = (int)PADIDSTATE::FIRST;
 	}
-	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST))
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //右への移動
 	{
-		//padID_ = (int)PADIDSTATE::FIRST;
+		attackOrCollect_ = (int)PADIDSTATE::SECONDS;
 	}
-
-	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
-	{
-		//padID_ = (int)PADIDSTATE::SECONDS;
-	}
-
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
 	{
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)
@@ -119,7 +100,14 @@ void SelectScene::Update()
 		//▼INIファイルへの書き込み
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollectInverse", std::to_string(attackOrCollectInverse_).c_str(), "Setting/PlayerSetting.ini");
-		pSceneManager_->ChangeScene(SCENE_ID_DOGS_FIGHT_PLAY);
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+		{
+			pSceneManager_->ChangeScene(SCENE_ID_DOGS_WALK_PLAY);
+		}
+		else
+		{
+			pSceneManager_->ChangeScene(SCENE_ID_DOGS_FIGHT_PLAY);
+		}
 	}
 	if (Input::IsKeyDown(DIK_R))
 	{
@@ -153,13 +141,13 @@ void SelectScene::Update()
 
 }
 
-void SelectScene::Draw()
+void DogSelectScene::Draw()
 {
 	Image::SetTransform(hPict_, pictureTrans_);
 	Image::Draw(hPict_);
 }
 
-void SelectScene::Release()
+void DogSelectScene::Release()
 {
 
 }

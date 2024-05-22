@@ -147,7 +147,7 @@
     <ClCompile Include="Scene\GameTitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\SelectScene.cpp">
+    <ClCompile Include="Scene\DogSelectScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="StageObject\Sky.cpp">
@@ -324,7 +324,7 @@
     <ClInclude Include="Scene\GameTitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\SelectScene.h">
+    <ClInclude Include="Scene\DogSelectScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="StageObject\Sky.h">

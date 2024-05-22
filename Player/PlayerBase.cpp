@@ -9,6 +9,7 @@ PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)
 {
     stunData_.vecKnockbackDirection_ = {};
     dirData_.vecCam_ = { XMFLOAT3(0.0f,5.0f,-10.0f) };
+    gameData_.walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlayScene.ini");
 }
 
 // ‰Šú‰»
@@ -112,7 +113,7 @@ void PlayerBase::PlayerCamera()
     float floKnockbackLenRecedes = 5.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = Input::GetPadStickR(gameData_.padID_);
-    const float padSens = 50;
+    const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
     const float degreesMin = 0.0f;
@@ -192,7 +193,7 @@ void PlayerBase::PlayerFall()
 void PlayerBase::PlayerMove()
 {
     const float walkSpeed = 0.4f;
-    const float runSpeed = 0.5f;
+    const float runSpeed = 0.6f;
     // ƒvƒŒƒCƒ„[‚ÌˆÚ“®ˆ—
     if (!moveData_.isRun_)
     {

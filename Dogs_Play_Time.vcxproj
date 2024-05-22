@@ -179,7 +179,7 @@
     <ClCompile Include="Scene\GameSelectScene.cpp" />
     <ClCompile Include="Scene\GameTitleScene.cpp" />
     <ClCompile Include="Scene\Dogs_Walk_PlayScene.cpp" />
-    <ClCompile Include="Scene\SelectScene.cpp" />
+    <ClCompile Include="Scene\DogSelectScene.cpp" />
     <ClCompile Include="StageObject\Sky.cpp" />
     <ClCompile Include="StageObject\SolidText.cpp" />
     <ClCompile Include="StageObject\Stage.cpp" />
@@ -241,7 +241,7 @@
     <ClInclude Include="Scene\GameSelectScene.h" />
     <ClInclude Include="Scene\GameTitleScene.h" />
     <ClInclude Include="Scene\Dogs_Walk_PlayScene.h" />
-    <ClInclude Include="Scene\SelectScene.h" />
+    <ClInclude Include="Scene\DogSelectScene.h" />
     <ClInclude Include="StageObject\Sky.h" />
     <ClInclude Include="StageObject\SolidText.h" />
     <ClInclude Include="StageObject\Stage.h" />

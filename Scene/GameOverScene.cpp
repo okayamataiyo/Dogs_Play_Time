@@ -33,15 +33,9 @@ void GameOverScene::Initialize()
 	//画像データのロード
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)(TEXTSTATE::GAMEOVER));
-
-	XMFLOAT3 positionSolidText = { 0.0f,0.0f,0.0f };
-	XMFLOAT3 scaleSolidText = { 0.5f,0.5f,0.5f };
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	XMFLOAT3 positionActorAttackPlayer = { 0.0f,0.0f,20.0f };
 	XMFLOAT3 positionActorCollectPlayer = { 0.0f,0.0f,25.0f };
-	pSolidText_->SetPosition(positionSolidText);
-	pSolidText_->SetScale(scaleSolidText);
-	pSolidText_->SetRotateX(15.0f);
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
 	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);

@@ -19,6 +19,12 @@ namespace
 		FOUR
 	};
 
+	enum class PLAYSCENESTATE
+	{
+		DOGSWALK = 0,
+		DOGSFIGHT,
+	};
+
 	int PlayerScore_[2] = { 0,0 };
 	int winOrLose_ = (int)WINORLOSE::WIN;
 }

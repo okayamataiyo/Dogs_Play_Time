@@ -17,16 +17,19 @@ class ActorCollectPlayer;
 class GameSelectScene : public GameObject
 {
 private:
+
 	int hPict_;
 	int attackOrCollect_;
 	int attackOrCollectInverse_;
+	int walkOrFight_;
 	bool padIDNum_;
 	XMFLOAT3 skyPos_;
 	XMFLOAT3 skyPosFly_;
 	XMFLOAT3 camPos_;
 	SceneManager* pSceneManager_;
 	StageObjectManager* pStageObjectManager_;
-	SolidText* pSolidText_;
+	SolidText* pDogsWalkText_;
+	SolidText* pDogsFightText_;
 	Sky* pSky_;
 public:
 	GameSelectScene(GameObject* _pParent);

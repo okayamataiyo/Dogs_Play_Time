@@ -36,6 +36,10 @@ void SolidText::Draw()
 		Model::SetTransform(hModel_[(int)TEXTSTATE::DOGS_WALK], transform_);
 		Model::Draw(hModel_[(int)TEXTSTATE::DOGS_WALK]);
 		break;
+	case TEXTSTATE::DOGS_FIGHT:
+		Model::SetTransform(hModel_[(int)TEXTSTATE::DOGS_FIGHT], transform_);
+		Model::Draw(hModel_[(int)TEXTSTATE::DOGS_FIGHT]);
+		break;
 	case TEXTSTATE::SELECT:
 		Model::SetTransform(hModel_[(int)TEXTSTATE::SELECT], transform_);
 		Model::Draw(hModel_[(int)TEXTSTATE::SELECT]);
@@ -43,6 +47,7 @@ void SolidText::Draw()
 	case TEXTSTATE::GAMETITLE:
 		Model::SetTransform(hModel_[(int)TEXTSTATE::GAMETITLE], transform_);
 		Model::Draw(hModel_[(int)TEXTSTATE::GAMETITLE]);
+		break;
 	}
 }
 
