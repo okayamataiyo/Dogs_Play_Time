@@ -12,6 +12,7 @@
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/Bone.h"
+#include "../ItemObject/BoneSuck.h"
 #include "../ItemObject/ItemObjectManager.h"
 #include "../StageObject/Stage.h"
 #include "../StageObject/StageBlock.h"
@@ -24,7 +25,7 @@
 
 CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
-    , decBoneCount_{ -1 }, isBoneDeath_{ false }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
+    , decBoneCount_{ -1 }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
     , gameState_{GAMESTATE::READY}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }
@@ -250,7 +251,6 @@ void CollectPlayer::UpdatePlay()
         {
             pDogs_Fight_PlayScene_->AddBoneCount(decBoneCount_);
         }
-        isBoneDeath_ = true;
         isBoneTatch_ = false;
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
         killTime_ = killTimeMax_;
@@ -349,11 +349,12 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
             transform_.position_ = moveData_.positionPrev_;
         }
     }
-
     if (_pTarget->GetObjectName() == boneName && killTime_ == killTimeMax_)
     {
         SetKillTime(killTimeWait_);
         isBoneTatch_ = true;
+        _pTarget->KillMe();
+        Instantiate<BoneSuck>(pDogs_Walk_PlayScene_);
         Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
     }
     ++number_;

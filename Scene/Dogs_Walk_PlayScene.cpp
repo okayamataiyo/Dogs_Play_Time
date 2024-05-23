@@ -115,8 +115,16 @@ void Dogs_Walk_PlayScene::Update()
 	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
 	collectPlayerPosition_.x += boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
 	collectPlayerPosition_.z += boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
-	//SetCursorPos(mousePosX_, mousePosY_);
-	//HideCursor();
+	static bool isPause = false;
+	if (Input::IsKeyDown(DIK_P))
+	{
+		isPause = !isPause;
+	}
+	if (!isPause)
+	{
+		SetCursorPos(mousePosX_, mousePosY_);
+	}
+	HideCursor();
 	BoneSummons();
 	if (woodBoxCount_ <= woodBoxCountMax_)
 	{

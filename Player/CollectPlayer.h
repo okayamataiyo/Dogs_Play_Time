@@ -53,7 +53,6 @@ private:
 	int stageHModel_;				//ステージモデル番号
 	int floorHModel_;				//すり抜け床
 	int decBoneCount_;
-	bool isBoneDeath_;				//骨を消すか
 	bool isBoneTatch_;
 	int number_;
 	int killTime_;
@@ -175,8 +174,6 @@ public:
 
 	void SetAttackPlayer(AttackPlayer* _pAttackPlayer) { pAttackPlayer_ = _pAttackPlayer; }
 
-	void SetIsBoneDeath(bool _isBoneDeath) { isBoneDeath_ = _isBoneDeath; }
-
 	void SetKillTime(int _killTime) { killTime_ = _killTime; }
 
 	bool GetIsMove() override { return moveData_.isMove_; }
@@ -189,18 +186,16 @@ public:
 
 	bool GetIsDive() override { return diveData_.isDive_; }
 
+	bool GetIsBoneTatch() {return isBoneTatch_; }
+
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
 	int GetPadID()override { return gameData_.padID_; }
 
 	int GetModelHandle() override { return hModel_; }
 
-	bool GetIsBoneDeath() { return isBoneDeath_; }
-
 	float GetAngle() { return dirData_.angle_; }
 
 	int GetScore() { return gameData_.score_; }
-
-	bool GetIsBoneTatch() { return isBoneTatch_; }
 };
 
