@@ -65,9 +65,11 @@ static int normalizationInt = { 1 };
 static std::string soundFolderName = "Sound/";
 static std::string soundModifierName = ".wav";
 static std::string modelFolderName = "Model&Picture/";
+static std::string debugCollisionFolderName = "DebugCollision/";
 static std::string modelModifierName = ".fbx";
-static std::string debugCollisionName = "DebugCollision/";
 static std::string imageModifierName = ".png";
+static std::string iniFolderName = "Setting/";
+static std::string iniModifierName = ".ini";
 
 // INIƒtƒ@ƒCƒ‹‚©‚çfloat‚ğæ“¾‚·‚éŠÖ”
 static float GetPrivateProfileFloat(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpDefault, LPCTSTR lpFileName)

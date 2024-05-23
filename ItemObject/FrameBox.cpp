@@ -27,7 +27,7 @@ void FrameBox::Initialize()
 {
     //モデルデータのロード
     std::string modelName;
-    modelName = debugCollisionName + boxColliderName + modelModifierName;
+    modelName = debugCollisionFolderName + boxColliderName + modelModifierName;
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= initZeroInt);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);

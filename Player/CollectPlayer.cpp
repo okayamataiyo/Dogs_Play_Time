@@ -28,7 +28,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , decBoneCount_{ -1 }, isBoneTatch_{ false }, number_{ 0 }, killTime_{ 9999 }, killTimeWait_{ 30 }, killTimeMax_{ 9999 }
     , gameState_{GAMESTATE::READY}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr }, pText_{ nullptr }, pStage_{ nullptr }, pStageBlock_{ nullptr }, pFloor_{ nullptr }
+    , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
@@ -47,6 +47,7 @@ void CollectPlayer::Initialize()
 {
     //▼INIファイルからデータのロード
     attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
+    gameData_.walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
     for (int i = initZeroInt; i < sizeof(soundCollectPlayerNames) / sizeof(soundCollectPlayerNames[initZeroInt]); i++)
@@ -66,19 +67,17 @@ void CollectPlayer::Initialize()
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
+    pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
     pStage_ = (Stage*)FindObject(stageName);      //ステージオブジェクト
     pStageBlock_ = (StageBlock*)FindObject(stageBlockName);
     pFloor_ = (Floor*)FindObject(floorName);
-    if (pDogs_Walk_PlayScene_ != nullptr)
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
     {
         pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
-        gameData_.walkOrFight_ = (bool)PLAYSCENESTATE::DOGSWALK;
     }
-    if (pDogs_Fight_PlayScene_ != nullptr)
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
-        gameData_.walkOrFight_ = (bool)PLAYSCENESTATE::DOGSFIGHT;
-
     }
     pStateManager_ = new StateManager(this);
     pStateManager_->AddState("WalkState", new CollectPlayerWalkState(pStateManager_));
@@ -331,11 +330,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSWALK)
+            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
             {
                 pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
-            if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSFIGHT)
+            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
             {
                 pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
@@ -351,6 +350,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName && killTime_ == killTimeMax_)
     {
+        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        {
+            static int noDeathBoneSuck = -1;
+            pBoneSuck_->SetKillTime(noDeathBoneSuck);
+        }
         SetKillTime(killTimeWait_);
         isBoneTatch_ = true;
         _pTarget->KillMe();

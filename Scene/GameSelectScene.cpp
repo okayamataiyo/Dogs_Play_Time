@@ -25,7 +25,7 @@ void GameSelectScene::Initialize()
 	//▼INIファイルからデータのロード
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
-	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlayScene.ini");
+	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
 	ShowCursor();
 	pDogsWalkText_ = Instantiate<SolidText>(this);
 	pDogsWalkText_->SetMode((int)TEXTSTATE::DOGS_WALK);
@@ -78,7 +78,7 @@ void GameSelectScene::Update()
 	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
 	{
 		//INIファイルへの書き込み
-		WritePrivateProfileString("PLAYSCENEID", "WalkOrFight", std::to_string(walkOrFight_).c_str(), "Setting/PlayScene.ini");
+		WritePrivateProfileString("PLAYSCENEID", "WalkOrFight", std::to_string(walkOrFight_).c_str(), "Setting/PlaySceneSetting.ini");
 		pSceneManager_->ChangeScene(SCENE_ID_SELECT);
 	}
 }

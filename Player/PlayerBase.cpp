@@ -2,6 +2,7 @@
 #include "../Engine/Input.h"
 #include "../Engine/Camera.h"
 #include "../Engine/Global.h"
+#include "../Scene/Dogs_Fight_PlayScene.h"
 #include "PlayerBase.h"
 
 PlayerBase::PlayerBase(GameObject* _pParent,std::string _name)

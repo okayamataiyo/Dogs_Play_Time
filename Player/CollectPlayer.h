@@ -8,6 +8,7 @@ class Dogs_Fight_PlayScene;
 class AttackPlayer;
 class SphereCollider;
 class WoodBox;
+class BoneSuck;
 class Text;
 class Stage;
 class StageBlock;
@@ -58,6 +59,7 @@ private:
 	int killTime_;
 	int killTimeWait_;
 	int killTimeMax_;
+
 	int attackOrCollectInverse_;
 
 	GAMESTATE gameState_;
@@ -67,6 +69,7 @@ private:
 	AttackPlayer* pAttackPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
+	BoneSuck* pBoneSuck_;
 	Text* pText_;
 	Stage* pStage_;
 	StageBlock* pStageBlock_;

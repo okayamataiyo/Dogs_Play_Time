@@ -24,7 +24,7 @@ class ItemObjectManager;
 class StageObjectManager;
 
 /// <summary>
-/// 骨沢山型プレイシーン
+/// 骨一個型プレイシーン
 /// </summary>
 class Dogs_Fight_PlayScene : public GameObject
 {
