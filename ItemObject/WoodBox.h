@@ -2,7 +2,6 @@
 //インクルード
 #include <string>
 #include "../Engine/Direct3D.h"
-#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "ItemObjectBase.h"
 
 namespace
@@ -14,7 +13,8 @@ namespace
 class GameObject;
 class AttackPlayer;
 class SphereCollider;
-
+class Dogs_Walk_PlayScene;
+class Dogs_Fight_PlayScene;
 
 //WoodBoxを管理するクラス
 class WoodBox : public ItemObjectBase
@@ -24,6 +24,7 @@ private:
     int hSound_;            //サウンドデータ
     float soundVolume_;
     bool isBreak_;            //木箱が壊されたか
+    int walkOrFight_;
     std::vector<int> woodBoxs_;
 
     //▼落下に関するメンバ変数
@@ -43,6 +44,7 @@ private:
 
     GameObject* pParent_;
     Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
+    Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
     AttackPlayer* pAttackPlayer_;
     SphereCollider* pCollision_;
 

@@ -8,6 +8,8 @@
 #include "../Engine/Global.h"
 #include "../StageObject/Stage.h"
 #include "../Player/AttackPlayer.h"
+#include "../Scene/Dogs_Walk_PlayScene.h"
+#include "../Scene/Dogs_Fight_PlayScene.h"
 #include "ItemObjectManager.h"
 #include "WoodBox.h"
 
@@ -15,7 +17,7 @@ WoodBox::WoodBox(GameObject* _pParent)
     :ItemObjectBase(_pParent, woodBoxName), hModel_{ -1 }, hSound_{ -1 },soundVolume_{0.3f}
     , isBreak_{ false }, woodBoxs_{}, gravity_{ 0.007f },woodBoxInitposY_{1.2f}, positionY_{0.0f}, positionPrevY_{0.0f}, positionTempY_{0.0f}
     , isJump_{ false },isOnWoodBox_ {false}, rayWoodBoxDist_{ 0.0f }, rayStageDistDown_{ 0.0f }, isFling_{ 1.1f }
-    ,pParent_{nullptr},pDogs_Walk_PlayScene_{nullptr}, pAttackPlayer_{ nullptr },pCollision_{nullptr}
+    ,pParent_{nullptr},pDogs_Walk_PlayScene_{nullptr},pDogs_Fight_PlayScene_{nullptr}, pAttackPlayer_{nullptr}, pCollision_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -27,6 +29,8 @@ WoodBox::~WoodBox()
 
 void WoodBox::Initialize()
 {
+    //▼INIファイルからデータのロード
+    walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
     //サウンドデータのロード
     std::string soundName = soundFolderName + soundWoodBoxName + soundModifierName;
     hSound_ = Audio::Load(soundName);
@@ -39,13 +43,20 @@ void WoodBox::Initialize()
     pCollision_ = new SphereCollider(collisionPos, 3.0f);
     AddCollider(pCollision_);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
+    pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 }
 
 void WoodBox::Update()
 {
-
-    woodBoxs_ = pDogs_Walk_PlayScene_->GetWoodBoxs();
+    if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    {
+        woodBoxs_ = pDogs_Walk_PlayScene_->GetWoodBoxs();
+    }
+    if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    {
+    	woodBoxs_ = pDogs_Fight_PlayScene_->GetWoodBoxs();
+    }
     WoodBoxMove();
     WoodBoxFall();
     WoodBoxRayCast();
@@ -54,8 +65,6 @@ void WoodBox::Update()
     {
         WoodBoxDeath();
     }
-    ImGui::Text("rayStageDistDown_: %.2f", rayStageDistDown_);
-    ImGui::Text("isJump_: %s", isJump_ ? "true" : "false");
 }
 
 void WoodBox::Draw()

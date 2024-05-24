@@ -67,7 +67,6 @@ void CollectPlayer::Initialize()
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
-    pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
     pStage_ = (Stage*)FindObject(stageName);      //ステージオブジェクト
     pStageBlock_ = (StageBlock*)FindObject(stageBlockName);
     pFloor_ = (Floor*)FindObject(floorName);
@@ -350,6 +349,15 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName && killTime_ == killTimeMax_)
     {
+        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+        {
+            Instantiate<BoneSuck>(pDogs_Walk_PlayScene_);
+        }
+        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        {
+            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
+        }
+        pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
             static int noDeathBoneSuck = -1;
@@ -358,7 +366,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
         SetKillTime(killTimeWait_);
         isBoneTatch_ = true;
         _pTarget->KillMe();
-        Instantiate<BoneSuck>(pDogs_Walk_PlayScene_);
+
         Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
     }
     ++number_;
@@ -454,9 +462,8 @@ void CollectPlayer::PlayerRayCast()
     RayCastData stageDataBack;
     RayCastData stageDataLeft;
     RayCastData stageDataRight;                 //プレイヤーが地面からどのくらい離れていたら浮いている判定にするか
-    stageHModel_ = pStage_->GetModelHandle();         //モデル番号を取得
+    stageHModel_ = pStage_->GetModelHandle();   //モデル番号を取得
     floorHModel_ = pFloor_->GetModelHandle();
-
     for (int i = 0; i < pItemObjectManager_->GetFloors().size(); i++)
     {
         //▼上の法線(すり抜け床のため)
@@ -492,7 +499,7 @@ void CollectPlayer::PlayerRayCast()
 
     }
 
-    //▼下の法線(床に張り付き)
+    //▼下の法線(地面に張り付き)
     stageDataDown.start = transform_.position_;     //レイの発射位置
     stageDataDown.start.y = initZeroFloat;
     XMStoreFloat3(&stageDataDown.dir, vecDown);     //レイの方向

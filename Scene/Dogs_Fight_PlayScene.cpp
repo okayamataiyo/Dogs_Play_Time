@@ -13,7 +13,7 @@
 #include "Dogs_Fight_PlayScene.h"
 
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
-	:GameObject(_pParent,Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}
+	:GameObject(_pParent,Dogs_Fight_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}
 	,stageBlockNum_{3},lengthRecedes_{5},degreesMin_{0.0f},degreesMax_{-88.0f},degreesToRadians_{3.14f / 180.0f},vecLengthRecedes_{1.0f},vecLengthApproach_{1.0f}
 	,woodBoxCountMax_{5},mousePosX_{600},mousePosY_{600},changeScore_{100},hSound_{-1,-1,-1,-1}
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
@@ -30,9 +30,9 @@ void Dogs_Fight_PlayScene::Initialize()
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
 	//▼サウンドデータのロード
 	std::string soundName;
-	for (int i = 0u; i < sizeof(soundDogs_Walk_PlaySceneNames) / sizeof(soundDogs_Walk_PlaySceneNames[initZeroInt]); i++)
+	for (int i = 0u; i < sizeof(soundDogs_Fight_PlaySceneNames) / sizeof(soundDogs_Fight_PlaySceneNames[initZeroInt]); i++)
 	{
-		soundName = soundFolderName + soundDogs_Walk_PlaySceneNames[i] + soundModifierName;
+		soundName = soundFolderName + soundDogs_Fight_PlaySceneNames[i] + soundModifierName;
 		hSound_[i] = Audio::Load(soundName);
 		assert(hSound_[i] >= 0u);
 	}
@@ -52,8 +52,8 @@ void Dogs_Fight_PlayScene::Initialize()
 		pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
 	}
 	floorPosition_[0].position_ = { 30.0f,0.8f,3.0f };
-	floorPosition_[1].position_ = { -70.0f,0.5f,50.0f };
-	floorPosition_[2].position_ = { -45.0f, 0.3f,-45.0f };
+	floorPosition_[1].position_ = { -10.0f,0.5f,50.0f };
+	floorPosition_[2].position_ = { -45.0f, 0.3f,-43.0f };
 	XMFLOAT3 scale = { 3.0f,1.0f,3.0f };
 	XMFLOAT3 DefaultData[2] = { XMFLOAT3(0.0f,0.0f,0.0f)	//0で初期化
 							   ,XMFLOAT3(1.0f,1.0f,1.0f) };	//1で初期化

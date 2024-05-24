@@ -4,6 +4,7 @@
 #include "PlayerBase.h"
 
 class Dogs_Walk_PlayScene;
+class Dogs_Fight_PlayScene;
 class CollectPlayer;
 class SphereCollider;
 class WoodBox;
@@ -55,6 +56,7 @@ private:
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
+	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	CollectPlayer* pCollectPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;

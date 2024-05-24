@@ -2,7 +2,6 @@
 //インクルード
 #include <string>
 #include "../Engine/Direct3D.h"
-#include "../Scene/Dogs_Walk_PlayScene.h"
 #include "ItemObjectBase.h"
 
 namespace
@@ -12,6 +11,8 @@ namespace
 }
 
 class AttackPlayer;
+class Dogs_Walk_PlayScene;
+class Dogs_Fight_PlayScene;
 
 //FrameBoxを管理するクラス
 class FrameBox : public ItemObjectBase
@@ -20,8 +21,10 @@ private:
     int hModel_;            //モデル
     bool isBreak_;          //木箱が壊されたか
     float frameBoxInitPosY_;
+    int walkOrFight_;
     std::vector<int> FrameBoxs_;
     Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
+    Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
     AttackPlayer* pAttackPlayer_;
 public:
     //コンストラクタ
