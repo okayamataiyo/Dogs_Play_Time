@@ -6,6 +6,7 @@ class Dogs_Walk_PlayScene;
 class SphereCollider;
 class Stage;
 class CollectPlayer;
+class AttackPlayer;
 class Bone;
 
 namespace
@@ -33,6 +34,7 @@ protected:
 	SphereCollider* pCollision_;
 	Stage* pStage_;
 	CollectPlayer* pCollectPlayer_;
+	AttackPlayer* pAttackPlayer_;
 	Bone* pBone_;
 public:
 	/// <summary>

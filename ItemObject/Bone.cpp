@@ -44,7 +44,7 @@ void Bone::Update()
 	int stageHModel;
 	stageHModel = pStage_->GetModelHandle();   //モデル番号を取得
 	data.start = transform_.position_;  //レイの発射位置
-	data.start.y = initZeroFloat;
+	data.start.y = 0.0f;
 	XMStoreFloat3(&data.dir, vecDown);	 //レイの方向
 	Model::RayCast(stageHModel, &data);  //レイを発射
 	rayDist_ = data.dist;

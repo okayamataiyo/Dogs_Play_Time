@@ -351,11 +351,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     {
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
         {
-            Instantiate<BoneSuck>(this);
+            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
         }
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
-            Instantiate<BoneSuck>(this);
+            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
         }
         pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
