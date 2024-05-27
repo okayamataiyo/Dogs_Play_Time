@@ -19,7 +19,9 @@ namespace
 class BoneSuck : public ItemObjectBase
 {
 protected:
+	GameObject* pParent_;
 	int hModel_;
+	int playerHModel_;
 	float rayDist_;
 	float positionRotate_;
 	float BoneSuckInitPosY_;

@@ -50,11 +50,11 @@ void CollectPlayer::Initialize()
     gameData_.walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
-    for (int i = initZeroInt; i < sizeof(soundCollectPlayerNames) / sizeof(soundCollectPlayerNames[initZeroInt]); i++)
+    for (int i = 0; i < sizeof(soundCollectPlayerNames) / sizeof(soundCollectPlayerNames[initZeroInt]); i++)
     {
         soundName = soundFolderName + soundCollectPlayerNames[i] + soundModifierName;
         hSound_[i] = Audio::Load(soundName);
-        assert(hSound_[i] >= initZeroInt);
+        assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
     std::string modelName = modelFolderName + collectPlayerName + modelModifierName;
@@ -308,11 +308,11 @@ void CollectPlayer::PlayerStun(int _timeLimit)
 void CollectPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
-    if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
     {
         woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     }
-    if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
         woodBoxs = pDogs_Fight_PlayScene_->GetWoodBoxs();
     }
@@ -351,11 +351,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     {
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
         {
-            Instantiate<BoneSuck>(pDogs_Walk_PlayScene_);
+            Instantiate<BoneSuck>(this);
         }
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
-            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
+            Instantiate<BoneSuck>(this);
         }
         pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)

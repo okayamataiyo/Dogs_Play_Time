@@ -8,6 +8,7 @@ class Dogs_Fight_PlayScene;
 class CollectPlayer;
 class SphereCollider;
 class WoodBox;
+class BoneSuck;
 class Text;
 class Stage;
 class Floor;
@@ -41,17 +42,23 @@ private:
 		WALK,
 		JUMP,
 		RUN,
+		CollectBone,
 	};
 
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号
-	int hSound_[4];					//サウンド番号
+	int hSound_[5];					//サウンド番号
 	int stageHModel_;				//ステージモデル番号
 	int floorHModel_;				//すり抜け床モデル番号
 	int number_;
 	int scoreTimeCounter_;
 	int scoreTimeCounterWait_;
 	int attackOrCollect_;
+	int decBoneCount_;
+	bool isBoneTatch_;
+	int killTime_;
+	int killTimeWait_;
+	int killTimeMax_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -60,6 +67,7 @@ private:
 	CollectPlayer* pCollectPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
+	BoneSuck* pBoneSuck_;
 	Text* pText_;
 	Stage* pStage_;
 	Floor* pFloor_;
@@ -166,6 +174,8 @@ public:
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
+	void SetKillTime(int _killTime) { killTime_ = _killTime; }
+
 	bool GetIsMove() override { return moveData_.isMove_; }
 
 	bool GetIsJump() override { return jumpData_.isJump_; }
@@ -176,15 +186,16 @@ public:
 
 	bool GetIsDive() override { return diveData_.isDive_; }
 
-	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
+	bool GetIsBoneTatch() { return isBoneTatch_; }
 
-	float GetAngle() { return dirData_.angle_; }
+	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 
 	int GetPadID()override { return gameData_.padID_; }
 
+	int GetModelHandle() override { return hModel_; }
+
+	float GetAngle() { return dirData_.angle_; }
+
 	int GetScore() { return gameData_.score_; }
-
-	int GetModelHandle() override { return hModel_; };
-
 };
 

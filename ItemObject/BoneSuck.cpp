@@ -4,12 +4,13 @@
 #include "../Engine/Global.h"
 #include "../Player/PlayerBase.h"
 #include "../Player/CollectPlayer.h"
+#include "../Player/AttackPlayer.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../StageObject/Stage.h"
 #include "BoneSuck.h"
 #include "Bone.h"
 BoneSuck::BoneSuck(GameObject* _parent)
-	:ItemObjectBase(_parent, boneSuckName), hModel_{ -1 }, rayDist_{ 0.0f }, positionRotate_{ 1.0f }
+	:ItemObjectBase(_parent, boneSuckName),pParent_{_parent}, hModel_{-1},playerHModel_{-1}, rayDist_{0.0f}, positionRotate_{1.0f}
 	, BoneSuckInitPosY_{ 0.6f },killTime_{9999},killTimeWait_{30},killTimeMax_{9999}, pickUpBoneSuckScale_{0.2f,0.2f,0.2f}
 	, pDogs_Walk_PlayScene_{ nullptr }, pCollision_{ nullptr }, pStage_{ nullptr }, pCollectPlayer_{ nullptr },pBone_{nullptr}
 {
@@ -36,6 +37,16 @@ void BoneSuck::Initialize()
 void BoneSuck::Update()
 {
 	transform_.rotate_.y += positionRotate_;
+	if (pParent_->GetObjectName() == collectPlayerName)
+	{
+		playerHModel_ = ((CollectPlayer*)pParent_)->GetModelHandle();
+		transform_.rotate_.y = ((CollectPlayer*)pParent_)->GetAngle();
+	}
+	if (pParent_->GetObjectName() == attackPlayerName)
+	{
+		playerHModel_ = ((AttackPlayer*)pParent_)->GetModelHandle();
+		transform_.rotate_.y = ((AttackPlayer*)pParent_)->GetAngle();
+	}
 	PlayerSuckBoneSuck();
 	if (killTime_ > initZeroInt)
 	{
@@ -61,9 +72,8 @@ void BoneSuck::Release()
 
 void BoneSuck::PlayerSuckBoneSuck()
 {
-	XMFLOAT3 BoneSuckPosition_ = Model::GetBonePosition(pCollectPlayer_->GetModelHandle(), "joint3");
+	XMFLOAT3 BoneSuckPosition_ = Model::GetBonePosition(playerHModel_, "joint3");
 	transform_.position_ = BoneSuckPosition_;
-	transform_.rotate_.y = pCollectPlayer_->GetAngle();
 	transform_.scale_ = pickUpBoneSuckScale_;
 }
 
