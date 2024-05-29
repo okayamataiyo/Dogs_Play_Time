@@ -209,6 +209,8 @@ protected:
 	virtual void PlayerJumpStateFunc();
 	virtual void PlayerStunStateFunc();
 
+	virtual void PlayerScore();
+
 	virtual void PlayerCamera();
 
 	virtual void PlayerFall() = 0;

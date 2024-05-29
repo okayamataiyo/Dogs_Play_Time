@@ -42,19 +42,13 @@ public:
 
 	void OnCollision(GameObject* _pTarget)override;
 
+	void PlayerScore() override;
+
+	void PlayerCamera() override;
+
 	void PlayerFall() override;
 
 	void PlayerMove() override;
-
-	void IsMove() override;
-
-	void IsJump() override;
-
-	void IsRun() override;
-
-	void IsStun() override;
-
-	void IsDive() override;
 
 	void PlayerJump() override;
 
@@ -67,6 +61,16 @@ public:
 	void PlayerKnockback() override;
 
 	void PlayerRayCast() override;
+
+	void IsMove() override;
+
+	void IsJump() override;
+
+	void IsRun() override;
+
+	void IsStun() override;
+
+	void IsDive() override;
 
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
 

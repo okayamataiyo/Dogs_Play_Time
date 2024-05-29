@@ -90,6 +90,11 @@ void PlayerBase::PlayerStunStateFunc()
     animData_.animSpeed_ = 0.5f;
 }
 
+void PlayerBase::PlayerScore()
+{
+    gameData_.score_ += gameData_.scoreAmount_;
+}
+
 void PlayerBase::PlayerCamera()
 {
     struct float2

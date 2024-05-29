@@ -2,6 +2,7 @@
 #include "../Engine/Model.h"
 #include "../Engine/Audio.h"
 #include "../Engine/Global.h"
+#include "../Engine/ImGui/imgui.h"
 #include "../Player/PlayerBase.h"
 #include "../Player/CollectPlayer.h"
 #include "../Player/AttackPlayer.h"
@@ -26,19 +27,18 @@ void BoneSuck::Initialize()
 	//ƒ‚ƒfƒ‹‚Ìƒ[ƒh
 	std::string ModelName = modelFolderName + boneSuckName + modelModifierName;
 	hModel_ = Model::Load(ModelName);
-	assert(hModel_ >= initZeroInt);
+	assert(hModel_ >= 0);
 	pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
 	pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 	pBone_ = (Bone*)FindObject(boneName);
 	transform_.scale_ = { 0.5,0.5,0.5 };
-	transform_.position_ = { 10,0,0 };
+	transform_.position_ = { 0,2,5 };
 	SetKillTime(killTimeWait_);
 }
 
 void BoneSuck::Update()
 {
-	transform_.rotate_.y += positionRotate_;
 	PlayerSuckBoneSuck();
 	if (killTime_ > initZeroInt)
 	{
@@ -74,9 +74,9 @@ void BoneSuck::PlayerSuckBoneSuck()
 		playerHModel_ = pAttackPlayer_->GetModelHandle();
 		transform_.rotate_.y = pAttackPlayer_->GetAngle();
 	}
-	XMFLOAT3 BoneSuckPosition_ = Model::GetBonePosition(playerHModel_, "joint3");
-	transform_.position_ = BoneSuckPosition_;
-	transform_.scale_ = pickUpBoneSuckScale_;
+	ImGui::Text("transform_.position_.x: %.2f", transform_.position_.x);
+	ImGui::Text("transform_.position_.y: %.2f", transform_.position_.y);
+	ImGui::Text("transform_.position_.z: %.2f", transform_.position_.z);
 }
 
 void BoneSuck::BoneSuckDeath()

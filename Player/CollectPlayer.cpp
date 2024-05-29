@@ -240,7 +240,7 @@ void CollectPlayer::UpdatePlay()
 
     if (killTime_ <= initZeroInt && isBoneTatch_)
     {
-        gameData_.score_ += gameData_.scoreAmount_;
+        PlayerScore();
         if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSWALK)
         {
             pDogs_Walk_PlayScene_->AddBoneCount(decBoneCount_);
@@ -351,17 +351,17 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     {
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
         {
-            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
+            Instantiate<BoneSuck>(this);
         }
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
-            Instantiate<BoneSuck>(pDogs_Fight_PlayScene_);
+            Instantiate<BoneSuck>(this);
         }
         pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
             static int noDeathBoneSuck = -1;
-            pBoneSuck_->SetKillTime(noDeathBoneSuck);
+//            pBoneSuck_->SetKillTime(noDeathBoneSuck);
         }
         SetKillTime(killTimeWait_);
         isBoneTatch_ = true;
@@ -382,6 +382,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
         stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
     }
+}
+
+void CollectPlayer::PlayerScore()
+{
+    PlayerBase::PlayerScore();
 }
 
 void CollectPlayer::PlayerCamera()

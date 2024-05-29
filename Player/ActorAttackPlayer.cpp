@@ -107,6 +107,14 @@ void ActorAttackPlayer::OnCollision(GameObject* _pTarget)
 {
 }
 
+void ActorAttackPlayer::PlayerScore()
+{
+}
+
+void ActorAttackPlayer::PlayerCamera()
+{
+}
+
 void ActorAttackPlayer::PlayerFall()
 {
     if (jumpData_.isJump_)
@@ -213,6 +221,10 @@ void ActorAttackPlayer::PlayerRayCast()
     {
         jumpData_.isJump_ = true;
     }
+}
+
+void ActorAttackPlayer::PlayerRevival()
+{
 }
 
 void ActorAttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
