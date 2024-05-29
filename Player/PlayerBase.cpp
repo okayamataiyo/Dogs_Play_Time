@@ -22,10 +22,7 @@ void PlayerBase::Initialize()
 // XV
 void PlayerBase::Update()
 {
-    PlayerMove();
-    PlayerJump();
-    PlayerDive();
-    PlayerKnockback();
+
 }
 
 // •`‰æ

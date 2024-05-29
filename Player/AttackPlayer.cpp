@@ -21,9 +21,8 @@
 #include "CollectPlayer.h"
 
 AttackPlayer::AttackPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{0}, floorHModel_{0}
-    ,decBoneCount_{-1}, number_{0}, killTime_{9999}, killTimeWait_{30}, killTimeMax_{9999}, scoreTimeCounter_{0}, scoreTimeCounterWait_{1}
-    , gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }, isBoneTatch_{ false }
+    :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
+    ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
@@ -59,6 +58,10 @@ void AttackPlayer::Initialize()
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    {
+        gameData_.FPS_ = 300;
+    }
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
@@ -180,12 +183,22 @@ void AttackPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-    scoreTimeCounter_++;
-    if (scoreTimeCounter_ % gameData_.FPS_ == scoreTimeCounterWait_)
+    gameData_.scoreTimeCounter_++;
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
     {
-        PlayerScore();
+        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_)
+        {
+    		PlayerScore();
+        }
     }
-    PlayerTime();
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    {
+        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_)
+        {
+            PlayerScore();
+        }
+    }
+
     PlayerCamera();
     PlayerFall();
     PlayerRayCast();
@@ -233,28 +246,28 @@ void AttackPlayer::UpdatePlay()
         Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundData_.soundVolumeHalf_);
     }
 
-    if (isBoneTatch_)
+    if (boneData_.isBoneTatch_)
     {
-        if (killTime_ > initZeroInt)
+        if (boneData_.killTime_ > 0)
         {
-            --killTime_;
+            --boneData_.killTime_;
         }
     }
 
-    if (killTime_ <= initZeroInt && isBoneTatch_)
+    if (boneData_.killTime_ <= 0 && boneData_.isBoneTatch_)
     {
         PlayerScore();
-        if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSWALK)
+        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
         {
-            pDogs_Walk_PlayScene_->AddBoneCount(decBoneCount_);
+            pDogs_Walk_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         }
-        if (gameData_.walkOrFight_ == (bool)PLAYSCENESTATE::DOGSFIGHT)
+        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
-            pDogs_Fight_PlayScene_->AddBoneCount(decBoneCount_);
+            pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         }
-        isBoneTatch_ = false;
+        boneData_.isBoneTatch_ = false;
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
-        killTime_ = killTimeMax_;
+        boneData_.killTime_ = boneData_.killTimeMax_;
     }
     IsMove();
     IsJump();
@@ -349,20 +362,16 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
             transform_.position_ = moveData_.positionPrev_;
         }
     }
-    if (_pTarget->GetObjectName() == boneName && killTime_ == killTimeMax_)
+    if (_pTarget->GetObjectName() == boneName && boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            Instantiate<BoneSuck>(this);
-        }
+        Instantiate<BoneSuck>(this);
+
         pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            static int noDeathBoneSuck = -1;
-//            pBoneSuck_->SetKillTime(noDeathBoneSuck);
-        }
-        SetKillTime(killTimeWait_);
-        isBoneTatch_ = true;
+        SetKillTime(boneData_.killTimeWait_);
+        static int noDeathBoneSuck = 99999;
+        pBoneSuck_->SetKillTime(noDeathBoneSuck);
+        SetKillTime(noDeathBoneSuck);
+        boneData_.isBoneTatch_ = true;
         _pTarget->KillMe();
 
         Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
@@ -379,11 +388,12 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         stunData_.isKnockBack_ = true;
         stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pCollectPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
+        if (boneData_.killTime_ < boneData_.killTimeMax_)
+        {
+            pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+            SetKillTime(boneData_.killTimeWait_);
+        }
     }
-}
-
-void AttackPlayer::PlayerTime()
-{
 }
 
 void AttackPlayer::PlayerScore()

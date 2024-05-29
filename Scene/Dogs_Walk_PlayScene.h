@@ -80,7 +80,6 @@ private:
     float woodBoxFrontPosition_;              //前にどのくらい移動させるか
     //▼演出で使うメンバ変数
     int time_;                         //時間を表す
-    int blockOrCollect_;               //邪魔する側か収集する側か
     bool isGameStop_;                  //ゲームが止まったか
 
     XMFLOAT3 Init = { 0.0f,0.0f,0.0f };
@@ -117,7 +116,6 @@ public:
     void Release() override;
     void BoneSummons();
     std::vector<int> GetWoodBoxs() { return pItemObjectManager_->GetWoodBoxs(); }
-    int GetBlockOrCollect() { return blockOrCollect_; }
     XMFLOAT3 GetAttackPlayerPosition() { return attackPlayerPosition_; }
     XMFLOAT3 GetCollectPlayerPosition() { return collectPlayerPosition_; }
     void AddBoneCount(int _boneCount) { boneCount_ += _boneCount; }

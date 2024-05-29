@@ -51,14 +51,8 @@ private:
 	int stageHModel_;				//ステージモデル番号
 	int floorHModel_;				//すり抜け床モデル番号
 	int number_;
-	int scoreTimeCounter_;
-	int scoreTimeCounterWait_;
 	int attackOrCollect_;
-	int decBoneCount_;
-	bool isBoneTatch_;
-	int killTime_;
-	int killTimeWait_;
-	int killTimeMax_;
+
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -123,8 +117,6 @@ public:
 	/// <param name="_pTarget">当たった相手</param>
 	void OnCollision(GameObject* _pTarget) override;
 
-	void PlayerTime();
-
 	void PlayerScore() override;
 
 	void PlayerCamera() override;
@@ -178,7 +170,7 @@ public:
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
-	void SetKillTime(int _killTime) { killTime_ = _killTime; }
+	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 
 	bool GetIsMove() override { return moveData_.isMove_; }
 
@@ -190,7 +182,7 @@ public:
 
 	bool GetIsDive() override { return diveData_.isDive_; }
 
-	bool GetIsBoneTatch() { return isBoneTatch_; }
+	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 

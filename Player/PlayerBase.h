@@ -35,10 +35,12 @@ protected:
 		int score_;			//得点
 		int scoreAmount_;	//得点の量
 		int scoreMax_;		//最大得点量
+		int scoreTimeCounter_;	//得点を加算する時間
+		int scoreTimeCounterWait_;	//得点を加算する待機時間
 		int padID_;
 		int walkOrFight_;
 		GameData()
-			:FPS_{ 60 * 10 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 }, padID_{ 0 },walkOrFight_{false}
+			:FPS_{ 600 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 },scoreTimeCounter_{0},scoreTimeCounterWait_{30}, padID_{0}, walkOrFight_{false}
 		{
 
 		}
@@ -171,6 +173,20 @@ protected:
 
 		}
 	}wallData_;
+	//▼骨に関するメンバ変数
+	struct BoneData
+	{
+		int decBoneCount_;
+		bool isBoneTatch_;
+		int killTime_;
+		int killTimeWait_;
+		int killTimeMax_;
+		BoneData()
+			:decBoneCount_{ -1 }, isBoneTatch_{ false }, killTime_{ 99999 }, killTimeWait_{ 30 }, killTimeMax_{ 99999 }
+		{
+
+		}
+	}boneData_;
 	//▼アニメーションに関するメンバ変数
 	struct AnimData
 	{

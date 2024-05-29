@@ -3,6 +3,7 @@
 #include "ItemObjectBase.h"
 
 class Dogs_Walk_PlayScene;
+class Dogs_Fight_PlayScene;
 class SphereCollider;
 class Stage;
 class CollectPlayer;
@@ -20,17 +21,19 @@ namespace
 class BoneSuck : public ItemObjectBase
 {
 protected:
-	GameObject* pParent_;
 	int hModel_;
 	int playerHModel_;
 	float rayDist_;
 	float positionRotate_;
-	float BoneSuckInitPosY_;
+	int walkOrFight_;
+	XMFLOAT3 playerRot_;
 	int killTime_;
 	int killTimeWait_;
 	int killTimeMax_;
 	XMFLOAT3 pickUpBoneSuckScale_;
+	GameObject* pParent_;
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
+	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	SphereCollider* pCollision_;
 	Stage* pStage_;
 	CollectPlayer* pCollectPlayer_;
@@ -68,7 +71,12 @@ public:
 	/// </summary>
 	void Release() override;
 
-	void PlayerSuckBoneSuck();
+	void PlayerSuckBone();
+	
+	/// <summary>
+	/// çúÇ™é˚èWë§ÇÃå¢ÇÃå˚Ç…Ç≠ÇÈÇΩÇﬂÇÃåvéZ
+	/// </summary>
+	void CalcPlayerFrontRot();
 
 	void BoneSuckDeath();
 

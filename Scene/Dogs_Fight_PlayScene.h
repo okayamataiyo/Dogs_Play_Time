@@ -70,9 +70,6 @@ private:
     float soundVolumeHalf_;
     //▼骨に関するメンバ変数
     int boneCount_;         //今ある骨の数
-    XMFLOAT3 collectPlayerPosition_;
-    XMVECTOR collectPlayerDirection_;
-    float boneFrontPosition_;
     //▼木箱に関するメンバ変数
     int woodBoxCount_;      //今ある木箱の数
     XMFLOAT3 attackPlayerPosition_;         //アタックプレイヤーの位置
@@ -80,25 +77,7 @@ private:
     float woodBoxFrontPosition_;              //前にどのくらい移動させるか
     //▼演出で使うメンバ変数
     int time_;                         //時間を表す
-    int blockOrCollect_;               //邪魔する側か収集する側か
     bool isGameStop_;                  //ゲームが止まったか
-
-    XMFLOAT3 Init = { 0.0f,0.0f,0.0f };
-    XMVECTOR vPos[2] = {};
-    XMFLOAT3 mouse = Init;
-    XMFLOAT3 controller[2] = {};
-    XMFLOAT3 rDir = { 0.0f,0.0f,1.0f };
-    XMVECTOR Dir[2] = {};
-    float sigmaRotY[2] = {};
-    float sigmaRotX[2] = {};
-    XMMATRIX mxRotX[2] = {};
-    XMMATRIX mxRotY[2] = {};
-    XMMATRIX rot[2] = {};
-    XMFLOAT3 playerPos[2] = {};
-    XMFLOAT3 floatDir[2] = {};
-
-    const float mouseSens = 400;
-    const float controllerSens = 50;
 
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
@@ -118,9 +97,7 @@ public:
     void Release() override;
     void BoneSummons();
     std::vector<int> GetWoodBoxs() { return pItemObjectManager_->GetWoodBoxs(); }
-    int GetBlockOrCollect() { return blockOrCollect_; }
     XMFLOAT3 GetAttackPlayerPosition() { return attackPlayerPosition_; }
-    XMFLOAT3 GetCollectPlayerPosition() { return collectPlayerPosition_; }
     void AddBoneCount(int _boneCount) { boneCount_ += _boneCount; }
     void AddWoodBoxCount(int _woodBoxCount) { woodBoxCount_ += _woodBoxCount; }
     ItemObjectManager* GetItemObjectManager() { return pItemObjectManager_; }

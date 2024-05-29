@@ -17,8 +17,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	,stageBlockNum_{3},lengthRecedes_{5},degreesMin_{0.0f},degreesMax_{-88.0f},degreesToRadians_{3.14f / 180.0f},vecLengthRecedes_{1.0f},vecLengthApproach_{1.0f}
 	,woodBoxCountMax_{5},mousePosX_{600},mousePosY_{600},changeScore_{100},hSound_{-1,-1,-1,-1}
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
-	, collectPlayerPosition_{}, collectPlayerDirection_{}, boneFrontPosition_{ 2.0f }, woodBoxCount_{ 0 }
-	, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, blockOrCollect_{ 0 }, isGameStop_{ false }
+	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr }
 {
 }
@@ -105,13 +104,6 @@ void Dogs_Fight_PlayScene::Update()
 	attackPlayerPosition_.x += woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
 	attackPlayerPosition_.y += -2.0f;
 	attackPlayerPosition_.z += woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
-	//çúÇ™é˚èWë§ÇÃå¢ÇÃå˚Ç…Ç≠ÇÈÇΩÇﬂÇÃåvéZ
-	collectPlayerPosition_ = pCollectPlayer_->GetPosition();
-	collectPlayerDirection_ = XMLoadFloat3(&collectPlayerPosition_) - Camera::VecGetPosition(pCollectPlayer_->GetPadID());
-	collectPlayerDirection_ = XMVectorSetY(collectPlayerDirection_, 0);	//yç¿ïWÇÃèâä˙âª
-	collectPlayerDirection_ = XMVector3Normalize(collectPlayerDirection_);
-	collectPlayerPosition_.x += boneFrontPosition_ * XMVectorGetX(collectPlayerDirection_);
-	collectPlayerPosition_.z += boneFrontPosition_ * XMVectorGetZ(collectPlayerDirection_);
 	static bool isPause = false;
 	if (Input::IsKeyDown(DIK_P))
 	{
@@ -145,13 +137,13 @@ void Dogs_Fight_PlayScene::Release()
 
 void Dogs_Fight_PlayScene::BoneSummons()
 {
-	int boneCountNone = 0;
-	int boneCountMax = 1;
-	int addBoneCountAmount = 1;
-	float boneSummonsPosLimitMinX = 100.0f;
-	float boneSummonsPosLimitMaxX = 100.0f;
-	float boneSummonsPosLimitMinZ = 100.0f;
-	float boneSummonsPosLimitMaxZ = 100.0f;
+	const int boneCountNone = 0;
+	const int boneCountMax = 1;
+	const int addBoneCountAmount = 1;
+	const float boneSummonsPosLimitMinX = 100.0f;
+	const float boneSummonsPosLimitMaxX = 100.0f;
+	const float boneSummonsPosLimitMinZ = 100.0f;
+	const float boneSummonsPosLimitMaxZ = 100.0f;
 	bool isCreateBone = false;     //çúÇçÏÇ¡ÇΩÇ©Ç«Ç§Ç©
 
 	if (boneCount_ == boneCountNone)
