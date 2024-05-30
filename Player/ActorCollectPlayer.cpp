@@ -34,6 +34,29 @@ void ActorCollectPlayer::Initialize()
 
 void ActorCollectPlayer::Update()
 {
+    UpdatePlay();
+}
+
+void ActorCollectPlayer::PlayerStun(int _timeLimit)
+{
+}
+
+void ActorCollectPlayer::Draw()
+{
+    Model::SetTransform(hModel_, transform_);
+    Model::Draw(hModel_);
+}
+
+void ActorCollectPlayer::Release()
+{
+}
+
+void ActorCollectPlayer::UpdateReady()
+{
+}
+
+void ActorCollectPlayer::UpdatePlay()
+{
     //óéÇøÇΩéûÇÃèàóù
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
@@ -42,7 +65,8 @@ void ActorCollectPlayer::Update()
 
     if (!isSelect_)
     {
-        diveData_.isDive_ = true;
+        //diveData_.isDive_ = true;
+        jumpData_.isJump_ = true;
     }
     if (diveData_.isDive_ && !diveData_.isDived_)
     {
@@ -67,30 +91,6 @@ void ActorCollectPlayer::Update()
     IsRun();
     IsStun();
     IsDive();
-}
-
-void ActorCollectPlayer::PlayerStun(int _timeLimit)
-{
-}
-
-
-
-void ActorCollectPlayer::Draw()
-{
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
-}
-
-void ActorCollectPlayer::Release()
-{
-}
-
-void ActorCollectPlayer::UpdateReady()
-{
-}
-
-void ActorCollectPlayer::UpdatePlay()
-{
 }
 
 void ActorCollectPlayer::UpdateGameOver()
@@ -130,6 +130,7 @@ void ActorCollectPlayer::PlayerMove()
 
 void ActorCollectPlayer::PlayerJump()
 {
+    PlayerBase::PlayerJump();
 }
 
 void ActorCollectPlayer::PlayerJumpPower()

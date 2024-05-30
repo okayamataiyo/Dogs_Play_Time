@@ -34,6 +34,32 @@ void ActorAttackPlayer::Initialize()
 
 void ActorAttackPlayer::Update()
 {
+    UpdatePlay();
+    
+}
+
+void ActorAttackPlayer::PlayerStun(int _timeLimit)
+{
+}
+
+
+
+void ActorAttackPlayer::Draw()
+{
+    Model::SetTransform(hModel_, transform_);
+    Model::Draw(hModel_);
+}
+
+void ActorAttackPlayer::Release()
+{
+}
+
+void ActorAttackPlayer::UpdateReady()
+{
+}
+
+void ActorAttackPlayer::UpdatePlay()
+{
     //—‚¿‚½‚Ìˆ—
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
@@ -42,7 +68,8 @@ void ActorAttackPlayer::Update()
 
     if (!isSelect_)
     {
-        diveData_.isDive_ = true;
+        //diveData_.isDive_ = true;
+        jumpData_.isJump_ = true;
     }
 
     if (diveData_.isDive_ && !diveData_.isDived_)
@@ -68,30 +95,6 @@ void ActorAttackPlayer::Update()
     IsRun();
     IsStun();
     IsDive();
-}
-
-void ActorAttackPlayer::PlayerStun(int _timeLimit)
-{
-}
-
-
-
-void ActorAttackPlayer::Draw()
-{
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
-}
-
-void ActorAttackPlayer::Release()
-{
-}
-
-void ActorAttackPlayer::UpdateReady()
-{
-}
-
-void ActorAttackPlayer::UpdatePlay()
-{
 }
 
 void ActorAttackPlayer::UpdateGameOver()
