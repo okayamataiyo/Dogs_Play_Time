@@ -33,9 +33,9 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     pParent_ = _pParent;
     //¥UI‚ÉŠÖ‚·‚éŠî’êƒNƒ‰ƒXƒƒ“ƒo•Ï”
     drawScoreTextX_ = 30;
-    drawScoreTextY_ = 60;
+    drawScoreTextY_ = 30;
     drawScoreNumberX_ = 360;
-    drawScoreNumberY_ = 60;
+    drawScoreNumberY_ = 30;
 }
 
 CollectPlayer::~CollectPlayer()
@@ -114,8 +114,16 @@ void CollectPlayer::Update()
 
 void CollectPlayer::Draw()
 {
-    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=",true,false);
-    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_,true,false);
+    if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
+    {
+        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=", false, true);
+        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, false, true);
+    }
+    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
+    {
+        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=", true, false);
+        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, true, false);
+    }
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);

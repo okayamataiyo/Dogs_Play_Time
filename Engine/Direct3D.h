@@ -80,6 +80,8 @@ namespace Direct3D
 	{
 		LEFTVIEWPORT = 0,
 		RIGHTVIEWPORT,
+		UPVIEWPORT,
+		VIEWPORTNUM,
 	};
 
 
@@ -88,10 +90,6 @@ namespace Direct3D
 	extern int		screenHeight_;		//スクリーンの高さ
 	extern bool		isDrawCollision_;	//コリジョンを表示するかフラグ
 	extern int		viewPortType_;		//ビューポートの種類
-
-
-
-
 
 	////////////////////////ここからは関数///////////////////////////////
 

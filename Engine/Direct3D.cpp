@@ -45,7 +45,8 @@ namespace Direct3D
 	int						screenWidth_ = 0;
 	int						screenHeight_ = 0;
 	int						screenWidthHaif_ = 0;
-	float					vPSize_[4] = { 0,0,0,0 };
+	int						vPWidth_[(int)VIEWPORTSTATE::VIEWPORTNUM] = {};
+	int						vPTopLeftX_[(int)VIEWPORTSTATE::VIEWPORTNUM] = {};
 	float					prevVP_ = 0;
 	int						isChangeView_ = (int)VIEWSTATE::LEFTVIEW;
 	bool					isFinishView_ = false;
@@ -197,7 +198,7 @@ namespace Direct3D
 		screenWidth_ = screenWidth;
 		screenHeight_ = screenHeight;
 		prevVP_ = vp[1].Width;
-		vPSize_[0] = screenWidthHaif_;
+		vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] = screenWidthHaif_;
 
 		return S_OK;
 	}
@@ -508,18 +509,19 @@ namespace Direct3D
 	{
 		// ビューポートの設定
 		//レンダリング結果を表示する範囲
-		vp[0].Width = screenWidthHaif_ + vPSize_[0];
-		vp[0].Height = screenHeight_;
-		vp[0].TopLeftX = vPSize_[2];			 //画面左上のx座標
-		vp[0].TopLeftY = 0;			 //画面左上のy座標
-		vp[0].MinDepth = 0.0f;		 //深度値の最小値
-		vp[0].MaxDepth = 1.0f;		 //深度値の最大値
-		vp[1].Width = screenWidthHaif_ + vPSize_[3];
-		vp[1].Height = screenHeight_;
-		vp[1].TopLeftX = screenWidth_ + vPSize_[1];	 //画面左上のx座標
-		vp[1].TopLeftY = 0;			 //画面左上のy座標
-		vp[1].MinDepth = 0.0f;		 //深度値の最小値
-		vp[1].MaxDepth = 1.0f;		 //深度値の最大値
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT];
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Height = screenHeight_;
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftX = vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のx座標
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Height = screenHeight_;
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftX = screenWidth_ + vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];	 //画面左上のx座標
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
+		
 
 		switch (isChangeView_)
 		{
@@ -528,36 +530,36 @@ namespace Direct3D
 			break;
 		case (int)VIEWSTATE::LEFTVIEW:
 			Camera::SetIsChangeView((int)VIEWSTATE::LEFTVIEW);
-			if (vPSize_[0] <= screenWidthHaif_)
+			if (vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] <= screenWidthHaif_)
 			{
-				vPSize_[0] += 10;
-				vPSize_[1] += 10;
+				vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
 			}
 			break;
 		case (int)VIEWSTATE::LEFT_BOTHVIEW:
 			Camera::SetIsChangeView((int)VIEWSTATE::LEFT_BOTHVIEW);
-			if (vPSize_[0] >= 10)
+			if (vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] >= 10)
 			{
-				vPSize_[0] -= 10;
-				vPSize_[1] -= 10;
+				vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
 			}
 			break;
 		case (int)VIEWSTATE::RIGHTVIEW:
 			Camera::SetIsChangeView((int)VIEWSTATE::RIGHTVIEW);
-			if (vPSize_[3] <= screenWidthHaif_)
+			if (vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] <= screenWidthHaif_)
 			{
-				vPSize_[1] -= 10;
-				vPSize_[2] -= 10;
-				vPSize_[3] += 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 10;
+				vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
 			}
 			break;
 		case (int)VIEWSTATE::RIGHT_BOTHVIEW:
 			Camera::SetIsChangeView((int)VIEWSTATE::RIGHT_BOTHVIEW);
-			if (vPSize_[3] >= 10)
+			if (vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] >= 10)
 			{
-				vPSize_[1] += 10;
-				vPSize_[2] += 10;
-				vPSize_[3] -= 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
+				vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 10;
+				vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
 			}
 			break;
 		default:

@@ -114,8 +114,16 @@ void AttackPlayer::Update()
 
 void AttackPlayer::Draw()
 {
-    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=",false,true);
-    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_,false,true);
+    if(gameData_.padID_ == (int)PADIDSTATE::FIRST)
+	{
+        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=", true, false);
+        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, true, false);
+	}
+    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
+    {
+        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=", false, true);
+        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, false, true);
+    }
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
