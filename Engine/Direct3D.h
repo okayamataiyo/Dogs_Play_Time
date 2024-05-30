@@ -76,12 +76,18 @@ namespace Direct3D
 		RIGHT_BOTHVIEW,
 	};
 
+	enum class VIEWPORTSTATE
+	{
+		LEFTVIEWPORT = 0,
+		RIGHTVIEWPORT,
+	};
+
 
 	//その他
 	extern int		screenWidth_;		//スクリーンの幅
 	extern int		screenHeight_;		//スクリーンの高さ
 	extern bool		isDrawCollision_;	//コリジョンを表示するかフラグ
-
+	extern int		viewPortType_;		//ビューポートの種類
 
 
 
@@ -128,7 +134,7 @@ namespace Direct3D
 	bool Intersect(XMFLOAT3& start, XMFLOAT3& direction, XMFLOAT3 &v0, XMFLOAT3& v1, XMFLOAT3& v2, float* distance);
 
 	/// <summary>
-	/// ぴゅーポートに情報を入れる
+	/// ビューポートに情報を入れる
 	/// </summary>
 	/// <param name="_VpType">ビューポート</param>
 	void SetViewPort(int _VpType);
@@ -138,6 +144,8 @@ namespace Direct3D
 	//Zバッファへの書き込みON/OFF
 	//引数：isWrite	  true=書き込みON／false=書き込みOFF
 	void SetDepthBafferWriteEnable(bool isWrite);
+
+	int GetViewPort();
 
 	int GetIsChangeView();
 };

@@ -114,8 +114,8 @@ void CollectPlayer::Update()
 
 void CollectPlayer::Draw()
 {
-    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=");
-    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_);
+    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "CollectPlayer:Score=",true,false);
+    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_,true,false);
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);

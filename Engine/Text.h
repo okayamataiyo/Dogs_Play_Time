@@ -32,12 +32,12 @@ public:
 	//描画（文字列）
 	//引数：x, y	表示位置（左上）
 	//引数：str		表示したい文字列
-	void Draw(int x, int y, const char* str);
+	void Draw(int x, int y, const char* str,bool _isLeftView = false, bool _isRightView = false);
 
 	//描画（整数値）
 	//引数：x, y	表示位置（左上）
 	//引数：value	表示したい値
-	void Draw(int x, int y, int value);
+	void Draw(int x, int y, int value,bool _isLeftView = false,bool _isRightView = false);
 
 	void DrawTextFor(float px, float py,const char* str);
 

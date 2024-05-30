@@ -35,7 +35,7 @@ namespace Direct3D
 
 	bool		isDrawCollision_ = true;	//コリジョンを表示するか
 	bool		_isLighting = false;		//ライティングするか
-
+	int 	    viewPortType_ = 0;			//ビューポートの種類
 
 
 	//extern宣言した変数の初期化
@@ -680,6 +680,7 @@ namespace Direct3D
 	void SetViewPort(int _VpType)
 	{
 		pContext_->RSSetViewports(1, &vp[_VpType]);	//ビューポートのセット
+		viewPortType_ = _VpType;
 	}
 
 	void SetIsChangeView(int _isChangeView)
@@ -701,6 +702,11 @@ namespace Direct3D
 		{
 			pContext_->OMSetRenderTargets(1, &pRenderTargetView_, nullptr);
 		}
+	}
+
+	int GetViewPort()
+	{
+		return viewPortType_;
 	}
 
 	int GetIsChangeView()

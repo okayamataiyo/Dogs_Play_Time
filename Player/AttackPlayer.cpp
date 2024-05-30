@@ -114,8 +114,8 @@ void AttackPlayer::Update()
 
 void AttackPlayer::Draw()
 {
-    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=");
-    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_);
+    pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=",false,true);
+    pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_,false,true);
 
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
