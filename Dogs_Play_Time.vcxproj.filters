@@ -216,6 +216,7 @@
     <ClCompile Include="Scene\Dogs_Walk_PlayScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -402,6 +403,7 @@
     <ClInclude Include="Scene\Dogs_Walk_PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

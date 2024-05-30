@@ -9,6 +9,7 @@ class SceneManager;
 class Stage;
 class ActorAttackPlayer;
 class ActorCollectPlayer;
+class UI;
 
 namespace
 {
@@ -29,6 +30,7 @@ private:
 	StageObjectManager* pStageObjectManager_;
 	SceneManager* pSceneManager_;
 	Stage* pStage_;
+	UI* pUI_;
 	ActorAttackPlayer* pActorAttackPlayer_;
 	ActorCollectPlayer* pActorCollectPlayer_;
 public:

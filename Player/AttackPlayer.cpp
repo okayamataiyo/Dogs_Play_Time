@@ -28,11 +28,6 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr}
 {
     pParent_ = _pParent;
-    //▼UIに関する基底クラスメンバ変数
-    drawScoreTextX_ = 30;
-    drawScoreTextY_ = 30;
-    drawScoreNumberX_ = 360;
-    drawScoreNumberY_ = 30;
 }
 
 AttackPlayer::~AttackPlayer()
@@ -114,15 +109,19 @@ void AttackPlayer::Update()
 
 void AttackPlayer::Draw()
 {
+    int drawScoreTextX = 30;
+    int drawScoreTextY = 30;
+    int drawScoreNumberX = 360;
+    int drawScoreNumberY = 30;
     if(gameData_.padID_ == (int)PADIDSTATE::FIRST)
 	{
-        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=", true, false);
-        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, true, false);
+        pText_->Draw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=", true, false);
+        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, true, false);
 	}
     if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
     {
-        pText_->Draw(drawScoreTextX_, drawScoreTextY_, "AttackPlayer:Score=", false, true);
-        pText_->Draw(drawScoreNumberX_, drawScoreNumberY_, gameData_.score_, false, true);
+        pText_->Draw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=", false, true);
+        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, false, true);
     }
 
     Model::SetTransform(hModel_, transform_);
@@ -289,6 +288,9 @@ void AttackPlayer::UpdateGameOver()
     Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
     if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
     {
+        //▼INIファイルへの書き込み
+        WritePrivateProfileString("PLAYERSCORE", "AttackPlayerScore", std::to_string(gameData_.score_).c_str(), "Setting/PlayerSetting.ini");
+        WritePrivateProfileString("PLAYERSCORE", "CollectPlayerScore", std::to_string(pCollectPlayer_->GetScore()).c_str(), "Setting/PlayerSetting.ini");
         pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
     }
 }

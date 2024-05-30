@@ -12,13 +12,14 @@
 #include "../Player/CollectPlayer.h"
 #include "../Player/ActorAttackPlayer.h"
 #include "../Player/ActorCollectPlayer.h"
+#include "../UI.h"
 #include "GameOverScene.h"
 
 GameOverScene::GameOverScene(GameObject* _pParent)
 	:GameObject(_pParent, gameOverSceneName), hSound_{ -1 }, soundVolume_{0.1f},inputWait_{ 0 }
 	, inputWaitTime_{ 60 },camPos_{0.0f,0.0f,0.0f},camTar_{0.0f,0.0f,0.0f}
 	,pSolidText_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr},pStage_{nullptr}
-	,pActorAttackPlayer_{nullptr},pActorCollectPlayer_{nullptr}
+	,pUI_{nullptr}, pActorAttackPlayer_{nullptr}, pActorCollectPlayer_{nullptr}
 {
 
 }
@@ -50,6 +51,8 @@ void GameOverScene::Initialize()
 	pActorCollectPlayer_ = Instantiate<ActorCollectPlayer>(this);
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
+	pUI_ = Instantiate<UI>(this);
+
 }
 
 void GameOverScene::Update()
@@ -72,6 +75,7 @@ void GameOverScene::Update()
 
 void GameOverScene::Draw()
 {
+	
 }
 
 void GameOverScene::Release()

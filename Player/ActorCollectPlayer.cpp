@@ -14,12 +14,6 @@ ActorCollectPlayer::ActorCollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, actorCollectPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMESTATE::READY}
     , pDogs_Walk_PlayScene_{ nullptr }, pStage_{ nullptr }
 {
-    //▼UIに関する基底クラスメンバ変数
-    drawScoreTextX_ = 30;
-    drawScoreTextY_ = 30;
-    drawScoreNumberX_ = 360;
-    drawScoreNumberY_ = 30;
-    //▼ゲーム演出に関する基底クラスメンバ変数
 }
 
 ActorCollectPlayer::~ActorCollectPlayer()

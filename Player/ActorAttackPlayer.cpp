@@ -14,11 +14,6 @@ ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, actorAttackPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMESTATE::READY}
     ,pDogs_Walk_PlayScene_{nullptr},pStage_{nullptr}
 {
-    //¥UI‚ÉŠÖ‚·‚éŠî’êƒNƒ‰ƒXƒƒ“ƒo•Ï”
-    drawScoreTextX_ = 30;
-    drawScoreTextY_ = 30;
-    drawScoreNumberX_ = 360;
-    drawScoreNumberY_ = 30;
 }
 
 ActorAttackPlayer::~ActorAttackPlayer()

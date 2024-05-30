@@ -4,7 +4,7 @@
 
 namespace
 {
-	enum Player {
+	enum class PLAYERSTATE {
 		collectPlayer = 0,
 		attackPlayer,
 		playerNum
@@ -20,11 +20,6 @@ protected:
 		PLAY,
 		GAMEOVER,
 	};
-	//▼UIに関するメンバ変数
-	int drawScoreTextX_;
-	int drawScoreTextY_;
-	int drawScoreNumberX_;
-	int drawScoreNumberY_;
 	//▼ゲーム演出に関するメンバ変数
 	struct GameData
 	{
