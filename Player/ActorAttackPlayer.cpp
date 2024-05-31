@@ -69,7 +69,8 @@ void ActorAttackPlayer::UpdatePlay()
     if (!isSelect_)
     {
         //diveData_.isDive_ = true;
-        jumpData_.isJump_ = true;
+        //jumpData_.isJump_ = true;
+        PlayerJumpPower();
     }
 
     if (diveData_.isDive_ && !diveData_.isDived_)
@@ -219,6 +220,7 @@ void ActorAttackPlayer::PlayerRayCast()
     {
         jumpData_.isJump_ = true;
     }
+    moveData_.positionPrev_ = transform_.position_;
 }
 
 void ActorAttackPlayer::PlayerRevival()

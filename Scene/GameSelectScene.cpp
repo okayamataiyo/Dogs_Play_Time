@@ -67,15 +67,15 @@ void GameSelectScene::Update()
 	}
 
 	const float deadZone = 0.3f;
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)
 	{
 		walkOrFight_ = (int)PLAYSCENESTATE::DOGSWALK;
 	}
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x > deadZone)
 	{
 		walkOrFight_ = (int)PLAYSCENESTATE::DOGSFIGHT;
 	}
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
 	{
 		//INIÉtÉ@ÉCÉãÇ÷ÇÃèëÇ´çûÇ›
 		WritePrivateProfileString("PLAYSCENEID", "WalkOrFight", std::to_string(walkOrFight_).c_str(), "Setting/PlaySceneSetting.ini");

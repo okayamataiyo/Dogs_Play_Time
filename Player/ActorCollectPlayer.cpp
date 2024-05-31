@@ -66,7 +66,8 @@ void ActorCollectPlayer::UpdatePlay()
     if (!isSelect_)
     {
         //diveData_.isDive_ = true;
-        jumpData_.isJump_ = true;
+        //jumpData_.isJump_ = true;
+        PlayerJumpPower();
     }
     if (diveData_.isDive_ && !diveData_.isDived_)
     {
@@ -77,7 +78,6 @@ void ActorCollectPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-
     PlayerFall();
     PlayerMove();
     PlayerKnockback();
@@ -130,11 +130,11 @@ void ActorCollectPlayer::PlayerMove()
 
 void ActorCollectPlayer::PlayerJump()
 {
-    PlayerBase::PlayerJump();
 }
 
 void ActorCollectPlayer::PlayerJumpPower()
 {
+    PlayerBase::PlayerJumpPower();
 }
 
 void ActorCollectPlayer::PlayerDive()

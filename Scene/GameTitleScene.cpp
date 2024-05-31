@@ -47,7 +47,7 @@ void GameTitleScene::Update()
 	Camera::SetTarget(camTar_, (int)PADIDSTATE::SECONDS);
 	Camera::SetPosition(camPos_, (int)PADIDSTATE::FIRST);
 	Camera::SetTarget(camTar_, (int)PADIDSTATE::FIRST);
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A,(int)PADIDSTATE::FIRST))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B,(int)PADIDSTATE::FIRST))
 	{
 		pSceneManager_->ChangeScene(SCENE_ID_GAMESELECT);
 	}

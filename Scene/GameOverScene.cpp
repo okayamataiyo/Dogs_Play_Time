@@ -13,13 +13,14 @@
 #include "../Player/ActorAttackPlayer.h"
 #include "../Player/ActorCollectPlayer.h"
 #include "../UI.h"
+#include "../GameImage.h"
 #include "GameOverScene.h"
 
 GameOverScene::GameOverScene(GameObject* _pParent)
 	:GameObject(_pParent, gameOverSceneName), hSound_{ -1 }, soundVolume_{0.1f},inputWait_{ 0 }
 	, inputWaitTime_{ 60 },camPos_{0.0f,0.0f,0.0f},camTar_{0.0f,0.0f,0.0f}
 	,pSolidText_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr},pStage_{nullptr}
-	,pUI_{nullptr}, pActorAttackPlayer_{nullptr}, pActorCollectPlayer_{nullptr}
+	,pUI_{nullptr},pGameImage_{nullptr}, pActorAttackPlayer_{nullptr}, pActorCollectPlayer_{nullptr}
 {
 
 }
@@ -52,7 +53,7 @@ void GameOverScene::Initialize()
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pUI_ = Instantiate<UI>(this);
-
+	pGameImage_ = Instantiate<GameImage>(this);
 }
 
 void GameOverScene::Update()
@@ -65,7 +66,7 @@ void GameOverScene::Update()
 	++inputWait_;
 	if (inputWait_ >= inputWaitTime_)
 	{
-		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST))
+		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST))
 		{
 			pSceneManager_->ChangeScene(SCENE_ID_GAMETITLE);
 			inputWait_ = initZeroInt;

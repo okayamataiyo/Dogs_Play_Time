@@ -3,23 +3,21 @@
 #include "Engine/Model.h"
 #include "Engine/GameObject.h"
 
-class Text;
-
 namespace
 {
 
 }
 
-class UI : public GameObject
+class GameImage : public GameObject
 {
 private:
-	int attackOrCollectInverse_;
-	int attackPlayerScore_;
-	int collectPlayerScore_;
+
 	int hModel_[4];
-	Text* pText_;
+	Transform imageTransform_;
+	int isMatchWinner_;
+	int hPict_;	//âÊëúî‘çÜ
 public:
-	UI(GameObject* _pParent);
+	GameImage(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

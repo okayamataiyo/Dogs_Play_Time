@@ -79,7 +79,7 @@ void DogSelectScene::Update()
 	{
 		attackOrCollect_ = (int)PADIDSTATE::SECONDS;
 	}
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
 	{
 		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)
 		{
@@ -108,6 +108,10 @@ void DogSelectScene::Update()
 		{
 			pSceneManager_->ChangeScene(SCENE_ID_DOGS_FIGHT_PLAY);
 		}
+	}
+	if (Input::IsKeyDown(DIK_Q) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	{
+		pSceneManager_->ChangeScene(SCENE_ID_GAMESELECT);
 	}
 	if (Input::IsKeyDown(DIK_R))
 	{

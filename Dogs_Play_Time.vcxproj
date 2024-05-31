@@ -163,6 +163,7 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="GameImage.cpp" />
     <ClCompile Include="ItemObject\Bone.cpp" />
     <ClCompile Include="ItemObject\BoneSuck.cpp" />
     <ClCompile Include="ItemObject\Floor.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="GameImage.h" />
     <ClInclude Include="ItemObject\Bone.h" />
     <ClInclude Include="ItemObject\BoneSuck.h" />
     <ClInclude Include="ItemObject\Floor.h" />
