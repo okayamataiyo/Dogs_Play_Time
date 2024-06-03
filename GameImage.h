@@ -23,7 +23,7 @@ private:
 	int isMatchWinner_;
 	int hPict_;	//‰æ‘œ”Ô†
 public:
-	GameImage(GameObject* _pParent,IMAGESTATE _imageState);
+	GameImage(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

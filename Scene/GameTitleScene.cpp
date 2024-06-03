@@ -27,7 +27,6 @@ void GameTitleScene::Initialize()
 	assert(hSound_ >= 0);
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)TEXTSTATE::GAMETITLE);
-	pGameImage_ = Instantiate<GameImage>(this);
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
@@ -38,6 +37,8 @@ void GameTitleScene::Initialize()
 	camPos_.z -= 15;
 	camTar_ = pSolidText_->GetPosition();
 	camTar_.y += 2;
+	pGameImage_ = Instantiate<GameImage>(this);
+	pGameImage_->SetMode((int)IMAGESTATE::GAMETITLE);
 }
 
 void GameTitleScene::Update()

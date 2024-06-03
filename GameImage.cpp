@@ -3,14 +3,19 @@
 #include "GameImage.h"
 
 
-GameImage::GameImage(GameObject* _pParent,IMAGESTATE _imageState)
-	:hModel_{}, hPict_{} ,imageTransform_{},imageState_{IMAGESTATE::GAMEOVER},isMatchWinner_{}
+GameImage::GameImage(GameObject* _pParent)
+	:hModel_{}, hPict_{}, imageTransform_{}, imageState_{ IMAGESTATE::GAMEOVER }, isMatchWinner_{}
 {
 }
 
 void GameImage::Initialize()
 {
 	imageTransform_.position_ = { 0.0f,0.8f,0.0f };
+	
+}
+
+void GameImage::Update()
+{
 	//▼INIファイルからデータのロード
 	const int attackPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "AttackPlayerScore", 0, "Setting/PlayerSetting.ini");
 	const int collectPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "CollectPlayerScore", 0, "Setting/PlayerSetting.ini");
@@ -57,11 +62,6 @@ void GameImage::Initialize()
 		assert(hPict_ >= 0);
 		break;
 	}
-	
-}
-
-void GameImage::Update()
-{
 }
 
 void GameImage::Draw()
