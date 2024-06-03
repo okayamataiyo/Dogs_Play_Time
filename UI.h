@@ -10,6 +10,12 @@ namespace
 
 }
 
+enum class UISTATE
+{
+	GAMEOVER = 0,
+	GAMETITLE,
+};
+
 class UI : public GameObject
 {
 private:
@@ -17,6 +23,7 @@ private:
 	int attackPlayerScore_;
 	int collectPlayerScore_;
 	int hModel_[4];
+	UISTATE UIState_;
 	Text* pText_;
 public:
 	UI(GameObject* _pParent);

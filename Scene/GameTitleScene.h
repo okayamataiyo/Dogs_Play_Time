@@ -11,6 +11,7 @@ namespace
 
 class StageObjectManager;
 class SolidText;
+class GameImage;
 class SceneManager;
 
 class GameTitleScene : public GameObject
@@ -21,6 +22,7 @@ private:
 	XMFLOAT3 camPos_;
 	XMFLOAT3 camTar_;
 	SolidText* pSolidText_;
+	GameImage* pGameImage_;
 	StageObjectManager* pStageObjectManager_;
 	SceneManager* pSceneManager_;
 public:

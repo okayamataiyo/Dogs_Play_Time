@@ -6,13 +6,14 @@
 #include "../Engine/Audio.h"
 #include "../StageObject/StageObjectManager.h"
 #include "../StageObject/SolidText.h"
+#include "../GameImage.h"
 #include "../Player/AttackPlayer.h"
 #include "../Player/CollectPlayer.h"
 #include "GameTitleScene.h"
 
 GameTitleScene::GameTitleScene(GameObject* _pParent)
 	:GameObject(_pParent, gameTitleSceneName), hSound_{-1},soundVolume_{0.2f},camPos_{0.0f,0.0f,0.0f}
-	,pSolidText_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr}
+	,pSolidText_{nullptr},pGameImage_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr}
 {
 
 }
@@ -26,6 +27,7 @@ void GameTitleScene::Initialize()
 	assert(hSound_ >= 0);
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)TEXTSTATE::GAMETITLE);
+	pGameImage_ = Instantiate<GameImage>(this);
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	pStageObjectManager_ = new StageObjectManager(this);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);

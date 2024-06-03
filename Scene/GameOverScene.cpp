@@ -53,7 +53,9 @@ void GameOverScene::Initialize()
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pUI_ = Instantiate<UI>(this);
+	pUI_->SetMode((int)UISTATE::GAMEOVER);
 	pGameImage_ = Instantiate<GameImage>(this);
+	pGameImage_->SetMode((int)IMAGESTATE::GAMEOVER);
 }
 
 void GameOverScene::Update()
