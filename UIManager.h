@@ -7,16 +7,18 @@ class Text;
 
 namespace
 {
-
+	std::string UIName = "UI";
 }
 
 enum class UISTATE
 {
 	GAMEOVER = 0,
 	GAMETITLE,
+	GAMEMANUAL,
+	DOGSSELECT,
 };
 
-class UI : public GameObject
+class UIManager : public GameObject
 {
 private:
 	int attackOrCollectInverse_;
@@ -26,7 +28,7 @@ private:
 	UISTATE UIState_;
 	Text* pText_;
 public:
-	UI(GameObject* _pParent);
+	UIManager(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

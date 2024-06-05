@@ -10,6 +10,7 @@ namespace
 
 class SceneManager;
 class SolidText;
+class ImageManager;
 class Sky;
 class ActorAttackPlayer;
 class ActorCollectPlayer;
@@ -30,6 +31,7 @@ private:
 	StageObjectManager* pStageObjectManager_;
 	SolidText* pDogsWalkText_;
 	SolidText* pDogsFightText_;
+	ImageManager* pImageManager_;
 	Sky* pSky_;
 public:
 	GameSelectScene(GameObject* _pParent);

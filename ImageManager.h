@@ -5,25 +5,29 @@
 
 namespace
 {
-
+	std::string gameImageName = "GameImage";
 }
 enum class IMAGESTATE
 {
 	GAMEOVER = 0,
 	GAMETITLE,
+	GAMEMANUAL,
 };
 
-class GameImage : public GameObject
+class ImageManager : public GameObject
 {
 private:
 
 	int hModel_[4];
-	IMAGESTATE imageState_;
-	Transform imageTransform_;
-	int isMatchWinner_;
 	int hPict_;	//âÊëúî‘çÜ
+	int hbuttonhPict_;
+	int hmanualhPict_;
+	Transform imageTransform_;
+	Transform buttonTransform_;
+	IMAGESTATE imageState_;
+	int isMatchWinner_;
 public:
-	GameImage(GameObject* _pParent);
+	ImageManager(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

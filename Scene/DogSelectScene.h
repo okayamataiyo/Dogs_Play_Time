@@ -13,6 +13,8 @@ namespace
 class SceneManager;
 class StageObjectManager;
 class SolidText;
+class ImageManager;
+class UIManager;
 class Sky;
 class ActorAttackPlayer;
 class ActorCollectPlayer;
@@ -20,13 +22,10 @@ class ActorCollectPlayer;
 class DogSelectScene : public GameObject
 {
 private:
-	int hPict_;
 	int attackOrCollect_;	//é◊ñÇÇ∑ÇÈë§Ç©é˚èWÇ∑ÇÈë§Ç©
 	int attackOrCollectInverse_;
 	int walkOrFight_;
-	Transform pictureTrans_;
 	float solidTextRotate_;
-	bool isViewPicture_;
 	bool padIDNum_;
 	XMFLOAT3 skyPos_;
 	XMFLOAT3 skyPosFly_;
@@ -34,6 +33,9 @@ private:
 	SceneManager* pSceneManager_;
 	StageObjectManager* pStageObjectManager_;
 	SolidText* pSolidText_;
+	ImageManager* pImageManager_;
+	UIManager* pUIManager_;
+	UIManager* pDogsSelectUIManager_;
 	Button* buttonStart_;
 	Button* buttonBack_;
 	Sky* pSky_;

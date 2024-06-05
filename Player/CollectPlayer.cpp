@@ -20,6 +20,7 @@
 #include "../State/CollectPlayerState.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
+#include "../ImageManager.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
@@ -28,7 +29,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , number_{ 0 }, gameState_{GAMESTATE::READY},attackOrCollectInverse_{0}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}
+    , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -274,6 +275,8 @@ void CollectPlayer::UpdatePlay()
 
 void CollectPlayer::UpdateGameOver()
 {
+    pImageManager_ = Instantiate<ImageManager>(this);
+    pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {
         Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));

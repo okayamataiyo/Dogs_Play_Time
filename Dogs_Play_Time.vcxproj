@@ -163,7 +163,7 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="GameImage.cpp" />
+    <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="ItemObject\Bone.cpp" />
     <ClCompile Include="ItemObject\BoneSuck.cpp" />
     <ClCompile Include="ItemObject\Floor.cpp" />
@@ -189,7 +189,7 @@
     <ClCompile Include="State\AttackPlayerState.cpp" />
     <ClCompile Include="State\CollectPlayerState.cpp" />
     <ClCompile Include="State\StateManager.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -226,7 +226,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
-    <ClInclude Include="GameImage.h" />
+    <ClInclude Include="ImageManager.h" />
     <ClInclude Include="ItemObject\Bone.h" />
     <ClInclude Include="ItemObject\BoneSuck.h" />
     <ClInclude Include="ItemObject\Floor.h" />
@@ -255,7 +255,7 @@
     <ClInclude Include="State\CollectPlayerState.h" />
     <ClInclude Include="State\StateBase.h" />
     <ClInclude Include="State\StateManager.h" />
-    <ClInclude Include="UI.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\BillBoard.hlsl">

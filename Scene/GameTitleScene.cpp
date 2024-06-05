@@ -6,14 +6,14 @@
 #include "../Engine/Audio.h"
 #include "../StageObject/StageObjectManager.h"
 #include "../StageObject/SolidText.h"
-#include "../GameImage.h"
+#include "../ImageManager.h"
 #include "../Player/AttackPlayer.h"
 #include "../Player/CollectPlayer.h"
 #include "GameTitleScene.h"
 
 GameTitleScene::GameTitleScene(GameObject* _pParent)
 	:GameObject(_pParent, gameTitleSceneName), hSound_{-1},soundVolume_{0.2f},camPos_{0.0f,0.0f,0.0f}
-	,pSolidText_{nullptr},pGameImage_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr}
+	,pSolidText_{nullptr},pImageManager_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr}
 {
 
 }
@@ -37,8 +37,8 @@ void GameTitleScene::Initialize()
 	camPos_.z -= 15;
 	camTar_ = pSolidText_->GetPosition();
 	camTar_.y += 2;
-	pGameImage_ = Instantiate<GameImage>(this);
-	pGameImage_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_ = Instantiate<ImageManager>(this);
+	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
 }
 
 void GameTitleScene::Update()

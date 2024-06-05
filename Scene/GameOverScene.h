@@ -9,8 +9,8 @@ class SceneManager;
 class Stage;
 class ActorAttackPlayer;
 class ActorCollectPlayer;
-class UI;
-class GameImage;
+class UIManager;
+class ImageManager;
 
 namespace
 {
@@ -31,8 +31,9 @@ private:
 	StageObjectManager* pStageObjectManager_;
 	SceneManager* pSceneManager_;
 	Stage* pStage_;
-	UI* pUI_;
-	GameImage* pGameImage_;
+	UIManager* pUIManager_;
+	ImageManager* pImageManager_;
+	ImageManager* pButtonImage_;
 	ActorAttackPlayer* pActorAttackPlayer_;
 	ActorCollectPlayer* pActorCollectPlayer_;
 public:

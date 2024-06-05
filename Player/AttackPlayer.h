@@ -15,6 +15,7 @@ class Floor;
 class SceneManager;
 class ItemObjectManager;
 class StateManager;
+class ImageManager;
 
 namespace
 {
@@ -68,6 +69,7 @@ private:
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
+	ImageManager* pImageManager_;
 public:
 
 	/// <summary>

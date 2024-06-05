@@ -1,16 +1,16 @@
 #include "Engine/Text.h"
 #include "Engine/Global.h"
-#include "UI.h"
+#include "UIManager.h"
 #include "Player/AttackPlayer.h"
 
 
-UI::UI(GameObject* _pParent)
-	:hModel_{},attackOrCollectInverse_{},attackPlayerScore_{},collectPlayerScore_{}
+UIManager::UIManager(GameObject* _pParent)
+	:GameObject(_pParent,UIName),hModel_{},attackOrCollectInverse_{},attackPlayerScore_{},collectPlayerScore_{}
 	,pText_{nullptr}
 {
 }
 
-void UI::Initialize()
+void UIManager::Initialize()
 {
 	//▼INIファイルからデータのロード
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
@@ -20,11 +20,11 @@ void UI::Initialize()
 	pText_->Initialize();
 }
 
-void UI::Update()
+void UIManager::Update()
 {
 }
 
-void UI::Draw()
+void UIManager::Draw()
 {
 	int drawScoreTextX[(int)PLAYERSTATE::playerNum] = {};
 	int drawScoreTextY[(int)PLAYERSTATE::playerNum] = {};
@@ -63,14 +63,24 @@ void UI::Draw()
 		case UISTATE::GAMETITLE:
 
 			break;
+		case UISTATE::GAMEMANUAL:
+			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
+			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
+			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "XButton:MANUAL", true, true);
+			break;
+		case UISTATE::DOGSSELECT:
+			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
+			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 60 };
+			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "RStick:<- ->", true, true);
+			break;
 	}
 }
 
-void UI::Release()
+void UIManager::Release()
 {
 }
 
-void UI::SetMode(int _mode)
+void UIManager::SetMode(int _mode)
 {
 	UIState_ = (UISTATE)_mode;
 }

@@ -12,15 +12,15 @@
 #include "../Player/CollectPlayer.h"
 #include "../Player/ActorAttackPlayer.h"
 #include "../Player/ActorCollectPlayer.h"
-#include "../UI.h"
-#include "../GameImage.h"
+#include "../UIManager.h"
+#include "../ImageManager.h"
 #include "GameOverScene.h"
 
 GameOverScene::GameOverScene(GameObject* _pParent)
 	:GameObject(_pParent, gameOverSceneName), hSound_{ -1 }, soundVolume_{0.1f},inputWait_{ 0 }
 	, inputWaitTime_{ 60 },camPos_{0.0f,0.0f,0.0f},camTar_{0.0f,0.0f,0.0f}
 	,pSolidText_{nullptr}, pStageObjectManager_{nullptr}, pSceneManager_{nullptr},pStage_{nullptr}
-	,pUI_{nullptr},pGameImage_{nullptr}, pActorAttackPlayer_{nullptr}, pActorCollectPlayer_{nullptr}
+	,pUIManager_{nullptr},pImageManager_{nullptr},pButtonImage_{nullptr}, pActorAttackPlayer_{nullptr}, pActorCollectPlayer_{nullptr}
 {
 
 }
@@ -52,10 +52,12 @@ void GameOverScene::Initialize()
 	pActorCollectPlayer_ = Instantiate<ActorCollectPlayer>(this);
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
-	pUI_ = Instantiate<UI>(this);
-	pUI_->SetMode((int)UISTATE::GAMEOVER);
-	pGameImage_ = Instantiate<GameImage>(this);
-	pGameImage_->SetMode((int)IMAGESTATE::GAMEOVER);
+	pUIManager_ = Instantiate<UIManager>(this);
+	pUIManager_->SetMode((int)UISTATE::GAMEOVER);
+	pImageManager_ = Instantiate<ImageManager>(this);
+	pImageManager_->SetMode((int)IMAGESTATE::GAMEOVER);
+	pButtonImage_ = Instantiate<ImageManager>(this);
+	pButtonImage_->SetMode((int)IMAGESTATE::GAMETITLE);
 }
 
 void GameOverScene::Update()

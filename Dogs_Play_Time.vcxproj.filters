@@ -216,8 +216,8 @@
     <ClCompile Include="Scene\Dogs_Walk_PlayScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp" />
-    <ClCompile Include="GameImage.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="ImageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -404,8 +404,8 @@
     <ClInclude Include="Scene\Dogs_Walk_PlayScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h" />
-    <ClInclude Include="GameImage.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="ImageManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
