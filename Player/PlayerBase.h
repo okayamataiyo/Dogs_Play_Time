@@ -5,9 +5,9 @@
 namespace
 {
 	enum class PLAYERSTATE {
-		collectPlayer = 0,
-		attackPlayer,
-		playerNum
+		COLLECTPLAYER = 0,
+		ATTACKPLAYER,
+		PLAYERNUM
 	};
 }
 

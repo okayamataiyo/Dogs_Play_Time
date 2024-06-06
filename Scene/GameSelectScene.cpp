@@ -12,13 +12,14 @@
 #include "../Player/ActorAttackPlayer.h"
 #include "../Player/ActorCollectPlayer.h"
 #include "../ImageManager.h"
+#include "../UIManager.h"
 #include "GameSelectScene.h"
 
 GameSelectScene::GameSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, gameSelectSceneName), hPict_{ -1 }, attackOrCollect_{ 0 }, attackOrCollectInverse_{ 0 },walkOrFight_{0}, padIDNum_{0}
 	, skyPos_{ 0.0f,0.0f,0.0f }, skyPosFly_{ 10000.0f,0.0f,10000.0f }
 	, pSceneManager_{ nullptr }, pStageObjectManager_{ nullptr }, pSky_{ nullptr }
-	, pDogsWalkText_{ nullptr }, pDogsFightText_{ nullptr }, pImageManager_{ nullptr }
+	, pDogsWalkText_{ nullptr }, pDogsFightText_{ nullptr }, pImageManager_{ nullptr }, pDogsSelectUIManager_{ nullptr }
 {
 }
 
@@ -49,6 +50,8 @@ void GameSelectScene::Initialize()
 	XMFLOAT3 positionActorCollectPlayer = { -5.0f,0.0f,0.0f };
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
+	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECT);
 }
 
 void GameSelectScene::Update()

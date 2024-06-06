@@ -32,6 +32,7 @@ private:
 	SolidText* pDogsWalkText_;
 	SolidText* pDogsFightText_;
 	ImageManager* pImageManager_;
+	UIManager* pDogsSelectUIManager_;
 	Sky* pSky_;
 public:
 	GameSelectScene(GameObject* _pParent);

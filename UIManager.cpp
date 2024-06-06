@@ -26,10 +26,10 @@ void UIManager::Update()
 
 void UIManager::Draw()
 {
-	int drawScoreTextX[(int)PLAYERSTATE::playerNum] = {};
-	int drawScoreTextY[(int)PLAYERSTATE::playerNum] = {};
-	int drawScoreNumberX[(int)PLAYERSTATE::playerNum] = {};
-	int drawScoreNumberY[(int)PLAYERSTATE::playerNum] = {};
+	int drawScoreTextX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreTextY[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberY[(int)PLAYERSTATE::PLAYERNUM] = {};
 	switch (UIState_)
 	{
 		case UISTATE::GAMEOVER:
