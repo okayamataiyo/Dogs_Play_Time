@@ -150,7 +150,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				for (int i = 0u; i < 3; i++) {
 					Direct3D::SetViewPort(i);	//ビューポートにセット
 					Camera::Update(i);			//カメラを更新
-
+					VFX::Draw();
 					//全オブジェクトを描画
 					//ルートオブジェクトのDrawを呼んだあと、自動的に子、孫のUpdateが呼ばれる
 					pRootObject->DrawSub();
