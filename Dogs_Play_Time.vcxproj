@@ -170,6 +170,7 @@
     <ClCompile Include="ItemObject\FrameBox.cpp" />
     <ClCompile Include="ItemObject\ItemObjectManager.cpp" />
     <ClCompile Include="ItemObject\WoodBox.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Player\ActorAttackPlayer.cpp" />
     <ClCompile Include="Player\ActorCollectPlayer.cpp" />
     <ClCompile Include="Player\AttackPlayer.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="ItemObject\ItemObjectBase.h" />
     <ClInclude Include="ItemObject\ItemObjectManager.h" />
     <ClInclude Include="ItemObject\WoodBox.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Player\ActorAttackPlayer.h" />
     <ClInclude Include="Player\ActorCollectPlayer.h" />
     <ClInclude Include="Player\AttackPlayer.h" />
