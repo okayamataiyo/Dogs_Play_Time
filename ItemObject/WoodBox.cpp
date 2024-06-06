@@ -67,10 +67,18 @@ void WoodBox::Update()
     }
 }
 
-void WoodBox::Draw()
+void WoodBox::BothViewDraw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+}
+
+void WoodBox::LeftViewDraw()
+{
+}
+
+void WoodBox::RightViewDraw()
+{
 }
 
 void WoodBox::Release()

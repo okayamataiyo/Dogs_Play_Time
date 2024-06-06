@@ -30,7 +30,9 @@ public:
 
 	void Update() override;
 
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 
 	void Release() override;
 

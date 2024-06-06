@@ -44,10 +44,18 @@ void ActorAttackPlayer::PlayerStun(int _timeLimit)
 
 
 
-void ActorAttackPlayer::Draw()
+void ActorAttackPlayer::BothViewDraw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+}
+
+void ActorAttackPlayer::LeftViewDraw()
+{
+}
+
+void ActorAttackPlayer::RightViewDraw()
+{
 }
 
 void ActorAttackPlayer::Release()

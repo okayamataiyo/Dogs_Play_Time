@@ -127,7 +127,15 @@ void Dogs_Fight_PlayScene::Update()
 	}
 }
 
-void Dogs_Fight_PlayScene::Draw()
+void Dogs_Fight_PlayScene::BothViewDraw()
+{
+}
+
+void Dogs_Fight_PlayScene::LeftViewDraw()
+{
+}
+
+void Dogs_Fight_PlayScene::RightViewDraw()
 {
 }
 

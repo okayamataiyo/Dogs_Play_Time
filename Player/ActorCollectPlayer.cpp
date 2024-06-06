@@ -41,11 +41,18 @@ void ActorCollectPlayer::PlayerStun(int _timeLimit)
 {
 }
 
-void ActorCollectPlayer::Draw()
+void ActorCollectPlayer::BothViewDraw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 }
+
+void ActorCollectPlayer::LeftViewDraw()
+{
+}
+
+void ActorCollectPlayer::RightViewDraw()
+{}
 
 void ActorCollectPlayer::Release()
 {

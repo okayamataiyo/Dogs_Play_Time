@@ -80,11 +80,11 @@ void ImageManager::Update()
 	}
 }
 
-void ImageManager::Draw()
+void ImageManager::BothViewDraw()
 {
 	Image::SetTransform(hPict_,imageTransform_);
 	Image::Draw(hPict_);
-	if (imageState_ == IMAGESTATE::GAMETITLE)
+	if (imageState_ == IMAGESTATE::GAMETITLE || imageState_ == IMAGESTATE::DOGSSELECT)
 	{
 		Image::SetTransform(hbuttonhPict_, buttonTransform_);
 		Image::Draw(hbuttonhPict_);
@@ -94,6 +94,14 @@ void ImageManager::Draw()
 		Image::SetTransform(hmanualhPict_, transform_);
 		Image::Draw(hmanualhPict_);
 	}
+}
+
+void ImageManager::LeftViewDraw()
+{
+}
+
+void ImageManager::RightViewDraw()
+{
 }
 
 void ImageManager::Release()

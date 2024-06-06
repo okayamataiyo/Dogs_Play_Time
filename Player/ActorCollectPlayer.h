@@ -32,7 +32,9 @@ public:
 
 	void PlayerStun(int _timeLimit = 60) override;
 
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 
 	void Release() override;
 

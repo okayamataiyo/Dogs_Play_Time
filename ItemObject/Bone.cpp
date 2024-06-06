@@ -55,10 +55,18 @@ void Bone::Update()
 	}
 }
 
-void Bone::Draw()
+void Bone::BothViewDraw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
+}
+
+void Bone::LeftViewDraw()
+{
+}
+
+void Bone::RightViewDraw()
+{
 }
 
 void Bone::Release()

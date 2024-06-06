@@ -157,7 +157,15 @@ void DogSelectScene::Update()
 	}
 }
 
-void DogSelectScene::Draw()
+void DogSelectScene::BothViewDraw()
+{
+}
+
+void DogSelectScene::LeftViewDraw()
+{
+}
+
+void DogSelectScene::RightViewDraw()
 {
 }
 

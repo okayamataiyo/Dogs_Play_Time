@@ -108,7 +108,7 @@ void AttackPlayer::Update()
     }
 }
 
-void AttackPlayer::Draw()
+void AttackPlayer::BothViewDraw()
 {
     int drawScoreTextX = 30;
     int drawScoreTextY = 30;
@@ -116,13 +116,13 @@ void AttackPlayer::Draw()
     int drawScoreNumberY = 30;
     if(gameData_.padID_ == (int)PADIDSTATE::FIRST)
 	{
-        pText_->Draw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=", true, false);
-        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, true, false);
+        pText_->LeftViewDraw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=");
+        pText_->LeftViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
 	}
     if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
     {
-        pText_->Draw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=", false, true);
-        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, false, true);
+        pText_->RightViewDraw(drawScoreTextX, drawScoreTextY, "AttackPlayer:Score=");
+        pText_->RightViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
     }
 
     Model::SetTransform(hModel_, transform_);

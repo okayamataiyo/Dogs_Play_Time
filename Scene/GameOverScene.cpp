@@ -78,9 +78,18 @@ void GameOverScene::Update()
 	}
 }
 
-void GameOverScene::Draw()
+void GameOverScene::BothViewDraw()
 {
 	
+}
+
+void GameOverScene::LeftViewDraw()
+{
+}
+
+void GameOverScene::RightViewDraw()
+{
+
 }
 
 void GameOverScene::Release()

@@ -49,13 +49,22 @@ void Floor::Update()
     }
 }
 
-void Floor::Draw()
+void Floor::BothViewDraw()
 {
     for (int i = initZeroInt; i <= 1; i++)
     {
         Model::SetTransform(hModel_, transform_);
         Model::Draw(hModel_);
     }
+}
+
+
+void Floor::LeftViewDraw()
+{
+}
+
+void Floor::RightViewDraw()
+{
 }
 
 void Floor::Release()

@@ -31,7 +31,9 @@ public:
 	UIManager(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 	void Release() override;
 	void SetMode(int _mode);
 };

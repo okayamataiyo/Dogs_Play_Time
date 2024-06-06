@@ -24,7 +24,7 @@ void UIManager::Update()
 {
 }
 
-void UIManager::Draw()
+void UIManager::BothViewDraw()
 {
 	int drawScoreTextX[(int)PLAYERSTATE::PLAYERNUM] = {};
 	int drawScoreTextY[(int)PLAYERSTATE::PLAYERNUM] = {};
@@ -55,10 +55,10 @@ void UIManager::Draw()
 				drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 1230 };
 				drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
 			}
-			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer :Score=", true, true);
-			pText_->Draw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_, true, true);
-			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=", true, true);
-			pText_->Draw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_, true, true);
+			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer :Score=");
+			pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_);
+			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=");
+			pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_);
 			break;
 		case UISTATE::GAMETITLE:
 
@@ -66,14 +66,22 @@ void UIManager::Draw()
 		case UISTATE::GAMEMANUAL:
 			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
 			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
-			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "XButton:MANUAL", true, true);
+			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "XButton:MANUAL");
 			break;
 		case UISTATE::DOGSSELECT:
 			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
 			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 60 };
-			pText_->Draw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "RStick:<- ->", true, true);
+			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "RStick:<- ->");
 			break;
 	}
+}
+
+void UIManager::LeftViewDraw()
+{
+}
+
+void UIManager::RightViewDraw()
+{
 }
 
 void UIManager::Release()

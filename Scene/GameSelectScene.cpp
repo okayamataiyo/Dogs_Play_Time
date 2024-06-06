@@ -90,7 +90,16 @@ void GameSelectScene::Update()
 	}
 }
 
-void GameSelectScene::Draw()
+void GameSelectScene::BothViewDraw()
+{
+}
+
+void GameSelectScene::LeftViewDraw()
+{
+
+}
+
+void GameSelectScene::RightViewDraw()
 {
 }
 

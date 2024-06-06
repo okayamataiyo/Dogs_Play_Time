@@ -43,7 +43,9 @@ public:
 	//各オブジェクトで必ず作る関数
 	virtual void Initialize(void) = 0;
 	virtual void Update(void) = 0;
-	virtual void Draw() = 0;
+	virtual void BothViewDraw() = 0;
+	virtual void LeftViewDraw();
+	virtual void RightViewDraw() = 0;
 	virtual void Release(void) = 0;
 
 	//自分の該当関数を読んだ後、子供の関数も呼ぶ

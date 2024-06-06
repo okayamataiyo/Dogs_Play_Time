@@ -137,8 +137,17 @@ void Dogs_Walk_PlayScene::Update()
 	}
 }
 
-void Dogs_Walk_PlayScene::Draw()
+void Dogs_Walk_PlayScene::BothViewDraw()
 {
+}
+
+void Dogs_Walk_PlayScene::LeftViewDraw()
+{
+}
+
+void Dogs_Walk_PlayScene::RightViewDraw()
+{
+
 }
 
 void Dogs_Walk_PlayScene::Release()

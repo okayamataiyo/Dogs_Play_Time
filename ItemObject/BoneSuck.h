@@ -64,7 +64,9 @@ public:
 	/// <summary>
 	/// •`‰æŠÖ”
 	/// </summary>
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 
 	/// <summary>
 	/// ŠJ•úŠÖ”

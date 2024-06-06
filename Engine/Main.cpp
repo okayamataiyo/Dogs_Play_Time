@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <time.h>
+#include "Direct3D.h"
 #include "global.h"
 #include "RootObject.h"
 #include "Model.h"
@@ -146,7 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				{
 					while (::ShowCursor(true) < 0);
 				}
-				for (int i = 0u; i <= 1; i++) {
+				for (int i = 0u; i < 3; i++) {
 					Direct3D::SetViewPort(i);	//ビューポートにセット
 					Camera::Update(i);			//カメラを更新
 

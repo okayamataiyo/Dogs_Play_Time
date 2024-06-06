@@ -56,7 +56,15 @@ void SceneManager::Update()
 }
 
 //•`‰æ
-void SceneManager::Draw()
+void SceneManager::BothViewDraw()
+{
+}
+
+void SceneManager::LeftViewDraw()
+{
+}
+
+void SceneManager::RightViewDraw()
 {
 }
 

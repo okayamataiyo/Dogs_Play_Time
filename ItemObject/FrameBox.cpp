@@ -53,7 +53,7 @@ void FrameBox::Update()
     transform_.rotate_.y = pAttackPlayer_->GetAngle();
 }
 
-void FrameBox::Draw()
+void FrameBox::BothViewDraw()
 {
     Direct3D::SetShader(Direct3D::SHADER_UNLIT);
     Model::SetTransform(hModel_, transform_);
@@ -62,6 +62,14 @@ void FrameBox::Draw()
         Model::Draw(hModel_);
     }
     Direct3D::SetShader(Direct3D::SHADER_3D);
+}
+
+void FrameBox::LeftViewDraw()
+{
+}
+
+void FrameBox::RightViewDraw()
+{
 }
 
 void FrameBox::Release()

@@ -25,7 +25,7 @@ void Button::Update()
 {
 }
 
-void Button::Draw()
+void Button::BothViewDraw()
 {
 	if (pushed_) {
 		Image::SetTransform(hPushModel_, transform_);
@@ -35,6 +35,14 @@ void Button::Draw()
 		Image::SetTransform(hModel_, transform_);
 		Image::Draw(hModel_);
 	}
+}
+
+void Button::LeftViewDraw()
+{
+}
+
+void Button::RightViewDraw()
+{
 }
 
 void Button::Release()

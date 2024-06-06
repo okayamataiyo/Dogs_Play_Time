@@ -24,7 +24,7 @@ void SolidText::Update()
 {
 }
 
-void SolidText::Draw()
+void SolidText::BothViewDraw()
 {
 	switch (textState_)
 	{
@@ -49,6 +49,14 @@ void SolidText::Draw()
 		Model::Draw(hModel_[(int)TEXTSTATE::GAMETITLE]);
 		break;
 	}
+}
+
+void SolidText::LeftViewDraw()
+{
+}
+
+void SolidText::RightViewDraw()
+{
 }
 
 void SolidText::Release()

@@ -291,6 +291,14 @@ GameObject * GameObject::GetRootJob()
 
 
 
+void GameObject::LeftViewDraw()
+{
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
+	{
+
+	}
+}
+
 void GameObject::UpdateSub()
 {
 	Update();
@@ -320,8 +328,9 @@ void GameObject::UpdateSub()
 
 void GameObject::DrawSub()
 {
-	Draw();
-
+	BothViewDraw();
+	LeftViewDraw();
+	RightViewDraw();
 
 	//ÉäÉäÅ[ÉXéûÇÕçÌèú
 #ifdef _DEBUG

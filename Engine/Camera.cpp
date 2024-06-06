@@ -16,7 +16,7 @@ float viewChangeSpeed_ = 0.008f;
 //初期化（プロジェクション行列作成）
 void Camera::Initialize()
 {
-	for (int i = 0u; i <= 1; i++)
+	for (int i = 0u; i < 2; i++)
 	{
 		position_[i] = XMFLOAT3(0, 3 * i, -20);	//カメラの位置
 		target_[i] = XMFLOAT3(0, 0, 0);	//カメラの焦点

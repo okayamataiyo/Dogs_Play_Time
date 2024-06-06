@@ -72,7 +72,15 @@ void GameTitleScene::Update()
 	}
 }
 
-void GameTitleScene::Draw()
+void GameTitleScene::BothViewDraw()
+{
+}
+
+void GameTitleScene::LeftViewDraw()
+{
+}
+
+void GameTitleScene::RightViewDraw()
 {
 }
 

@@ -116,13 +116,13 @@ void CollectPlayer::Draw()
     int drawScoreNumberY = 30;
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {
-        pText_->Draw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=", true, false);
-        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, true, false);
+        pText_->LeftViewDraw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=");
+        pText_->LeftViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
     }
     if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
     {
-        pText_->Draw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=", false, true);
-        pText_->Draw(drawScoreNumberX, drawScoreNumberY, gameData_.score_, false, true);
+        pText_->RightViewDraw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=");
+        pText_->RightViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
     }
 
     Model::SetTransform(hModel_, transform_);

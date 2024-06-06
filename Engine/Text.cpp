@@ -33,11 +33,9 @@ HRESULT Text::Initialize(const char* fileName, const unsigned int charWidth, con
 	return Initialize();
 }
 
-
-//描画（文字列）
-void Text::Draw(int x, int y, const char* str ,bool _isLeftView,bool _isRightView)
+void Text::BothViewDraw(int x, int y, const char* str)
 {
-	if(_isLeftView && Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT || Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::RIGHTVIEWPORT)
 	{
 		//表示位置（左上）を計算
 		//Spriteクラスは中心が(0,0)、右上が(1,1)という座標だが、ここの引数は左上を(0,0)、ドット単位で指定している
@@ -53,7 +51,31 @@ void Text::Draw(int x, int y, const char* str ,bool _isLeftView,bool _isRightVie
 
 		DrawTextFor(px, py, str);
 	}
-	else if(_isRightView && Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::RIGHTVIEWPORT)
+}
+
+void Text::LeftViewDraw(int x, int y, const char* str)
+{
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
+	{
+		//表示位置（左上）を計算
+		//Spriteクラスは中心が(0,0)、右上が(1,1)という座標だが、ここの引数は左上を(0,0)、ドット単位で指定している
+		float px, py;
+
+		//引数は左上原点だが、スプライトは画面中央が原点なので、画面サイズの半分ずらす
+		px = (float)(x - Direct3D::screenWidth_ / 2.0f);
+		py = (float)(-y + Direct3D::screenHeight_ / 2.0f);	//Y軸は+-反転
+
+		//スプライトはPositionを1ずらすと画面サイズの半分ずれるので、ピクセル単位に変換
+		px /= (float)(Direct3D::screenWidth_ / 2.0f);
+		py /= (float)(Direct3D::screenHeight_ / 2.0f);
+
+		DrawTextFor(px, py, str);
+	}
+}
+
+void Text::RightViewDraw(int x, int y, const char* str)
+{
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::RIGHTVIEWPORT)
 	{
 		//表示位置（左上）を計算
 		//Spriteクラスは中心が(0,0)、右上が(1,1)という座標だが、ここの引数は左上を(0,0)、ドット単位で指定している
@@ -69,27 +91,34 @@ void Text::Draw(int x, int y, const char* str ,bool _isLeftView,bool _isRightVie
 
 		DrawTextFor(px, py, str);
 	}
+
 }
 
-//描画（整数値）
-void Text::Draw(int x, int y, int value,bool _isLeftView,bool _isRightView)
+void Text::BothViewDraw(int x, int y, int value)
 {
-	if (_isLeftView)
-	{
-		//文字列に変換
-		char str[256];
-		sprintf_s(str, "%d", value);
+	//文字列に変換
+	char str[256];
+	sprintf_s(str, "%d", value);
 
-		Draw(x, y, str,_isLeftView,_isRightView);
-	}
-	else if (_isRightView)
-	{
-		//文字列に変換
-		char str[256];
-		sprintf_s(str, "%d", value);
+	BothViewDraw(x, y, str);
+}
 
-		Draw(x, y, str,_isLeftView, _isRightView);
-	}
+void Text::LeftViewDraw(int x, int y, int value)
+{
+	//文字列に変換
+	char str[256];
+	sprintf_s(str, "%d", value);
+
+	LeftViewDraw(x, y, str);
+}
+
+void Text::RightViewDraw(int x, int y, int value)
+{
+	//文字列に変換
+	char str[256];
+	sprintf_s(str, "%d", value);
+
+	RightViewDraw(x, y, str);
 }
 
 void Text::DrawTextFor(float px,float py, const char* str)

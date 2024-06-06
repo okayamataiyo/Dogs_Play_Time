@@ -40,7 +40,9 @@ public:
 	GameOverScene(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 	void Release() override;
 	void ShowCursor() { while (::ShowCursor(true) < initZeroInt); }
 };
