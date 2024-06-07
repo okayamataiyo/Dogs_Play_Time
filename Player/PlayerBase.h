@@ -60,6 +60,10 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
+		const float CamPos_[3] = { 30.0f,15.0f,5.0f };
+		int CamPosNum_;
+		bool i_;
+		bool j_;
 		MoveData()
 			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
 		{

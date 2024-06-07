@@ -16,6 +16,9 @@ enum class UISTATE
 	GAMETITLE,
 	GAMEMANUAL,
 	DOGSSELECT,
+	DOGSWALKATTACK,
+	DOGSWALKCOLLECT,
+	DOGSFIGHT,
 };
 
 class UIManager : public GameObject
@@ -24,6 +27,7 @@ private:
 	int attackOrCollectInverse_;
 	int attackPlayerScore_;
 	int collectPlayerScore_;
+	int padNum_;
 	int hModel_[4];
 	UISTATE UIState_;
 	Text* pText_;
@@ -36,5 +40,8 @@ public:
 	void RightViewDraw() override;
 	void Release() override;
 	void SetMode(int _mode);
+	void SetAttackPlayerScore(int _score) { attackPlayerScore_ = _score; }
+	void SetCollectPlayerScore(int _score) { collectPlayerScore_ = _score; }
+	void SetPadNum(int _padNum) { padNum_ = _padNum; }
 };
 

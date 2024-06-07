@@ -33,9 +33,16 @@ void ParticleManager::Update()
 
 }
 
-void ParticleManager::Draw()
+void ParticleManager::BothViewDraw()
 {
+}
 
+void ParticleManager::LeftViewDraw()
+{
+}
+
+void ParticleManager::RightViewDraw()
+{
 }
 
 void ParticleManager::Release()

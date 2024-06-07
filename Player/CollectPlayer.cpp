@@ -22,6 +22,7 @@
 #include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../ImageManager.h"
 #include "../ParticleManager.h"
+#include "../UIManager.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
@@ -31,7 +32,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr}
-    ,pParticleManager_{nullptr}
+    ,pParticleManager_{nullptr},pUIManager_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -85,7 +86,6 @@ void CollectPlayer::Initialize()
     pStateManager_->ChangeState("WaitState");
     pText_ = new Text;
     pText_->Initialize();
-    pParticleManager_ = Instantiate<ParticleManager>(this);
     if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
     {
         gameData_.padID_ = (int)PADIDSTATE::FIRST;
@@ -95,13 +95,17 @@ void CollectPlayer::Initialize()
         gameData_.padID_ = (int)PADIDSTATE::SECONDS;
     }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
+    pParticleManager_ = Instantiate<ParticleManager>(this);
+    pUIManager_ = Instantiate<UIManager>(this);
+    pUIManager_->SetPadNum(gameData_.padID_);
+    pUIManager_->SetMode((int)UISTATE::DOGSWALKCOLLECT);
 }
 
 void CollectPlayer::Update()
 {
     //ステートマネージャーの更新
     pStateManager_->Update();
-
+    pUIManager_->SetCollectPlayerScore(gameData_.score_);
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
@@ -110,25 +114,20 @@ void CollectPlayer::Update()
     }
 }
 
-void CollectPlayer::Draw()
+void CollectPlayer::BothViewDraw()
 {
-    int drawScoreTextX = 30;
-    int drawScoreTextY = 30;
-    int drawScoreNumberX = 360;
-    int drawScoreNumberY = 30;
-    if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
-    {
-        pText_->LeftViewDraw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=");
-        pText_->LeftViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
-    }
-    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
-    {
-        pText_->RightViewDraw(drawScoreTextX, drawScoreTextY, "CollectPlayer:Score=");
-        pText_->RightViewDraw(drawScoreNumberX, drawScoreNumberY, gameData_.score_);
-    }
-
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+}
+
+void CollectPlayer::LeftViewDraw()
+{
+
+}
+
+void CollectPlayer::RightViewDraw()
+{
+
 }
 
 void CollectPlayer::Release()

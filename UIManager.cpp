@@ -22,6 +22,7 @@ void UIManager::Initialize()
 
 void UIManager::Update()
 {
+
 }
 
 void UIManager::BothViewDraw()
@@ -32,56 +33,120 @@ void UIManager::BothViewDraw()
 	int drawScoreNumberY[(int)PLAYERSTATE::PLAYERNUM] = {};
 	switch (UIState_)
 	{
-		case UISTATE::GAMEOVER:
-			if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
-			{
-				drawScoreTextX[(int)PADIDSTATE::FIRST] = { 900 };
-				drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
-				drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 50 };
-				drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
-				drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 1230 };
-				drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
-				drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 380 };
-				drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
-			}
-			if (attackOrCollectInverse_ == (int)PADIDSTATE::SECONDS)
-			{
-				drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
-				drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
-				drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 900 };
-				drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
-				drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 380 };
-				drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
-				drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 1230 };
-				drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
-			}
-			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer :Score=");
-			pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_);
-			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=");
-			pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_);
-			break;
-		case UISTATE::GAMETITLE:
-
-			break;
-		case UISTATE::GAMEMANUAL:
+	case UISTATE::GAMEOVER:
+		if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
+		{
+			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 900 };
+			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
+			drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 50 };
+			drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 1230 };
+			drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 380 };
+			drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
+		}
+		if (attackOrCollectInverse_ == (int)PADIDSTATE::SECONDS)
+		{
 			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
 			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
-			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "XButton:MANUAL");
-			break;
-		case UISTATE::DOGSSELECT:
-			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
-			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 60 };
-			pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "RStick:<- ->");
-			break;
+			drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 900 };
+			drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 380 };
+			drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 1230 };
+			drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
+		}
+		pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer :Score=");
+		pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_);
+		pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=");
+		pText_->BothViewDraw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_);
+		break;
+	case UISTATE::GAMETITLE:
+
+		break;
+	case UISTATE::GAMEMANUAL:
+		drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
+		drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
+		pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "XButton:MANUAL");
+		break;
+	case UISTATE::DOGSSELECT:
+		drawScoreTextX[(int)PADIDSTATE::FIRST] = { 50 };
+		drawScoreTextY[(int)PADIDSTATE::FIRST] = { 60 };
+		pText_->BothViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "RStick:<- ->");
+		break;
+	case UISTATE::DOGSWALKATTACK:
+
+		break;
+	case UISTATE::DOGSWALKCOLLECT:
+		
+		break;
 	}
 }
 
 void UIManager::LeftViewDraw()
 {
+	int drawScoreTextX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreTextY[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberY[(int)PLAYERSTATE::PLAYERNUM] = {};
+	switch (UIState_)
+	{
+		case::UISTATE::DOGSWALKATTACK:
+			drawScoreTextX[(int)PADIDSTATE::FIRST] = { 30 };
+			drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 360 };
+			drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
+			if (padNum_ == (int)PADIDSTATE::FIRST)
+			{
+				pText_->LeftViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer:Score=");
+				pText_->LeftViewDraw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_);
+			}
+			break;
+		case::UISTATE::DOGSWALKCOLLECT:
+			drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 30 };
+			drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
+			drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 360 };
+			drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
+			if (padNum_ == (int)PADIDSTATE::FIRST)
+			{
+				pText_->LeftViewDraw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=");
+				pText_->LeftViewDraw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_);
+			}
+			break;
+	}
 }
 
 void UIManager::RightViewDraw()
 {
+	int drawScoreTextX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreTextY[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberX[(int)PLAYERSTATE::PLAYERNUM] = {};
+	int drawScoreNumberY[(int)PLAYERSTATE::PLAYERNUM] = {};
+	switch (UIState_)
+	{
+	case::UISTATE::DOGSWALKATTACK:
+		drawScoreTextX[(int)PADIDSTATE::FIRST] = { 30 };
+		drawScoreTextY[(int)PADIDSTATE::FIRST] = { 30 };
+		drawScoreNumberX[(int)PADIDSTATE::FIRST] = { 360 };
+		drawScoreNumberY[(int)PADIDSTATE::FIRST] = { 30 };
+		if (padNum_ == (int)PADIDSTATE::SECONDS)
+		{
+			pText_->RightViewDraw(drawScoreTextX[(int)PADIDSTATE::FIRST], drawScoreTextY[(int)PADIDSTATE::FIRST], "AttackPlayer:Score=");
+			pText_->RightViewDraw(drawScoreNumberX[(int)PADIDSTATE::FIRST], drawScoreNumberY[(int)PADIDSTATE::FIRST], attackPlayerScore_);
+		}
+		break;
+	case::UISTATE::DOGSWALKCOLLECT:
+		drawScoreTextX[(int)PADIDSTATE::SECONDS] = { 30 };
+		drawScoreTextY[(int)PADIDSTATE::SECONDS] = { 30 };
+		drawScoreNumberX[(int)PADIDSTATE::SECONDS] = { 360 };
+		drawScoreNumberY[(int)PADIDSTATE::SECONDS] = { 30 };
+		if (padNum_ == (int)PADIDSTATE::SECONDS)
+		{
+			pText_->RightViewDraw(drawScoreTextX[(int)PADIDSTATE::SECONDS], drawScoreTextY[(int)PADIDSTATE::SECONDS], "CollectPlayer:Score=");
+			pText_->RightViewDraw(drawScoreNumberX[(int)PADIDSTATE::SECONDS], drawScoreNumberY[(int)PADIDSTATE::SECONDS], collectPlayerScore_);
+		}
+		break;
+	}
 }
 
 void UIManager::Release()

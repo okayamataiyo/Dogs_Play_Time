@@ -142,6 +142,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					//全オブジェクトの更新処理
 					//ルートオブジェクトのUpdateを呼んだあと、自動的に子、孫のUpdateが呼ばれる
 					pRootObject->UpdateSub();
+
+					//エフェクトの更新
+					VFX::Update();
 				}
 				else
 				{
@@ -150,17 +153,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				for (int i = 0u; i < 3; i++) {
 					Direct3D::SetViewPort(i);	//ビューポートにセット
 					Camera::Update(i);			//カメラを更新
-					VFX::Draw();
 					//全オブジェクトを描画
 					//ルートオブジェクトのDrawを呼んだあと、自動的に子、孫のUpdateが呼ばれる
 					pRootObject->DrawSub();
+
+					//エフェクトの描画
+					VFX::Draw();
 				}
 
-				//エフェクトの更新
-				VFX::Update();
-
-				//エフェクトの描画
-				VFX::Draw();
 				ImGui::Render();
 				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 				//描画終了

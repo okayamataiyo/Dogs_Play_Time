@@ -44,7 +44,7 @@ public:
 	virtual void Initialize(void) = 0;
 	virtual void Update(void) = 0;
 	virtual void BothViewDraw() = 0;
-	virtual void LeftViewDraw();
+	virtual void LeftViewDraw() = 0;
 	virtual void RightViewDraw() = 0;
 	virtual void Release(void) = 0;
 

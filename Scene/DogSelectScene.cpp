@@ -75,11 +75,11 @@ void DogSelectScene::Update()
 	}
 
 	const float deadZone = 0.3f;
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //右への移動
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)   //右への移動
 	{
 		attackOrCollect_ = (int)PADIDSTATE::SECONDS;
 	}
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //右への移動
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x > deadZone)   //右への移動
 	{
 		attackOrCollect_ = (int)PADIDSTATE::FIRST;
 	}

@@ -28,11 +28,19 @@ void Sky::Update()
 	transform_.rotate_.y += 0.01;
 }
 
-void Sky::Draw()
+void Sky::BothViewDraw()
 {
 	Direct3D::SetShader(Direct3D::SHADER_SKY);
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
+}
+
+void Sky::LeftViewDraw()
+{
+}
+
+void Sky::RightViewDraw()
+{
 }
 
 void Sky::Release()

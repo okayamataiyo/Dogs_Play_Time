@@ -288,17 +288,6 @@ GameObject * GameObject::GetRootJob()
 	else return GetParent()->GetRootJob();
 }
 
-
-
-
-void GameObject::LeftViewDraw()
-{
-	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
-	{
-
-	}
-}
-
 void GameObject::UpdateSub()
 {
 	Update();
@@ -329,8 +318,14 @@ void GameObject::UpdateSub()
 void GameObject::DrawSub()
 {
 	BothViewDraw();
-	LeftViewDraw();
-	RightViewDraw();
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
+	{
+		LeftViewDraw();
+	}
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::RIGHTVIEWPORT)
+	{
+		RightViewDraw();
+	}
 
 	//ÉäÉäÅ[ÉXéûÇÕçÌèú
 #ifdef _DEBUG

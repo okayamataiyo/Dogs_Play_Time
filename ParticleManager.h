@@ -17,7 +17,9 @@ public:
 	ParticleManager(GameObject* _pParent);
 	void Initialize() override;
 	void Update() override;
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
 	void Release() override;
 	void CreateVFX(XMFLOAT3 _pos);
 	void SetMode(int _mode);

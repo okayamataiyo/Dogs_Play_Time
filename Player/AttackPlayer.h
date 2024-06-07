@@ -16,6 +16,7 @@ class SceneManager;
 class ItemObjectManager;
 class StateManager;
 class ImageManager;
+class UIManager;
 
 namespace
 {
@@ -70,6 +71,7 @@ private:
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
 	ImageManager* pImageManager_;
+	UIManager* pUIManager_;
 public:
 
 	/// <summary>
