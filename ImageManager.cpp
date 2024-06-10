@@ -5,17 +5,14 @@
 
 
 ImageManager::ImageManager(GameObject* _pParent)
-	:GameObject(_pParent,gameImageName),hModel_{}, hPict_{},hmanualhPict_{}, hbuttonhPict_{}, imageTransform_{}, buttonTransform_{}, imageState_{IMAGESTATE::GAMEOVER}, isMatchWinner_{}
+	:GameObject(_pParent,gameImageName),hModel_{}, hPict_{},hManualPict_{}, hButtonPict_{}, imageTransform_{}, buttonTransform_{}, imageState_{IMAGESTATE::GAMEOVER}, isMatchWinner_{}
+	,imageWidth_{},imageHeight_{},left{ imageWidth_ / 2 - imageWidth_ / 2 },width{ imageWidth_}
 {
 }
 
 void ImageManager::Initialize()
 {
 	buttonTransform_.position_ = { -0.3f,-0.5f,0.0f };
-}
-
-void ImageManager::Update()
-{
 	//▼INIファイルからデータのロード
 	const int attackPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "AttackPlayerScore", 0, "Setting/PlayerSetting.ini");
 	const int collectPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "CollectPlayerScore", 0, "Setting/PlayerSetting.ini");
@@ -61,23 +58,39 @@ void ImageManager::Update()
 	case IMAGESTATE::GAMETITLE:
 		hPict_ = Image::Load(modelFolderName + "ClickButton" + imageModifierName);
 		assert(hPict_ >= 0);
-		hbuttonhPict_ = Image::Load(modelFolderName + "BButton" + imageModifierName);
-		assert(hbuttonhPict_ >= 0);
+		hButtonPict_ = Image::Load(modelFolderName + "BButton" + imageModifierName);
+		assert(hButtonPict_ >= 0);
 		imageTransform_.position_ = { 0.3f,-0.5f,0.0f };
-
-		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST))
-		{
-			buttonTransform_.scale_ = { 0.5f,0.5f,0.5f };
-		}
-		else
-		{
-			buttonTransform_.scale_ = { 0.3f,0.3f,0.3f };
-		}
 		break;
 	case IMAGESTATE::GAMEMANUAL:
-		hmanualhPict_ = Image::Load(modelFolderName + "Manual" + imageModifierName);
-		assert(hmanualhPict_ >= 0);
+		hManualPict_ = Image::Load(modelFolderName + "Manual" + imageModifierName);
+		assert(hManualPict_ >= 0);
+		break;
+	case IMAGESTATE::TIMEGAUGE:
+		hPict_ = Image::Load(modelFolderName + "TimeGauge" + imageModifierName);
+		assert(hPict_ >= 0);
+		imageWidth_ = Image::GetWidth(hPict_);
+		imageHeight_ = Image::GetHeight(hPict_);
+		hFramePict_ = Image::Load(modelFolderName + "TimeGaugeFrame" + imageModifierName);
+		assert(hFramePict_ >= 0);
+		break;
 	}
+}
+
+void ImageManager::Update()
+{
+	switch (imageState_)
+	{
+	case IMAGESTATE::GAMEOVER:
+		break;
+	case IMAGESTATE::GAMETITLE:
+		break;
+	case IMAGESTATE::GAMEMANUAL:
+		break;
+	case IMAGESTATE::TIMEGAUGE:
+		break;
+	}
+
 }
 
 void ImageManager::BothViewDraw()
@@ -86,13 +99,13 @@ void ImageManager::BothViewDraw()
 	Image::Draw(hPict_);
 	if (imageState_ == IMAGESTATE::GAMETITLE || imageState_ == IMAGESTATE::DOGSSELECT)
 	{
-		Image::SetTransform(hbuttonhPict_, buttonTransform_);
-		Image::Draw(hbuttonhPict_);
+		Image::SetTransform(hButtonPict_, buttonTransform_);
+		Image::Draw(hButtonPict_);
 	}
 	if (imageState_ == IMAGESTATE::GAMEMANUAL)
 	{
-		Image::SetTransform(hmanualhPict_, transform_);
-		Image::Draw(hmanualhPict_);
+		Image::SetTransform(hManualPict_, transform_);
+		Image::Draw(hManualPict_);
 	}
 }
 
@@ -106,6 +119,22 @@ void ImageManager::RightViewDraw()
 
 void ImageManager::UPSubViewDraw()
 {
+	switch (imageState_)
+	{
+	case IMAGESTATE::GAMEOVER:
+		break;
+	case IMAGESTATE::GAMETITLE:
+		break;
+	case IMAGESTATE::GAMEMANUAL:
+		break;
+	case IMAGESTATE::TIMEGAUGE:
+		Image::SetTransform(hFramePict_, imageTransform_);
+		Image::Draw(hFramePict_);
+		Image::SetRect(hPict_, left, 0, width, imageHeight_);
+		Image::SetTransform(hFramePict_, transform_);
+		Image::Draw(hFramePict_);
+		break;
+	}
 }
 
 void ImageManager::Release()

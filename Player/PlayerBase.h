@@ -60,7 +60,7 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
-		const float CamPos_[4] = { 1.4f,0.8f,0.3f,0.1f };
+		const float CamPos_[4] = { 0.1f,0.3f,0.8f,1.4f };
 		int CamPosNum_;
 		bool i_;
 		bool j_;

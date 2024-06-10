@@ -13,6 +13,7 @@ enum class IMAGESTATE
 	GAMETITLE,
 	GAMEMANUAL,
 	DOGSSELECT,
+	TIMEGAUGE,
 };
 
 class ImageManager : public GameObject
@@ -21,8 +22,13 @@ private:
 
 	int hModel_[4];
 	int hPict_;	//âÊëúî‘çÜ
-	int hbuttonhPict_;
-	int hmanualhPict_;
+	int hButtonPict_;
+	int hManualPict_;
+	int hFramePict_;
+	int imageWidth_;
+	int imageHeight_;
+	int left;
+	int width;
 	Transform imageTransform_;
 	Transform buttonTransform_;
 	IMAGESTATE imageState_;

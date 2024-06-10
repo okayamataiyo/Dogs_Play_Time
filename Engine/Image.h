@@ -90,4 +90,7 @@ namespace Image
 	XMMATRIX GetMatrix(int handle);
 
 	XMFLOAT3 GetSize(int _handle);
+
+	int GetWidth(int _handle);
+	int GetHeight(int _handle);
 }

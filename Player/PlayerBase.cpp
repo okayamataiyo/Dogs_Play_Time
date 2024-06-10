@@ -227,7 +227,6 @@ void PlayerBase::PlayerCamera()
     XMStoreFloat3(&floDir_, vecDir);
     Camera::SetPosition(floDir_, gameData_.padID_);
     Camera::SetTarget(transform_.position_, gameData_.padID_);
-    ImGui::Text("%.2f", padStickR.y);
 }
 
 void PlayerBase::PlayerFall()
