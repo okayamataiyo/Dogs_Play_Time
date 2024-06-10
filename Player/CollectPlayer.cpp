@@ -130,6 +130,10 @@ void CollectPlayer::RightViewDraw()
 
 }
 
+void CollectPlayer::UPSubViewDraw()
+{
+}
+
 void CollectPlayer::Release()
 {
     SAFE_DELETE(pStateManager_);

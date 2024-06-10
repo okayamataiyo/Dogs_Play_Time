@@ -58,6 +58,10 @@ void ActorAttackPlayer::RightViewDraw()
 {
 }
 
+void ActorAttackPlayer::UPSubViewDraw()
+{
+}
+
 void ActorAttackPlayer::Release()
 {
 }

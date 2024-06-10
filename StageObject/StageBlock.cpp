@@ -45,6 +45,10 @@ void StageBlock::RightViewDraw()
 {
 }
 
+void StageBlock::UPSubViewDraw()
+{
+}
+
 void StageBlock::Release()
 {
 }

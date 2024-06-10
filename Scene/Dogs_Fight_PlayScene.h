@@ -96,6 +96,7 @@ public:
     void BothViewDraw() override;
     void LeftViewDraw() override;
     void RightViewDraw() override;
+    void UPSubViewDraw() override;
     void Release() override;
     void BoneSummons();
     std::vector<int> GetWoodBoxs() { return pItemObjectManager_->GetWoodBoxs(); }

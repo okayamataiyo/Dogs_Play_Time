@@ -59,6 +59,10 @@ void SolidText::RightViewDraw()
 {
 }
 
+void SolidText::UPSubViewDraw()
+{
+}
+
 void SolidText::Release()
 {
 }

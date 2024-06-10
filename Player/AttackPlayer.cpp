@@ -125,6 +125,10 @@ void AttackPlayer::RightViewDraw()
 {
 }
 
+void AttackPlayer::UPSubViewDraw()
+{
+}
+
 void AttackPlayer::Release()
 {
     SAFE_DELETE(pStateManager_);

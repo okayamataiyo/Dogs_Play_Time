@@ -317,7 +317,14 @@ void GameObject::UpdateSub()
 
 void GameObject::DrawSub()
 {
-	BothViewDraw();
+	if(Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
+	{
+		UPSubViewDraw();
+	}
+	if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
+	{
+		BothViewDraw();
+	}
 	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
 	{
 		LeftViewDraw();

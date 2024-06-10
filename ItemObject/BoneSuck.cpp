@@ -71,6 +71,10 @@ void BoneSuck::RightViewDraw()
 
 }
 
+void BoneSuck::UPSubViewDraw()
+{
+}
+
 void BoneSuck::Release()
 {
 }

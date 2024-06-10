@@ -43,6 +43,10 @@ void Sky::RightViewDraw()
 {
 }
 
+void Sky::UPSubViewDraw()
+{
+}
+
 void Sky::Release()
 {
 }

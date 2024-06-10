@@ -19,7 +19,7 @@ DogSelectScene::DogSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, selectSceneName),attackOrCollect_{0},attackOrCollectInverse_{0},walkOrFight_{0}, solidTextRotate_{0.3f},padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}
 	, pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }
-	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pUIManager_{nullptr},pDogsSelectUIManager_{nullptr}
+	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pGameTitleImageManager_{nullptr}, pUIManager_{nullptr}, pDogsSelectUIManager_{nullptr}
 {
 
 }
@@ -49,6 +49,8 @@ void DogSelectScene::Initialize()
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pGameTitleImageManager_ = Instantiate<ImageManager>(this);
+	pGameTitleImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
 	pUIManager_ = Instantiate<UIManager>(this);
 	pUIManager_->SetMode((int)UISTATE::GAMEMANUAL);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
@@ -166,6 +168,10 @@ void DogSelectScene::LeftViewDraw()
 }
 
 void DogSelectScene::RightViewDraw()
+{
+}
+
+void DogSelectScene::UPSubViewDraw()
 {
 }
 

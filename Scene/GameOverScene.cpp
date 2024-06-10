@@ -92,6 +92,10 @@ void GameOverScene::RightViewDraw()
 
 }
 
+void GameOverScene::UPSubViewDraw()
+{
+}
+
 void GameOverScene::Release()
 {
 }

@@ -42,6 +42,10 @@ void Stage::RightViewDraw()
 {
 }
 
+void Stage::UPSubViewDraw()
+{
+}
+
 void Stage::Release()
 {
 }

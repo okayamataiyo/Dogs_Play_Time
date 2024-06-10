@@ -68,6 +68,10 @@ void SceneManager::RightViewDraw()
 {
 }
 
+void SceneManager::UPSubViewDraw()
+{
+}
+
 //ŠJ•ú
 void SceneManager::Release()
 {

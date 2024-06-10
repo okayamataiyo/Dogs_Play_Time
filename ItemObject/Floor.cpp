@@ -67,6 +67,10 @@ void Floor::RightViewDraw()
 {
 }
 
+void Floor::UPSubViewDraw()
+{
+}
+
 void Floor::Release()
 {
 }

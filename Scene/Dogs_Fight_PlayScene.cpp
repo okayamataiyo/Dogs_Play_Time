@@ -140,6 +140,10 @@ void Dogs_Fight_PlayScene::RightViewDraw()
 {
 }
 
+void Dogs_Fight_PlayScene::UPSubViewDraw()
+{
+}
+
 void Dogs_Fight_PlayScene::Release()
 {
 }

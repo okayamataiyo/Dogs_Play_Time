@@ -84,6 +84,10 @@ void GameTitleScene::RightViewDraw()
 {
 }
 
+void GameTitleScene::UPSubViewDraw()
+{
+}
+
 void GameTitleScene::Release()
 {
 }

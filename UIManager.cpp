@@ -149,6 +149,10 @@ void UIManager::RightViewDraw()
 	}
 }
 
+void UIManager::UPSubViewDraw()
+{
+}
+
 void UIManager::Release()
 {
 }

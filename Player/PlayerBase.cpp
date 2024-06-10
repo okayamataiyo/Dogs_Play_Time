@@ -42,6 +42,10 @@ void PlayerBase::RightViewDraw()
 
 }
 
+void PlayerBase::UPSubViewDraw()
+{
+}
+
 // ŠJ•ú
 void PlayerBase::Release()
 {
@@ -151,7 +155,15 @@ void PlayerBase::PlayerCamera()
     {
         moveData_.j_ = false;
     }
-    floDir_.y = moveData_.CamPos_[moveData_.CamPosNum_];
+    if(moveData_.CamPosNum_ < 0)
+	{
+		moveData_.CamPosNum_ = 0;
+	}
+    if (moveData_.CamPosNum_ > 4)
+    {
+        moveData_.CamPosNum_ = 4;
+    }
+    dirData_.vecCam_.x = moveData_.CamPos_[moveData_.CamPosNum_];
     const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;

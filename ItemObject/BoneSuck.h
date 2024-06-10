@@ -67,6 +67,7 @@ public:
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 
 	/// <summary>
 	/// ŠJ•úŠÖ”

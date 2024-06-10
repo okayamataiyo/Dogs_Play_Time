@@ -54,6 +54,10 @@ void ActorCollectPlayer::LeftViewDraw()
 void ActorCollectPlayer::RightViewDraw()
 {}
 
+void ActorCollectPlayer::UPSubViewDraw()
+{
+}
+
 void ActorCollectPlayer::Release()
 {
 }

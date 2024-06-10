@@ -104,6 +104,10 @@ void ImageManager::RightViewDraw()
 {
 }
 
+void ImageManager::UPSubViewDraw()
+{
+}
+
 void ImageManager::Release()
 {
 }

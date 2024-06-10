@@ -150,6 +150,10 @@ void Dogs_Walk_PlayScene::RightViewDraw()
 
 }
 
+void Dogs_Walk_PlayScene::UPSubViewDraw()
+{
+}
+
 void Dogs_Walk_PlayScene::Release()
 {
 }

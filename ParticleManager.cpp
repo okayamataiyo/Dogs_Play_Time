@@ -45,6 +45,10 @@ void ParticleManager::RightViewDraw()
 {
 }
 
+void ParticleManager::UPSubViewDraw()
+{
+}
+
 void ParticleManager::Release()
 {
 }

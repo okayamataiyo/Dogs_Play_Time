@@ -20,6 +20,7 @@ public:
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 	void Release() override;
 	void CreateVFX(XMFLOAT3 _pos);
 	void SetMode(int _mode);

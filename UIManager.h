@@ -38,6 +38,7 @@ public:
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 	void Release() override;
 	void SetMode(int _mode);
 	void SetAttackPlayerScore(int _score) { attackPlayerScore_ = _score; }

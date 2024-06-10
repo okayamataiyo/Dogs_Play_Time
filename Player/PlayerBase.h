@@ -60,7 +60,7 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
-		const float CamPos_[3] = { 30.0f,15.0f,5.0f };
+		const float CamPos_[4] = { 1.4f,0.8f,0.3f,0.1f };
 		int CamPosNum_;
 		bool i_;
 		bool j_;
@@ -210,6 +210,7 @@ protected:
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 
 	//開放
 	void Release()      override;

@@ -46,6 +46,7 @@ public:
 	virtual void BothViewDraw() = 0;
 	virtual void LeftViewDraw() = 0;
 	virtual void RightViewDraw() = 0;
+	virtual void UPSubViewDraw() = 0;
 	virtual void Release(void) = 0;
 
 	//©•ª‚ÌŠY“–ŠÖ”‚ğ“Ç‚ñ‚¾ŒãAq‹Ÿ‚ÌŠÖ”‚àŒÄ‚Ô

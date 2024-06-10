@@ -33,6 +33,10 @@ void RootObject::RightViewDraw()
 {
 }
 
+void RootObject::UPSubViewDraw()
+{
+}
+
 void RootObject::Release()
 {
 }

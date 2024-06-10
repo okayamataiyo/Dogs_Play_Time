@@ -103,6 +103,10 @@ void GameSelectScene::RightViewDraw()
 {
 }
 
+void GameSelectScene::UPSubViewDraw()
+{
+}
+
 void GameSelectScene::Release()
 {
 }

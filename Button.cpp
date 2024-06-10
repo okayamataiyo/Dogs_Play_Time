@@ -45,6 +45,10 @@ void Button::RightViewDraw()
 {
 }
 
+void Button::UPSubViewDraw()
+{
+}
+
 void Button::Release()
 {
 }

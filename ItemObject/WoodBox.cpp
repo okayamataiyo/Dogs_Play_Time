@@ -81,6 +81,10 @@ void WoodBox::RightViewDraw()
 {
 }
 
+void WoodBox::UPSubViewDraw()
+{
+}
+
 void WoodBox::Release()
 {
 }

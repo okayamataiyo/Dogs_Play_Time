@@ -69,6 +69,10 @@ void Bone::RightViewDraw()
 {
 }
 
+void Bone::UPSubViewDraw()
+{
+}
+
 void Bone::Release()
 {
 }

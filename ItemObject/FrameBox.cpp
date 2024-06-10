@@ -72,6 +72,10 @@ void FrameBox::RightViewDraw()
 {
 }
 
+void FrameBox::UPSubViewDraw()
+{
+}
+
 void FrameBox::Release()
 {
 }
