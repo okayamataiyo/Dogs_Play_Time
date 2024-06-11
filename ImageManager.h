@@ -25,6 +25,10 @@ private:
 	int hButtonPict_;
 	int hManualPict_;
 	int hFramePict_;
+	float nowPw_;
+	const float maxPw_ = 1.0f;
+	const float minPw_ = 0.0f;
+	float animPw_;
 	int imageWidth_;
 	int imageHeight_;
 	int left;
@@ -43,5 +47,11 @@ public:
 	void UPSubViewDraw() override;
 	void Release() override;
 	void SetMode(int _mode);
+
+	void AddValue(float _v);
+
+	void SetValue(float _v);
+
+	float GetValue() { return nowPw_; }
 };
 

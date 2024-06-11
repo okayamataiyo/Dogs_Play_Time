@@ -22,6 +22,7 @@ class AttackPlayer;
 class CollectPlayer;
 class ItemObjectManager;
 class StageObjectManager;
+class ImageManager;
 
 /// <summary>
 /// 骨一個型プレイシーン
@@ -84,6 +85,7 @@ private:
     CollectPlayer* pCollectPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
+    ImageManager* pImageManager_;
 
 public:
     /// <summary>

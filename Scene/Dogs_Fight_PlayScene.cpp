@@ -10,6 +10,7 @@
 #include "../ItemObject/BoneSuck.h"
 #include "../ItemObject/Bone.h"
 #include "../StageObject/StageObjectManager.h"
+#include "../ImageManager.h"
 #include "Dogs_Fight_PlayScene.h"
 
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
@@ -19,7 +20,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
-	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr }
+	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pImageManager_{nullptr}
 {
 }
 
@@ -84,6 +85,9 @@ void Dogs_Fight_PlayScene::Initialize()
 
 	//1Ç©ÇÁ2Ç‹Ç≈ÇÃÉâÉìÉ_ÉÄÇ»ílÇÃçÏê¨
 	random_value_ = dis(gen);
+
+	pImageManager_ = Instantiate<ImageManager>(this);
+	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
 }
 
 void Dogs_Fight_PlayScene::Update()

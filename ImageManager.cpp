@@ -13,6 +13,11 @@ ImageManager::ImageManager(GameObject* _pParent)
 void ImageManager::Initialize()
 {
 	buttonTransform_.position_ = { -0.3f,-0.5f,0.0f };
+
+}
+
+void ImageManager::Update()
+{
 	//▼INIファイルからデータのロード
 	const int attackPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "AttackPlayerScore", 0, "Setting/PlayerSetting.ini");
 	const int collectPlayerScore = GetPrivateProfileInt("PLAYERSCORE", "CollectPlayerScore", 0, "Setting/PlayerSetting.ini");
@@ -61,6 +66,15 @@ void ImageManager::Initialize()
 		hButtonPict_ = Image::Load(modelFolderName + "BButton" + imageModifierName);
 		assert(hButtonPict_ >= 0);
 		imageTransform_.position_ = { 0.3f,-0.5f,0.0f };
+
+		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST))
+		{
+			buttonTransform_.scale_ = { 0.5f,0.5f,0.5f };
+		}
+		else
+		{
+			buttonTransform_.scale_ = { 0.3f,0.3f,0.3f };
+		}
 		break;
 	case IMAGESTATE::GAMEMANUAL:
 		hManualPict_ = Image::Load(modelFolderName + "Manual" + imageModifierName);
@@ -71,23 +85,8 @@ void ImageManager::Initialize()
 		assert(hPict_ >= 0);
 		imageWidth_ = Image::GetWidth(hPict_);
 		imageHeight_ = Image::GetHeight(hPict_);
-		hFramePict_ = Image::Load(modelFolderName + "TimeGaugeFrame" + imageModifierName);
+		hFramePict_ = Image::Load(modelFolderName + "TimeGaugeFlame" + imageModifierName);
 		assert(hFramePict_ >= 0);
-		break;
-	}
-}
-
-void ImageManager::Update()
-{
-	switch (imageState_)
-	{
-	case IMAGESTATE::GAMEOVER:
-		break;
-	case IMAGESTATE::GAMETITLE:
-		break;
-	case IMAGESTATE::GAMEMANUAL:
-		break;
-	case IMAGESTATE::TIMEGAUGE:
 		break;
 	}
 
@@ -144,4 +143,30 @@ void ImageManager::Release()
 void ImageManager::SetMode(int _mode)
 {
 	imageState_ = (IMAGESTATE)_mode;
+}
+
+void ImageManager::AddValue(float _v)
+{
+	nowPw_ += _v;
+	if (nowPw_ < minPw_)
+	{
+		nowPw_ = minPw_;
+	}
+	else if (nowPw_ > maxPw_)
+	{
+		nowPw_ = maxPw_;
+	}
+}
+
+void ImageManager::SetValue(float _v)
+{
+	nowPw_ = _v;
+	if (nowPw_ < 0.0f)
+	{
+		nowPw_ = 0.0f;
+	}
+	else if (nowPw_ > maxPw_)
+	{
+		nowPw_ = maxPw_;
+	}
 }
