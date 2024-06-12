@@ -268,14 +268,17 @@ void GameObject::Collision(GameObject * pTarget)
 //テスト用の衝突判定枠を表示
 void GameObject::CollisionDraw()
 {
-	Direct3D::SetShader(Direct3D::SHADER_UNLIT);
-
-	for (auto i = this->colliderList_.begin(); i != this->colliderList_.end(); i++)
+	if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
 	{
-		(*i)->Draw(GetWorldPosition());
-	}
+		Direct3D::SetShader(Direct3D::SHADER_UNLIT);
 
-	Direct3D::SetShader(Direct3D::SHADER_3D);
+		for (auto i = this->colliderList_.begin(); i != this->colliderList_.end(); i++)
+		{
+			(*i)->Draw(GetWorldPosition());
+		}
+
+		Direct3D::SetShader(Direct3D::SHADER_3D);
+	}
 }
 
 //RootJobを取得

@@ -16,30 +16,43 @@ enum class IMAGESTATE
 	TIMEGAUGE,
 };
 
+enum class GAUGESTATE
+{
+	WALK = 0,
+	FIGHTATTACK,
+	FIGHTCOLLECT,
+};
+
 class ImageManager : public GameObject
 {
 private:
 
 	int hModel_[4];
-	int hPict_;	//âÊëúî‘çÜ
+	int hTimeGaugePict_;	//âÊëúî‘çÜ
+	int hClickButtonPict_;
+	int hPlayerWinPict_;
 	int hButtonPict_;
 	int hManualPict_;
 	int hFramePict_;
 	float nowPw_;
-	const float maxPw_ = 1.0f;
+	const float maxPw_ = 5.0f;
 	const float minPw_ = 0.0f;
 	float animPw_;
 	int imageWidth_;
 	int imageHeight_;
-	int left;
-	int width;
+	int left_;
+	int width_;
 	Transform imageTransform_;
 	Transform buttonTransform_;
+	Transform gaugeTransform_;
+	Transform gaugeFrameTransform_;
 	IMAGESTATE imageState_;
+	GAUGESTATE gaugeState_;
 	int isMatchWinner_;
 public:
 	ImageManager(GameObject* _pParent);
 	void Initialize() override;
+	void SecInit();
 	void Update() override;
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
@@ -47,6 +60,8 @@ public:
 	void UPSubViewDraw() override;
 	void Release() override;
 	void SetMode(int _mode);
+
+	void SetGaugeMode(int _mode);
 
 	void AddValue(float _v);
 

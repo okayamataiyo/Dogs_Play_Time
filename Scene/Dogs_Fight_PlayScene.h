@@ -85,7 +85,8 @@ private:
     CollectPlayer* pCollectPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
-    ImageManager* pImageManager_;
+    ImageManager* pAttackImageManager_;
+    ImageManager* pCollectImageManager_;
 
 public:
     /// <summary>

@@ -194,14 +194,14 @@ void AttackPlayer::UpdatePlay()
     gameData_.scoreTimeCounter_++;
     if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
     {
-        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_)
+        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
     		PlayerScore();
         }
     }
     if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
-        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_)
+        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && !gameData_.scoreTimeCounter_ == gameData_.scoreTimeCounterWait_)
         {
             PlayerScore();
         }

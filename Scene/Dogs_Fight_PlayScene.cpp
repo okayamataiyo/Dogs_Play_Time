@@ -20,7 +20,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
-	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pImageManager_{nullptr}
+	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pAttackImageManager_{nullptr},pCollectImageManager_{nullptr}
 {
 }
 
@@ -86,8 +86,14 @@ void Dogs_Fight_PlayScene::Initialize()
 	//1Ç©ÇÁ2Ç‹Ç≈ÇÃÉâÉìÉ_ÉÄÇ»ílÇÃçÏê¨
 	random_value_ = dis(gen);
 
-	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pAttackImageManager_ = Instantiate<ImageManager>(this);
+	pAttackImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pAttackImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTATTACK);
+	pAttackImageManager_->SecInit();
+	pCollectImageManager_ = Instantiate<ImageManager>(this);
+	pCollectImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pCollectImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTCOLLECT);
+	pCollectImageManager_->SecInit();
 }
 
 void Dogs_Fight_PlayScene::Update()
@@ -130,6 +136,7 @@ void Dogs_Fight_PlayScene::Update()
 			woodBoxCount_ += 1;
 		}
 	}
+	time_++;
 }
 
 void Dogs_Fight_PlayScene::BothViewDraw()

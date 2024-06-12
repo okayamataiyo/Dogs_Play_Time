@@ -80,7 +80,7 @@ private:
     XMVECTOR attackPlayerDirection_;   //アタックプレイヤーの向いてる位置
     float woodBoxFrontPosition_;              //前にどのくらい移動させるか
     //▼演出で使うメンバ変数
-    int time_;                         //時間を表す
+    float time_;                         //時間を表す
     bool isGameStop_;                  //ゲームが止まったか
 
     XMFLOAT3 Init = { 0.0f,0.0f,0.0f };

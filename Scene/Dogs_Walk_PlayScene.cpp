@@ -20,7 +20,7 @@ Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
 	, woodBoxCountMax_{5}, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}
 	, random_value_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}
 	, collectPlayerPosition_{}, collectPlayerDirection_{},boneFrontPosition_{2.0f}, woodBoxCount_{0}
-	, attackPlayerPosition_{}, attackPlayerDirection_{},woodBoxFrontPosition_{10.0f},isGameStop_{false}
+	, attackPlayerPosition_{}, attackPlayerDirection_{},woodBoxFrontPosition_{10.0f},time_{1.0f}, isGameStop_{false}
 	,pSceneManager_{nullptr}, pAttackPlayer_{nullptr}, pCollectPlayer_{nullptr}, pItemObjectManager_{nullptr}, pStageObjectManager_{nullptr}
 	,pImageManager_{nullptr}
 {
@@ -90,6 +90,7 @@ void Dogs_Walk_PlayScene::Initialize()
 	random_value_ = dis(gen);
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pImageManager_->SetGaugeMode((int)GAUGESTATE::WALK);
 }
 
 void Dogs_Walk_PlayScene::Update()

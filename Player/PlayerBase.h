@@ -35,7 +35,7 @@ protected:
 		int padID_;
 		int walkOrFight_;
 		GameData()
-			:FPS_{ 600 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 },scoreTimeCounter_{0},scoreTimeCounterWait_{30}, padID_{0}, walkOrFight_{false}
+			:FPS_{ 600 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 120 },scoreTimeCounter_{0},scoreTimeCounterWait_{30}, padID_{0}, walkOrFight_{false}
 		{
 
 		}
