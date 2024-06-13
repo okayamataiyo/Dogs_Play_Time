@@ -100,11 +100,11 @@ void Dogs_Fight_PlayScene::Update()
 {
 	if (pAttackPlayer_->GetIsBoneTatch())
 	{
-		pAttackImageManager_->AddGaugeScale(0.1f);
+		pAttackImageManager_->AddGaugeScale(0.102f);
 	}
 	if (pCollectPlayer_->GetIsBoneTatch())
 	{
-		pCollectImageManager_->AddGaugeScale(0.1f);
+		pCollectImageManager_->AddGaugeScale(0.102f);
 	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{

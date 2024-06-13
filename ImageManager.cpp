@@ -249,16 +249,16 @@ void ImageManager::SecInit()
 	{
 		if (gaugeState_ == GAUGESTATE::FIGHTATTACK)
 		{
-			gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
+			gaugeTransform_.position_ = { 0.02f,0.0f,0.0f };
 			gaugeTransform_.scale_ = { 2.4f,9.5f,1.0f };
-			gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
+			gaugeFrameTransform_.position_ = { 0.0f,0.0f,0.0f };
 			gaugeFrameTransform_.scale_ = { 2.5f,12.0f,1.0f };
 		}
 		if (gaugeState_ == GAUGESTATE::FIGHTCOLLECT)
 		{
-			gaugeTransform_.position_ = { 0.02f,0.0f,0.0f };
+			gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
 			gaugeTransform_.scale_ = { 2.4f,9.5f,1.0f };
-			gaugeFrameTransform_.position_ = { 0.0f,0.0f,0.0f };
+			gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
 			gaugeFrameTransform_.scale_ = { 2.5f,12.0f,1.0f };
 		}
 	}
@@ -266,16 +266,17 @@ void ImageManager::SecInit()
 	{
 		if (gaugeState_ == GAUGESTATE::FIGHTATTACK)
 		{
-			gaugeTransform_.position_ = { 0.02f,0.0f,0.0f };
+			gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
 			gaugeTransform_.scale_ = { 2.4f,9.5f,1.0f };
-			gaugeFrameTransform_.position_ = { 0.0f,0.0f,0.0f };
+			gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
 			gaugeFrameTransform_.scale_ = { 2.5f,12.0f,1.0f };
 		}
 		if (gaugeState_ == GAUGESTATE::FIGHTCOLLECT)
 		{
-			gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
+
+			gaugeTransform_.position_ = { 0.02f,0.0f,0.0f };
 			gaugeTransform_.scale_ = { 2.4f,9.5f,1.0f };
-			gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
+			gaugeFrameTransform_.position_ = { 0.0f,0.0f,0.0f };
 			gaugeFrameTransform_.scale_ = { 2.5f,12.0f,1.0f };
 		}
 	}

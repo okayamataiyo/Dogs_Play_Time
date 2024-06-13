@@ -32,7 +32,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr},pBoneImageManager_{nullptr}
-    ,pParticleManager_{nullptr},pUIManager_{nullptr}
+    ,pParticleManager_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -96,9 +96,6 @@ void CollectPlayer::Initialize()
     }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
-    pUIManager_ = Instantiate<UIManager>(this);
-    pUIManager_->SetPadNum(gameData_.padID_);
-    pUIManager_->SetMode((int)UISTATE::DOGSWALKCOLLECT);
     pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::NONE);
     pImageManager_->SecInit();
@@ -114,7 +111,6 @@ void CollectPlayer::Update()
 {
     //ステートマネージャーの更新
     pStateManager_->Update();
-    pUIManager_->SetCollectPlayerScore(gameData_.score_);
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;

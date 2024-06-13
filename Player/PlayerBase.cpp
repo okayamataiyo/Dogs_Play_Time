@@ -155,13 +155,13 @@ void PlayerBase::PlayerCamera()
     {
         moveData_.j_ = false;
     }
-    if(moveData_.CamPosNum_ < 0)
+    if(moveData_.CamPosNum_ <= 0)
 	{
 		moveData_.CamPosNum_ = 0;
 	}
-    if (moveData_.CamPosNum_ > 4)
+    if (moveData_.CamPosNum_ >= 4)
     {
-        moveData_.CamPosNum_ = 4;
+        moveData_.CamPosNum_ = 3;
     }
     dirData_.vecCam_.x = moveData_.CamPos_[moveData_.CamPosNum_];
     const float padSens = 25;

@@ -27,7 +27,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}, pUIManager_{nullptr}
+    , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -92,9 +92,6 @@ void AttackPlayer::Initialize()
         gameData_.padID_ = (int)PADIDSTATE::SECONDS;
     }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
-    pUIManager_ = Instantiate<UIManager>(this);
-    pUIManager_->SetPadNum(gameData_.padID_);
-    pUIManager_->SetMode((int)UISTATE::DOGSWALKATTACK);
     pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::NONE);
     pImageManager_->SecInit();
@@ -104,7 +101,6 @@ void AttackPlayer::Update()
 {
     //ステートマネージャーの更新
     pStateManager_->Update();
-    pUIManager_->SetAttackPlayerScore(gameData_.score_);
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
