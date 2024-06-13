@@ -48,16 +48,18 @@ void GameOverScene::Initialize()
 	camPos_.z -= 15;
 	camTar_ = pSolidText_->GetPosition();
 	camTar_.y += 2;
-	pActorAttackPlayer_ = Instantiate<ActorAttackPlayer>(this);
-	pActorCollectPlayer_ = Instantiate<ActorCollectPlayer>(this);
-	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
-	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
+	//pActorAttackPlayer_ = Instantiate<ActorAttackPlayer>(this);
+	//pActorCollectPlayer_ = Instantiate<ActorCollectPlayer>(this);
+	//pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
+	//pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pUIManager_ = Instantiate<UIManager>(this);
 	pUIManager_->SetMode((int)UISTATE::GAMEOVER);
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::GAMEOVER);
+	pImageManager_->SecInit();
 	pButtonImage_ = Instantiate<ImageManager>(this);
 	pButtonImage_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pButtonImage_->SecInit();
 }
 
 void GameOverScene::Update()

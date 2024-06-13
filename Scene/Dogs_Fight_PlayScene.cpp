@@ -98,6 +98,14 @@ void Dogs_Fight_PlayScene::Initialize()
 
 void Dogs_Fight_PlayScene::Update()
 {
+	if (pAttackPlayer_->GetIsBoneTatch())
+	{
+		pAttackImageManager_->AddGaugeScale(0.1f);
+	}
+	if (pCollectPlayer_->GetIsBoneTatch())
+	{
+		pCollectImageManager_->AddGaugeScale(0.1f);
+	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
@@ -136,7 +144,6 @@ void Dogs_Fight_PlayScene::Update()
 			woodBoxCount_ += 1;
 		}
 	}
-	time_++;
 }
 
 void Dogs_Fight_PlayScene::BothViewDraw()

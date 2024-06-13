@@ -48,9 +48,11 @@ void DogSelectScene::Initialize()
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_->SetMode((int)IMAGESTATE::NONE);
+	pImageManager_->SecInit();
 	pGameTitleImageManager_ = Instantiate<ImageManager>(this);
 	pGameTitleImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pGameTitleImageManager_->SecInit();
 	pUIManager_ = Instantiate<UIManager>(this);
 	pUIManager_->SetMode((int)UISTATE::GAMEMANUAL);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
@@ -146,10 +148,11 @@ void DogSelectScene::Update()
 	{
 		if (isOnce != isOncePrev)
 		{
-			pImageManager_ = Instantiate<ImageManager>(this);
 			isOncePrev = isOnce;
+			pImageManager_ = Instantiate<ImageManager>(this);
 		}
 		pImageManager_->SetMode((int)IMAGESTATE::GAMEMANUAL);
+		pImageManager_->SecInit();
 	}
 	else
 	{

@@ -31,7 +31,7 @@ CollectPlayer::CollectPlayer(GameObject* _pParent)
     , number_{ 0 }, gameState_{GAMESTATE::READY},attackOrCollectInverse_{0}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr}
+    , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr},pBoneImageManager_{nullptr}
     ,pParticleManager_{nullptr},pUIManager_{nullptr}
 {
     pParent_ = _pParent;
@@ -99,6 +99,15 @@ void CollectPlayer::Initialize()
     pUIManager_ = Instantiate<UIManager>(this);
     pUIManager_->SetPadNum(gameData_.padID_);
     pUIManager_->SetMode((int)UISTATE::DOGSWALKCOLLECT);
+    pImageManager_ = Instantiate<ImageManager>(this);
+    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SecInit();
+    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    {
+        pBoneImageManager_ = Instantiate<ImageManager>(this);
+        pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+        pBoneImageManager_->SecInit();
+	}
 }
 
 void CollectPlayer::Update()
@@ -197,7 +206,7 @@ void CollectPlayer::UpdatePlay()
         PlayerDive();
     }
     gameData_.scoreTimeCounter_++;
-    if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && !gameData_.scoreTimeCounter_ == gameData_.scoreTimeCounterWait_)
+    if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
     {
         PlayerScore();
     }
@@ -280,8 +289,8 @@ void CollectPlayer::UpdatePlay()
 
 void CollectPlayer::UpdateGameOver()
 {
-    pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+    pImageManager_->SecInit();
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {
         Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));
@@ -383,14 +392,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
         //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
         if (boneData_.killTime_ == boneData_.killTimeMax_)
         {
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-            {
-                Instantiate<BoneSuck>(this);
-            }
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-            {
-                Instantiate<BoneSuck>(this);
-            }
+            Instantiate<BoneSuck>(this);
             pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
             SetKillTime(boneData_.killTimeWait_);
             if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)

@@ -12,8 +12,9 @@ enum class IMAGESTATE
 	GAMEOVER = 0,
 	GAMETITLE,
 	GAMEMANUAL,
-	DOGSSELECT,
+	NONE,
 	TIMEGAUGE,
+	BONE,
 };
 
 enum class GAUGESTATE
@@ -22,11 +23,33 @@ enum class GAUGESTATE
 	FIGHTATTACK,
 	FIGHTCOLLECT,
 };
+enum class BONESTATE
+{
+	ONE,
+	TWO,
+	THREE,
+	FOUR,
+	FIVE,
+	SIX,
+	SEVEN,
+	EIGHT,
+	NINE,
+	TEN,
+	ELEVEN,
+	TWELVE,
+	BONENUM,
+};
+
+class CollectPlayer;
 
 class ImageManager : public GameObject
 {
 private:
 
+	int attackPlayerScore_;
+	int collectPlayerScore_;
+	int attackOrCollectInverse_;
+	int attackOrCollect_;
 	int hModel_[4];
 	int hTimeGaugePict_;	//âÊëúî‘çÜ
 	int hClickButtonPict_;
@@ -34,6 +57,8 @@ private:
 	int hButtonPict_;
 	int hManualPict_;
 	int hFramePict_;
+	int hBonePict_[(int)BONESTATE::BONENUM];
+	int hYellowBonePict_[(int)BONESTATE::BONENUM];
 	float nowPw_;
 	const float maxPw_ = 5.0f;
 	const float minPw_ = 0.0f;
@@ -46,9 +71,11 @@ private:
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
 	Transform gaugeFrameTransform_;
+	Transform boneTransforom_[(int)BONESTATE::BONENUM];
 	IMAGESTATE imageState_;
 	GAUGESTATE gaugeState_;
 	int isMatchWinner_;
+	CollectPlayer* pCollectPlayer_;
 public:
 	ImageManager(GameObject* _pParent);
 	void Initialize() override;
@@ -59,9 +86,14 @@ public:
 	void RightViewDraw() override;
 	void UPSubViewDraw() override;
 	void Release() override;
+
+	void BoneDraw();
+
 	void SetMode(int _mode);
 
 	void SetGaugeMode(int _mode);
+
+	void AddGaugeScale(float _v);
 
 	void AddValue(float _v);
 

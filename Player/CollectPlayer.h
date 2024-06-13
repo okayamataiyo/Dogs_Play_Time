@@ -75,6 +75,7 @@ private:
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
 	ImageManager* pImageManager_;
+	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
 	UIManager* pUIManager_;
 public:

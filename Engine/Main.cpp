@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <time.h>
+#include <chrono>
 #include "Direct3D.h"
 #include "global.h"
 #include "RootObject.h"

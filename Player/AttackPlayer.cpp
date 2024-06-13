@@ -95,6 +95,9 @@ void AttackPlayer::Initialize()
     pUIManager_ = Instantiate<UIManager>(this);
     pUIManager_->SetPadNum(gameData_.padID_);
     pUIManager_->SetMode((int)UISTATE::DOGSWALKATTACK);
+    pImageManager_ = Instantiate<ImageManager>(this);
+    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SecInit();
 }
 
 void AttackPlayer::Update()
@@ -201,7 +204,7 @@ void AttackPlayer::UpdatePlay()
     }
     if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
-        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && !gameData_.scoreTimeCounter_ == gameData_.scoreTimeCounterWait_)
+        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
             PlayerScore();
         }
@@ -286,8 +289,8 @@ void AttackPlayer::UpdatePlay()
 
 void AttackPlayer::UpdateGameOver()
 {
-    pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+    pImageManager_->SecInit();
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {
         Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));

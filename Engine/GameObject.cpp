@@ -1,5 +1,7 @@
-#include "gameObject.h"
 #include <assert.h>
+#include <chrono>
+#include "gameObject.h"
+#include "ImGui/imgui.h"
 #include "Global.h"
 
 //コンストラクタ（親も名前もなし）
@@ -322,11 +324,14 @@ void GameObject::DrawSub()
 {
 	if(Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
 	{
+
 		UPSubViewDraw();
+
 	}
 	if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
 	{
 		BothViewDraw();
+
 	}
 	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
 	{
@@ -336,7 +341,6 @@ void GameObject::DrawSub()
 	{
 		RightViewDraw();
 	}
-
 	//リリース時は削除
 #ifdef _DEBUG
 		//コリジョンの描画
