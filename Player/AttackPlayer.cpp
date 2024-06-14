@@ -18,6 +18,7 @@
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../ImageManager.h"
+#include "../ParticleManager.h"
 #include "../UIManager.h"
 #include "AttackPlayer.h"
 #include "CollectPlayer.h"
@@ -28,6 +29,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
+    ,pBoneImageManager_{nullptr}, pParticleManager_{nullptr}
 {
     pParent_ = _pParent;
 }
@@ -92,9 +94,13 @@ void AttackPlayer::Initialize()
         gameData_.padID_ = (int)PADIDSTATE::SECONDS;
     }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
+    pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::NONE);
     pImageManager_->SecInit();
+    pBoneImageManager_ = Instantiate<ImageManager>(this);
+    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SecInit();
 }
 
 void AttackPlayer::Update()
@@ -383,6 +389,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName)
     {
+        pParticleManager_->CreateVFX(transform_.position_);
         //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
         if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {

@@ -5,16 +5,17 @@
 #include "Engine/Input.h"
 #include "Player/PlayerBase.h"
 #include "Player/CollectPlayer.h"
+#include "Player/AttackPlayer.h"
 #include "ImageManager.h"
 
 
 ImageManager::ImageManager(GameObject* _pParent)
-	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{},hClickButtonPict_{}, hPlayerWinPict_{}
+	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{}, hClickButtonPict_{}, hPlayerWinPict_{}
 	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{}
 	,imageState_{IMAGESTATE::GAMEOVER},gaugeState_{GAUGESTATE::WALK}, isMatchWinner_{}
 	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{}
-	, imageTransform_{}, buttonTransform_{},boneTransforom_{}
-	,pCollectPlayer_{nullptr}
+	, imageTransform_{}, buttonTransform_{},boneTransform_{}
+	, pParent_{ _pParent },pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 }
 
@@ -25,11 +26,12 @@ void ImageManager::Initialize()
 	collectPlayerScore_ = GetPrivateProfileInt("PLAYERSCORE", "CollectPlayerScore", 0, "Setting/PlayerSetting.ini");
 	attackOrCollectInverse_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollectInverse", 0, "Setting/PlayerSetting.ini");
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
+	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
 	buttonTransform_.position_ = { -0.3f,-0.5f,0.0f };
 	for (int i = 0; i < (int)BONESTATE::BONENUM; ++i)
 	{
-		boneTransforom_[i].position_ = {-0.9f + i * 0.1f,0.9f,0.0f};
-		boneTransforom_[i].scale_ = {0.2f,0.2f,0.2f};
+		boneTransform_[i].position_ = {-0.9f + i * 0.1f,0.9f,0.0f};
+		boneTransform_[i].scale_ = {0.2f,0.2f,0.2f};
 	}
 }
 
@@ -75,7 +77,14 @@ void ImageManager::LeftViewDraw()
 	{ 
 		if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
 		{
-			BoneDraw();
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+			{
+				BoneDraw(walkBoneNum_);
+			}
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				BoneDraw(fightBoneNum_);
+			}
 		}
 	}
 }
@@ -86,7 +95,14 @@ void ImageManager::RightViewDraw()
 	{
 		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
 		{
-			BoneDraw();
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+			{
+				BoneDraw(walkBoneNum_);
+			}
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				BoneDraw(fightBoneNum_);
+			}
 		}
 	}
 }
@@ -146,19 +162,54 @@ void ImageManager::SetValue(float _v)
 	}
 }
 
-void ImageManager::BoneDraw()
+void ImageManager::BoneDraw(int _boneNum)
 {
-	for (int i = 0; i < (int)BONESTATE::BONENUM; ++i)
+	for (int i = 0; i < _boneNum; ++i)
 	{
-		if (pCollectPlayer_->GetScore() >= (i + 1) * 10)
+		if (pParent_->GetObjectName() == collectPlayerName)
 		{
-			Image::SetTransform(hYellowBonePict_[i], boneTransforom_[i]);
-			Image::Draw(hYellowBonePict_[i]);
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+			{
+				if (pCollectPlayer_->GetScore() >= (i + 1) * 10)
+				{
+					Image::SetTransform(hYellowBonePict_[i], boneTransform_[i]);
+					Image::Draw(hYellowBonePict_[i]);
+				}
+				else
+				{
+					Image::SetTransform(hBonePict_[i], boneTransform_[i]);
+					Image::Draw(hBonePict_[i]);
+				}
+			}
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				if (pCollectPlayer_->GetIsBoneTatch())
+				{
+					Image::SetTransform(hYellowBonePict_[i], boneTransform_[i]);
+					Image::Draw(hYellowBonePict_[i]);
+				}
+				else
+				{
+					Image::SetTransform(hBonePict_[i], boneTransform_[i]);
+					Image::Draw(hBonePict_[i]);
+				}
+			}
 		}
-		else
+		if (pParent_->GetObjectName() == attackPlayerName)
 		{
-			Image::SetTransform(hBonePict_[i], boneTransforom_[i]);
-			Image::Draw(hBonePict_[i]);
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				if (pAttackPlayer_->GetIsBoneTatch())
+				{
+					Image::SetTransform(hYellowBonePict_[i], boneTransform_[i]);
+					Image::Draw(hYellowBonePict_[i]);
+				}
+				else
+				{
+					Image::SetTransform(hBonePict_[i], boneTransform_[i]);
+					Image::Draw(hBonePict_[i]);
+				}
+			}
 		}
 	}
 }
@@ -228,6 +279,7 @@ void ImageManager::SecInit()
 		break;
 	case IMAGESTATE::BONE:
 		pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
+		pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 		for (int i = 0; i < (int)BONESTATE::BONENUM; ++i)
 		{
 			hBonePict_[i] = Image::Load(modelFolderName + "Bone" + imageModifierName);
@@ -273,7 +325,6 @@ void ImageManager::SecInit()
 		}
 		if (gaugeState_ == GAUGESTATE::FIGHTCOLLECT)
 		{
-
 			gaugeTransform_.position_ = { 0.02f,0.0f,0.0f };
 			gaugeTransform_.scale_ = { 2.4f,9.5f,1.0f };
 			gaugeFrameTransform_.position_ = { 0.0f,0.0f,0.0f };

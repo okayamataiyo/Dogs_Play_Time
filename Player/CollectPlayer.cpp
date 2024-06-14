@@ -99,12 +99,9 @@ void CollectPlayer::Initialize()
     pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::NONE);
     pImageManager_->SecInit();
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-    {
-        pBoneImageManager_ = Instantiate<ImageManager>(this);
-        pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
-        pBoneImageManager_->SecInit();
-	}
+    pBoneImageManager_ = Instantiate<ImageManager>(this);
+    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SecInit();
 }
 
 void CollectPlayer::Update()

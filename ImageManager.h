@@ -41,15 +41,18 @@ enum class BONESTATE
 };
 
 class CollectPlayer;
+class AttackPlayer;
 
 class ImageManager : public GameObject
 {
 private:
-
+	const int walkBoneNum_ = 12;
+	const int fightBoneNum_ = 1;
 	int attackPlayerScore_;
 	int collectPlayerScore_;
 	int attackOrCollectInverse_;
 	int attackOrCollect_;
+	int walkOrFight_;
 	int hModel_[4];
 	int hTimeGaugePict_;	//âÊëúî‘çÜ
 	int hClickButtonPict_;
@@ -71,11 +74,13 @@ private:
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
 	Transform gaugeFrameTransform_;
-	Transform boneTransforom_[(int)BONESTATE::BONENUM];
+	Transform boneTransform_[(int)BONESTATE::BONENUM];
 	IMAGESTATE imageState_;
 	GAUGESTATE gaugeState_;
 	int isMatchWinner_;
+	GameObject* pParent_;
 	CollectPlayer* pCollectPlayer_;
+	AttackPlayer* pAttackPlayer_;
 public:
 	ImageManager(GameObject* _pParent);
 	void Initialize() override;
@@ -87,7 +92,7 @@ public:
 	void UPSubViewDraw() override;
 	void Release() override;
 
-	void BoneDraw();
+	void BoneDraw(int _boneNum);
 
 	void SetMode(int _mode);
 
