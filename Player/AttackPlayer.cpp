@@ -100,7 +100,6 @@ void AttackPlayer::Initialize()
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
     pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
-    pBoneImageManager_->SecInit();
 }
 
 void AttackPlayer::Update()
@@ -609,6 +608,11 @@ void AttackPlayer::PlayerRevival()
 void AttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
     PlayerBase::SetKnockback(_vecKnockbackDirection, _knockbackSpeed);
+}
+
+void AttackPlayer::SetImageSecInit()
+{
+    pBoneImageManager_->SecInit();
 }
 
 void AttackPlayer::IsMove()

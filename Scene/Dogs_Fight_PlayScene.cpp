@@ -77,6 +77,8 @@ void Dogs_Fight_PlayScene::Initialize()
 	XMFLOAT3 secondsPPos = { 3,0,0 };
 	pAttackPlayer_->SetPosition(firstPPos);
 	pCollectPlayer_->SetPosition(secondsPPos);
+	pAttackPlayer_->SetImageSecInit();
+	pCollectPlayer_->SetImageSecInit();
 
 	//—”¶¬Ší‚Ìİ’è
 	std::random_device rd;

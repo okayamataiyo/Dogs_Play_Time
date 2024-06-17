@@ -181,6 +181,8 @@ public:
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 
+	void SetImageSecInit();
+
 	bool GetIsMove() override { return moveData_.isMove_; }
 
 	bool GetIsJump() override { return jumpData_.isJump_; }

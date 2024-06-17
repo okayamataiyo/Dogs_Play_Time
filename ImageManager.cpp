@@ -75,7 +75,18 @@ void ImageManager::LeftViewDraw()
 {
 	if (imageState_ == IMAGESTATE::BONE)
 	{ 
-		if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
+		if(pCollectPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		{
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+			{
+				BoneDraw(walkBoneNum_);
+			}
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				BoneDraw(fightBoneNum_);
+			}
+		}
+		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
 		{
 			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
 			{
@@ -93,7 +104,18 @@ void ImageManager::RightViewDraw()
 {
 	if (imageState_ == IMAGESTATE::BONE)
 	{
-		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+		if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		{
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+			{
+				BoneDraw(walkBoneNum_);
+			}
+			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+			{
+				BoneDraw(fightBoneNum_);
+			}
+		}
+		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
 		{
 			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
 			{
@@ -216,7 +238,8 @@ void ImageManager::BoneDraw(int _boneNum)
 
 void ImageManager::AddGaugeScale(float _v)
 {
-	gaugeTransform_.scale_.x -= (_v / 150.0f);
+	const float decScale = 150.0f;
+	gaugeTransform_.scale_.x -= (_v / decScale);
 }
 
 void ImageManager::SecInit()

@@ -101,7 +101,6 @@ void CollectPlayer::Initialize()
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
     pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
-    pBoneImageManager_->SecInit();
 }
 
 void CollectPlayer::Update()
@@ -630,4 +629,9 @@ void CollectPlayer::IsDive()
 void CollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
     PlayerBase::SetKnockback(_vecKnockbackDirection, _knockbackSpeed);
+}
+
+void CollectPlayer::SetImageSecInit()
+{
+    pBoneImageManager_->SecInit();
 }
