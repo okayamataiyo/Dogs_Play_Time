@@ -104,7 +104,7 @@ void ImageManager::RightViewDraw()
 {
 	if (imageState_ == IMAGESTATE::BONE)
 	{
-		if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
 		{
 			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
 			{
@@ -115,12 +115,8 @@ void ImageManager::RightViewDraw()
 				BoneDraw(fightBoneNum_);
 			}
 		}
-		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
 		{
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-			{
-				BoneDraw(walkBoneNum_);
-			}
 			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
 			{
 				BoneDraw(fightBoneNum_);
