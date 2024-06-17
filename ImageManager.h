@@ -90,6 +90,10 @@ public:
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
 	void UPSubViewDraw() override;
+	void LeftCollectDraw();
+	void RightCollectDraw();
+	void LeftAttackDraw();
+	void RightAttackDraw();
 	void Release() override;
 
 	void BoneDraw(int _boneNum);

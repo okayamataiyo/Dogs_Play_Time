@@ -75,27 +75,13 @@ void ImageManager::LeftViewDraw()
 {
 	if (imageState_ == IMAGESTATE::BONE)
 	{ 
-		if(pCollectPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		if (pParent_->GetObjectName() == collectPlayerName)
 		{
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-			{
-				BoneDraw(walkBoneNum_);
-			}
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-			{
-				BoneDraw(fightBoneNum_);
-			}
+			LeftCollectDraw();
 		}
-		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+		if (pParent_->GetObjectName() == attackPlayerName)
 		{
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-			{
-				BoneDraw(walkBoneNum_);
-			}
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-			{
-				BoneDraw(fightBoneNum_);
-			}
+			LeftAttackDraw();
 		}
 	}
 }
@@ -104,23 +90,13 @@ void ImageManager::RightViewDraw()
 {
 	if (imageState_ == IMAGESTATE::BONE)
 	{
-		if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
+		if (pParent_->GetObjectName() == collectPlayerName)
 		{
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-			{
-				BoneDraw(walkBoneNum_);
-			}
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-			{
-				BoneDraw(fightBoneNum_);
-			}
+			RightCollectDraw();
 		}
-		if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
+		if (pParent_->GetObjectName() == attackPlayerName)
 		{
-			if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-			{
-				BoneDraw(fightBoneNum_);
-			}
+			RightAttackDraw();
 		}
 	}
 }
@@ -228,6 +204,58 @@ void ImageManager::BoneDraw(int _boneNum)
 					Image::Draw(hBonePict_[i]);
 				}
 			}
+		}
+	}
+}
+
+void ImageManager::LeftCollectDraw()
+{
+	if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+	{
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+		{
+			BoneDraw(walkBoneNum_);
+		}
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+		{
+			BoneDraw(fightBoneNum_);
+		}
+	}
+}
+
+void ImageManager::RightCollectDraw()
+{
+	if (pCollectPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
+	{
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+		{
+			BoneDraw(walkBoneNum_);
+		}
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+		{
+			BoneDraw(fightBoneNum_);
+		}
+	}
+}
+
+void ImageManager::LeftAttackDraw()
+{
+	if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::FIRST)
+	{
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+		{
+			BoneDraw(fightBoneNum_);
+		}
+	}
+}
+
+void ImageManager::RightAttackDraw()
+{
+	if (pAttackPlayer_->GetPadID() == (int)PADIDSTATE::SECONDS)
+	{
+		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+		{
+			BoneDraw(fightBoneNum_);
 		}
 	}
 }
