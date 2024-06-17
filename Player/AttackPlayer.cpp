@@ -184,6 +184,9 @@ void AttackPlayer::UpdatePlay()
         int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
+
+        pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+        SetKillTime(boneData_.killTimeWait_);
     }
 
     if (diveData_.isDive_ && !diveData_.isDived_)
@@ -269,14 +272,7 @@ void AttackPlayer::UpdatePlay()
     if (boneData_.killTime_ <= 0 && boneData_.isBoneTatch_)
     {
         PlayerScore();
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-        {
-            pDogs_Walk_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
-        }
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
-        }
+        pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         boneData_.isBoneTatch_ = false;
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
         boneData_.killTime_ = boneData_.killTimeMax_;
@@ -388,13 +384,12 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName)
     {
-        pParticleManager_->CreateVFX(transform_.position_);
-        //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
         if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
-            Instantiate<BoneSuck>(this);
+            pParticleManager_->CreateVFX(transform_.position_);
+            //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
 
-            pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
+            pBoneSuck_ = Instantiate<BoneSuck>(this);;
             SetKillTime(boneData_.killTimeWait_);
             static int noDeathBoneSuck = 99999;
             pBoneSuck_->SetKillTime(noDeathBoneSuck);

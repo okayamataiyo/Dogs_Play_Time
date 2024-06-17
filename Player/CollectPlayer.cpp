@@ -380,12 +380,12 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName)
     {
-        pParticleManager_->CreateVFX(transform_.position_);
-        //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
         if (boneData_.killTime_ == boneData_.killTimeMax_)
         {
-            Instantiate<BoneSuck>(this);
-            pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
+            pParticleManager_->CreateVFX(transform_.position_);
+            //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
+            
+            pBoneSuck_ = Instantiate<BoneSuck>(this);
             SetKillTime(boneData_.killTimeWait_);
             if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
             {
