@@ -44,6 +44,8 @@ public:
     void RightViewDraw() override;
     void UPSubViewDraw() override;
 
+    void FloorUp(float _positionUpMax);
+    void FloorDown(float _positionDownMax);
     //ŠJ•ú
     void Release() override;
 
