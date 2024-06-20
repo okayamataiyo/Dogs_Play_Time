@@ -39,8 +39,13 @@ public:
     void Update() override;
 
     //•`‰æ
-    void Draw() override;
+    void BothViewDraw() override;
+    void LeftViewDraw() override;
+    void RightViewDraw() override;
+    void UPSubViewDraw() override;
 
+    void FloorUp(float _positionUpMax);
+    void FloorDown(float _positionDownMax);
     //ŠJ•ú
     void Release() override;
 

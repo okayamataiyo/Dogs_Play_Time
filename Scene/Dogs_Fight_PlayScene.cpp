@@ -10,6 +10,7 @@
 #include "../ItemObject/BoneSuck.h"
 #include "../ItemObject/Bone.h"
 #include "../StageObject/StageObjectManager.h"
+#include "../ImageManager.h"
 #include "Dogs_Fight_PlayScene.h"
 
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
@@ -19,7 +20,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
-	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr }
+	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pAttackImageManager_{nullptr},pCollectImageManager_{nullptr}
 {
 }
 
@@ -76,6 +77,8 @@ void Dogs_Fight_PlayScene::Initialize()
 	XMFLOAT3 secondsPPos = { 3,0,0 };
 	pAttackPlayer_->SetPosition(firstPPos);
 	pCollectPlayer_->SetPosition(secondsPPos);
+	pAttackPlayer_->SetImageSecInit();
+	pCollectPlayer_->SetImageSecInit();
 
 	//—”¶¬Ší‚Ìİ’è
 	std::random_device rd;
@@ -84,10 +87,27 @@ void Dogs_Fight_PlayScene::Initialize()
 
 	//1‚©‚ç2‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€‚È’l‚Ìì¬
 	random_value_ = dis(gen);
+
+	pAttackImageManager_ = Instantiate<ImageManager>(this);
+	pAttackImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pAttackImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTATTACK);
+	pAttackImageManager_->SecInit();
+	pCollectImageManager_ = Instantiate<ImageManager>(this);
+	pCollectImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
+	pCollectImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTCOLLECT);
+	pCollectImageManager_->SecInit();
 }
 
 void Dogs_Fight_PlayScene::Update()
 {
+	if (pAttackPlayer_->GetIsBoneTatch())
+	{
+		pAttackImageManager_->AddGaugeScale(0.102f);
+	}
+	if (pCollectPlayer_->GetIsBoneTatch())
+	{
+		pCollectImageManager_->AddGaugeScale(0.102f);
+	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
@@ -128,7 +148,19 @@ void Dogs_Fight_PlayScene::Update()
 	}
 }
 
-void Dogs_Fight_PlayScene::Draw()
+void Dogs_Fight_PlayScene::BothViewDraw()
+{
+}
+
+void Dogs_Fight_PlayScene::LeftViewDraw()
+{
+}
+
+void Dogs_Fight_PlayScene::RightViewDraw()
+{
+}
+
+void Dogs_Fight_PlayScene::UPSubViewDraw()
 {
 }
 

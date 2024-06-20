@@ -22,6 +22,7 @@ class AttackPlayer;
 class CollectPlayer;
 class ItemObjectManager;
 class StageObjectManager;
+class ImageManager;
 
 /// <summary>
 /// 骨一個型プレイシーン
@@ -84,6 +85,8 @@ private:
     CollectPlayer* pCollectPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
+    ImageManager* pAttackImageManager_;
+    ImageManager* pCollectImageManager_;
 
 public:
     /// <summary>
@@ -93,7 +96,10 @@ public:
     Dogs_Fight_PlayScene(GameObject* _pParent);
     void Initialize() override;
     void Update() override;
-    void Draw() override;
+    void BothViewDraw() override;
+    void LeftViewDraw() override;
+    void RightViewDraw() override;
+    void UPSubViewDraw() override;
     void Release() override;
     void BoneSummons();
     std::vector<int> GetWoodBoxs() { return pItemObjectManager_->GetWoodBoxs(); }

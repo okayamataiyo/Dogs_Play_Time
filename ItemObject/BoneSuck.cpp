@@ -56,10 +56,23 @@ void BoneSuck::Update()
 	}
 }
 
-void BoneSuck::Draw()
+void BoneSuck::BothViewDraw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
+}
+
+void BoneSuck::LeftViewDraw()
+{
+}
+
+void BoneSuck::RightViewDraw()
+{
+
+}
+
+void BoneSuck::UPSubViewDraw()
+{
 }
 
 void BoneSuck::Release()

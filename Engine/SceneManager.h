@@ -34,7 +34,10 @@ public:
 
 	void Initialize() override;
 	void Update() override;
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 	void Release() override;
 
 	//シーン切り替え（実際に切り替わるのはこの次のフレーム）

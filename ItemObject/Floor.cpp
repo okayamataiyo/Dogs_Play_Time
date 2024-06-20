@@ -38,23 +38,45 @@ void Floor::Update()
     {
         transform_.position_.y -= downVelocity_;
     }
-
-    if (transform_.position_.y >= positionUpMax_)
-    {
-        floorState_ = (int)FLOORSTATE::DOWN;
-    }
-    if (transform_.position_.y <= positionDownMax_)
-    {
-        floorState_ = (int)FLOORSTATE::UP;
-    }
+    FloorUp(positionUpMax_);
+    FloorDown(positionDownMax_);
 }
 
-void Floor::Draw()
+void Floor::BothViewDraw()
 {
     for (int i = initZeroInt; i <= 1; i++)
     {
         Model::SetTransform(hModel_, transform_);
         Model::Draw(hModel_);
+    }
+}
+
+
+void Floor::LeftViewDraw()
+{
+}
+
+void Floor::RightViewDraw()
+{
+}
+
+void Floor::UPSubViewDraw()
+{
+}
+
+void Floor::FloorUp(float _positionUpMax)
+{
+    if (transform_.position_.y >= _positionUpMax)
+    {
+        floorState_ = (int)FLOORSTATE::DOWN;
+    }
+}
+
+void Floor::FloorDown(float _positionDownMax)
+{
+    if (transform_.position_.y <= _positionDownMax)
+    {
+        floorState_ = (int)FLOORSTATE::UP;
     }
 }
 

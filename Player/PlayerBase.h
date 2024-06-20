@@ -35,7 +35,7 @@ protected:
 		int padID_;
 		int walkOrFight_;
 		GameData()
-			:FPS_{ 600 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 150 },scoreTimeCounter_{0},scoreTimeCounterWait_{30}, padID_{0}, walkOrFight_{false}
+			:FPS_{ 600 }, timeCounter_{ 0 }, timeLimit_{ 60 }, fallLimit_{ 100.0f }, score_{ 0 }, scoreAmount_{ 10 }, scoreMax_{ 120 },scoreTimeCounter_{0},scoreTimeCounterWait_{30}, padID_{0}, walkOrFight_{false}
 		{
 
 		}
@@ -60,6 +60,10 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
+		const float CamPos_[4] = { 0.1f,0.3f,0.8f,1.4f };
+		int CamPosNum_;
+		bool i_;
+		bool j_;
 		MoveData()
 			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
 		{
@@ -203,7 +207,10 @@ protected:
 	void Update()       override;
 
 	//描画
-	void Draw()         override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 
 	//開放
 	void Release()      override;

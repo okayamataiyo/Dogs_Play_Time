@@ -2,6 +2,7 @@
 #include "../Engine/Input.h"
 #include "../Engine/Camera.h"
 #include "../Engine/Global.h"
+#include "../Engine/ImGui/imgui.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
 #include "PlayerBase.h"
 
@@ -26,9 +27,23 @@ void PlayerBase::Update()
 }
 
 // •`‰æ
-void PlayerBase::Draw()
+void PlayerBase::BothViewDraw()
 {
 
+}
+
+void PlayerBase::LeftViewDraw()
+{
+
+}
+
+void PlayerBase::RightViewDraw()
+{
+
+}
+
+void PlayerBase::UPSubViewDraw()
+{
 }
 
 // ŠJ•ú
@@ -103,19 +118,52 @@ void PlayerBase::PlayerCamera()
     {
         XMMATRIX x, y;
     };
-
     static float2 padRotMove = {};
     float2 sigmaRot = {};
     XMMATRIX2 mat2Rot = {};
     XMMATRIX matRot = {};
-
+    float deadZone = 0.8f;
     XMVECTOR vecDir = {};
     XMFLOAT3 floDir_ = {};
     static float floLen = 0.0f;
     float floCameraLen = 30.0f;
     float floKnockbackLenRecedes = 5.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
-    XMFLOAT3 padStickR = Input::GetPadStickR(gameData_.padID_);
+    XMFLOAT3 padStickR = {};
+    padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
+    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
+    {
+        if (moveData_.i_ == false)
+        {
+            moveData_.i_ = true;
+            moveData_.CamPosNum_ -= 1;
+        }
+    }
+    else
+    {
+        moveData_.i_ = false;
+    }
+    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
+    {
+        if (moveData_.j_ == false)
+        {
+            moveData_.j_ = true;
+            moveData_.CamPosNum_ += 1;
+        }
+    }
+    else
+    {
+        moveData_.j_ = false;
+    }
+    if(moveData_.CamPosNum_ <= 0)
+	{
+		moveData_.CamPosNum_ = 0;
+	}
+    if (moveData_.CamPosNum_ >= 4)
+    {
+        moveData_.CamPosNum_ = 3;
+    }
+    dirData_.vecCam_.x = moveData_.CamPos_[moveData_.CamPosNum_];
     const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;

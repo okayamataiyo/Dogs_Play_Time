@@ -20,7 +20,10 @@ public:
 	~Button();
 	void Initialize() override;
 	void Update() override;
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 	void Release() override;
 	void SetPosition(int _x, int _y);						//ボタン表示位置
 	void Push(bool _pushed) { this->pushed_ = _pushed; }	//ボタンを押したか、押してないか

@@ -21,7 +21,19 @@ void RootObject::Update()
 {
 }
 
-void RootObject::Draw()
+void RootObject::BothViewDraw()
+{
+}
+
+void RootObject::LeftViewDraw()
+{
+}
+
+void RootObject::RightViewDraw()
+{
+}
+
+void RootObject::UPSubViewDraw()
 {
 }
 

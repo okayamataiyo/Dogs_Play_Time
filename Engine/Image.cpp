@@ -195,5 +195,13 @@ namespace Image
 	{
 		return _datas[_handle]->pSprite->GetTextureSize();
 	}
+	int GetWidth(int _handle)
+	{
+		return _datas[_handle]->pSprite->GetTextureSize().x;
+	}
+	int GetHeight(int _handle)
+	{
+		return _datas[_handle]->pSprite->GetTextureSize().y;
+	}
 }
 

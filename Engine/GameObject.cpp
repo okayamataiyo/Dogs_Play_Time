@@ -1,5 +1,7 @@
-#include "gameObject.h"
 #include <assert.h>
+#include <chrono>
+#include "gameObject.h"
+#include "ImGui/imgui.h"
 #include "Global.h"
 
 //コンストラクタ（親も名前もなし）
@@ -268,14 +270,17 @@ void GameObject::Collision(GameObject * pTarget)
 //テスト用の衝突判定枠を表示
 void GameObject::CollisionDraw()
 {
-	Direct3D::SetShader(Direct3D::SHADER_UNLIT);
-
-	for (auto i = this->colliderList_.begin(); i != this->colliderList_.end(); i++)
+	if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
 	{
-		(*i)->Draw(GetWorldPosition());
-	}
+		Direct3D::SetShader(Direct3D::SHADER_UNLIT);
 
-	Direct3D::SetShader(Direct3D::SHADER_3D);
+		for (auto i = this->colliderList_.begin(); i != this->colliderList_.end(); i++)
+		{
+			(*i)->Draw(GetWorldPosition());
+		}
+
+		Direct3D::SetShader(Direct3D::SHADER_3D);
+	}
 }
 
 //RootJobを取得
@@ -287,9 +292,6 @@ GameObject * GameObject::GetRootJob()
 	}
 	else return GetParent()->GetRootJob();
 }
-
-
-
 
 void GameObject::UpdateSub()
 {
@@ -320,9 +322,25 @@ void GameObject::UpdateSub()
 
 void GameObject::DrawSub()
 {
-	Draw();
+	if(Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
+	{
 
+		UPSubViewDraw();
 
+	}
+	if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
+	{
+		BothViewDraw();
+
+	}
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::LEFTVIEWPORT)
+	{
+		LeftViewDraw();
+	}
+	if (Direct3D::GetViewPort() == (int)Direct3D::VIEWPORTSTATE::RIGHTVIEWPORT)
+	{
+		RightViewDraw();
+	}
 	//リリース時は削除
 #ifdef _DEBUG
 		//コリジョンの描画

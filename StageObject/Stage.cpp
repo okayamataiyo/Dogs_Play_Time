@@ -28,10 +28,22 @@ void Stage::Update()
 
 }
 
-void Stage::Draw()
+void Stage::BothViewDraw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
+}
+
+void Stage::LeftViewDraw()
+{
+}
+
+void Stage::RightViewDraw()
+{
+}
+
+void Stage::UPSubViewDraw()
+{
 }
 
 void Stage::Release()

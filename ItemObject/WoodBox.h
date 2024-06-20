@@ -63,7 +63,10 @@ public:
     void Update() override;
 
     //•`‰æ
-    void Draw() override;
+    void BothViewDraw() override;
+    void LeftViewDraw() override;
+    void RightViewDraw() override;
+    void UPSubViewDraw() override;
 
     //ŠJ•ú
     void Release() override;

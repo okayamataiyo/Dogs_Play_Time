@@ -190,35 +190,38 @@ void VFX::CreateParticle(std::list<VFX::Emitter*>::iterator& emitter)
 //パーティクル描画
 void VFX::Draw()
 {
-    Direct3D::SetShader(Direct3D::SHADER_BILLBOARD);
-    Direct3D::SetBlendMode(Direct3D::BLEND_ADD);
-
- 
-    for (auto particle = particleList_.begin(); particle != particleList_.end(); particle++)
+    if (Direct3D::GetViewPort() != (int)Direct3D::VIEWPORTSTATE::UPSUBVIEWPORT)
     {
-        XMMATRIX matWorld;
-        XMMATRIX matTrans = XMMatrixTranslation((*particle)->now.position.x, (*particle)->now.position.y, (*particle)->now.position.z);
+        Direct3D::SetShader(Direct3D::SHADER_BILLBOARD);
+        Direct3D::SetBlendMode(Direct3D::BLEND_ADD);
 
-        XMMATRIX matRotateX = XMMatrixRotationX(XMConvertToRadians((*particle)->now.rotation.x));
-        XMMATRIX matRotateY = XMMatrixRotationY(XMConvertToRadians((*particle)->now.rotation.y));
-        XMMATRIX matRotateZ = XMMatrixRotationZ(XMConvertToRadians((*particle)->now.rotation.z));
-        XMMATRIX matRotate = matRotateZ * matRotateX * matRotateY;
 
-        XMMATRIX matScale = XMMatrixScaling((*particle)->now.scale.x, (*particle)->now.scale.y, 1.0f);
-
-        if ((*particle)->pEmitter->data.isBillBoard)
+        for (auto particle = particleList_.begin(); particle != particleList_.end(); particle++)
         {
-            matWorld = matScale * matRotate * Camera::GetBillboardMatrix() * matTrans;
+            XMMATRIX matWorld;
+            XMMATRIX matTrans = XMMatrixTranslation((*particle)->now.position.x, (*particle)->now.position.y, (*particle)->now.position.z);
+
+            XMMATRIX matRotateX = XMMatrixRotationX(XMConvertToRadians((*particle)->now.rotation.x));
+            XMMATRIX matRotateY = XMMatrixRotationY(XMConvertToRadians((*particle)->now.rotation.y));
+            XMMATRIX matRotateZ = XMMatrixRotationZ(XMConvertToRadians((*particle)->now.rotation.z));
+            XMMATRIX matRotate = matRotateZ * matRotateX * matRotateY;
+
+            XMMATRIX matScale = XMMatrixScaling((*particle)->now.scale.x, (*particle)->now.scale.y, 1.0f);
+
+            if ((*particle)->pEmitter->data.isBillBoard)
+            {
+                matWorld = matScale * matRotate * Camera::GetBillboardMatrix() * matTrans;
+            }
+            else
+            {
+                matWorld = matScale * matRotate * matTrans;
+            }
+            (*particle)->pEmitter->pBillBoard->Draw(matWorld, (*particle)->now.color);
         }
-        else
-        {
-            matWorld = matScale * matRotate * matTrans;
-        }
-        (*particle)->pEmitter->pBillBoard->Draw(matWorld,(*particle)->now.color);
+
+        Direct3D::SetShader(Direct3D::SHADER_3D);
+        Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
     }
-
-    Direct3D::SetShader(Direct3D::SHADER_3D);
-    Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
 }
 
 //解放

@@ -50,6 +50,7 @@ void GameSelectScene::Initialize()
 	XMFLOAT3 positionActorCollectPlayer = { -5.0f,0.0f,0.0f };
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_->SecInit();
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
 	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECT);
 }
@@ -90,7 +91,20 @@ void GameSelectScene::Update()
 	}
 }
 
-void GameSelectScene::Draw()
+void GameSelectScene::BothViewDraw()
+{
+}
+
+void GameSelectScene::LeftViewDraw()
+{
+
+}
+
+void GameSelectScene::RightViewDraw()
+{
+}
+
+void GameSelectScene::UPSubViewDraw()
 {
 }
 

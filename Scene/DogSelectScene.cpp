@@ -19,7 +19,7 @@ DogSelectScene::DogSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, selectSceneName),attackOrCollect_{0},attackOrCollectInverse_{0},walkOrFight_{0}, solidTextRotate_{0.3f},padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}
 	, pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }
-	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pUIManager_{nullptr},pDogsSelectUIManager_{nullptr}
+	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pGameTitleImageManager_{nullptr}, pUIManager_{nullptr}, pDogsSelectUIManager_{nullptr}
 {
 
 }
@@ -48,7 +48,11 @@ void DogSelectScene::Initialize()
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_->SetMode((int)IMAGESTATE::NONE);
+	pImageManager_->SecInit();
+	pGameTitleImageManager_ = Instantiate<ImageManager>(this);
+	pGameTitleImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pGameTitleImageManager_->SecInit();
 	pUIManager_ = Instantiate<UIManager>(this);
 	pUIManager_->SetMode((int)UISTATE::GAMEMANUAL);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
@@ -75,11 +79,11 @@ void DogSelectScene::Update()
 	}
 
 	const float deadZone = 0.3f;
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone)   //右への移動
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)   //右への移動
 	{
 		attackOrCollect_ = (int)PADIDSTATE::SECONDS;
 	}
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone)   //右への移動
+	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x > deadZone)   //右への移動
 	{
 		attackOrCollect_ = (int)PADIDSTATE::FIRST;
 	}
@@ -144,10 +148,11 @@ void DogSelectScene::Update()
 	{
 		if (isOnce != isOncePrev)
 		{
-			pImageManager_ = Instantiate<ImageManager>(this);
 			isOncePrev = isOnce;
+			pImageManager_ = Instantiate<ImageManager>(this);
 		}
 		pImageManager_->SetMode((int)IMAGESTATE::GAMEMANUAL);
+		pImageManager_->SecInit();
 	}
 	else
 	{
@@ -157,7 +162,19 @@ void DogSelectScene::Update()
 	}
 }
 
-void DogSelectScene::Draw()
+void DogSelectScene::BothViewDraw()
+{
+}
+
+void DogSelectScene::LeftViewDraw()
+{
+}
+
+void DogSelectScene::RightViewDraw()
+{
+}
+
+void DogSelectScene::UPSubViewDraw()
 {
 }
 

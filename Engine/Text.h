@@ -28,16 +28,35 @@ public:
 	//戻値：成功／失敗
 	HRESULT Initialize(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
 
-
-	//描画（文字列）
+	//両画面描画（文字列）
 	//引数：x, y	表示位置（左上）
 	//引数：str		表示したい文字列
-	void Draw(int x, int y, const char* str,bool _isLeftView = false, bool _isRightView = false);
+	void BothViewDraw(int x, int y, const char* str);
 
-	//描画（整数値）
+	//左画面描画（文字列）
+	//引数：x, y	表示位置（左上）
+	//引数：str		表示したい文字列
+	void LeftViewDraw(int x, int y, const char* str);
+
+	//右画面描画（文字列）
+	//引数：x, y	表示位置（左上）
+	//引数：str		表示したい文字列
+	void RightViewDraw(int x, int y, const char* str);
+
+	//両画面描画（整数値）
 	//引数：x, y	表示位置（左上）
 	//引数：value	表示したい値
-	void Draw(int x, int y, int value,bool _isLeftView = false,bool _isRightView = false);
+	void BothViewDraw(int x, int y, int value);
+
+	//左画面描画（整数値）
+	//引数：x, y	表示位置（左上）
+	//引数：value	表示したい値
+	void LeftViewDraw(int x, int y, int value);
+
+	//右画面描画（整数値）
+	//引数：x, y	表示位置（左上）
+	//引数：value	表示したい値
+	void RightViewDraw(int x, int y, int value);
 
 	void DrawTextFor(float px, float py,const char* str);
 

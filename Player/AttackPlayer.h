@@ -16,6 +16,8 @@ class SceneManager;
 class ItemObjectManager;
 class StateManager;
 class ImageManager;
+class ParticleManager;
+class UIManager;
 
 namespace
 {
@@ -70,6 +72,8 @@ private:
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
 	ImageManager* pImageManager_;
+	ImageManager* pBoneImageManager_;
+	ParticleManager* pParticleManager_;
 public:
 
 	/// <summary>
@@ -96,7 +100,10 @@ public:
 	/// <summary>
 	/// ï`âÊä÷êî
 	/// </summary>
-	void Draw() override;
+	void BothViewDraw() override;
+	void LeftViewDraw() override;
+	void RightViewDraw() override;
+	void UPSubViewDraw() override;
 
 	/// <summary>
 	/// äJï˙ä÷êî
@@ -173,6 +180,8 @@ public:
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
+
+	void SetImageSecInit();
 
 	bool GetIsMove() override { return moveData_.isMove_; }
 

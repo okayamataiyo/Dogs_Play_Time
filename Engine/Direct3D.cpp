@@ -18,7 +18,7 @@ namespace Direct3D
 	ID3D11RenderTargetView* pRenderTargetView_ = nullptr;
 
 	//分割ビューポート、これをモデルの描画前に設定する
-	D3D11_VIEWPORT vp[2];
+	D3D11_VIEWPORT vp[(int)VIEWPORTSTATE::VIEWPORTNUM];
 
 	//【デプスステンシル】
 	//Zバッファ法を用いて、3D物体の前後関係を正しく表示するためのもの
@@ -47,6 +47,7 @@ namespace Direct3D
 	int						screenWidthHaif_ = 0;
 	int						vPWidth_[(int)VIEWPORTSTATE::VIEWPORTNUM] = {};
 	int						vPTopLeftX_[(int)VIEWPORTSTATE::VIEWPORTNUM] = {};
+	int						vPTopLeftY_[(int)VIEWPORTSTATE::VIEWPORTNUM] = {};		
 	float					prevVP_ = 0;
 	int						isChangeView_ = (int)VIEWSTATE::LEFTVIEW;
 	bool					isFinishView_ = false;
@@ -197,7 +198,7 @@ namespace Direct3D
 		screenWidthHaif_ = screenWidth / 2;
 		screenWidth_ = screenWidth;
 		screenHeight_ = screenHeight;
-		prevVP_ = vp[1].Width;
+		prevVP_ = vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width;
 		vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] = screenWidthHaif_;
 
 		return S_OK;
@@ -512,21 +513,26 @@ namespace Direct3D
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT];
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Height = screenHeight_;
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftX = vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のx座標
-		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftY = vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のy座標
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Height = screenHeight_;
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftX = screenWidth_ + vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];	 //画面左上のx座標
-		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftY = vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];			 //画面左上のy座標
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
-		
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Width = screenWidth_;
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Height = vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT];
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].TopLeftX = 0;	 //画面左上のx座標
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値		
 
 		switch (isChangeView_)
 		{
 		case 0:
-			prevVP_ = vp[1].Width;
+			prevVP_ = vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width;
 			break;
 		case (int)VIEWSTATE::LEFTVIEW:
 			Camera::SetIsChangeView((int)VIEWSTATE::LEFTVIEW);
@@ -534,6 +540,12 @@ namespace Direct3D
 			{
 				vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 10;
 				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
+				if (vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] > 0)
+				{
+					vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] -= 1;
+					vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 1;
+					vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 1;
+				}
 			}
 			break;
 		case (int)VIEWSTATE::LEFT_BOTHVIEW:
@@ -542,6 +554,9 @@ namespace Direct3D
 			{
 				vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 10;
 				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
+				vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] += 1;
+				vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 1;
+				vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 1;
 			}
 			break;
 		case (int)VIEWSTATE::RIGHTVIEW:
@@ -551,6 +566,12 @@ namespace Direct3D
 				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
 				vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 10;
 				vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
+				if (vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] > 0)
+				{
+					vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] -= 1;
+					vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT] -= 1;
+					vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 1;
+				}
 			}
 			break;
 		case (int)VIEWSTATE::RIGHT_BOTHVIEW:
@@ -560,6 +581,9 @@ namespace Direct3D
 				vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 10;
 				vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 10;
 				vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] -= 10;
+				vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT] += 1;
+				vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT] += 1;
+				vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT] += 1;
 			}
 			break;
 		default:
