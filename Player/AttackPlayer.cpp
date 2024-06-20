@@ -382,19 +382,21 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
             transform_.position_ = moveData_.positionPrev_;
         }
     }
-    if (_pTarget->GetObjectName() == boneName && boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (_pTarget->GetObjectName() == boneName)
     {
-        Instantiate<BoneSuck>(this);
+        //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
+        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        {
+            Instantiate<BoneSuck>(this);
 
-        pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
-        SetKillTime(boneData_.killTimeWait_);
-        static int noDeathBoneSuck = 99999;
-        pBoneSuck_->SetKillTime(noDeathBoneSuck);
-        SetKillTime(noDeathBoneSuck);
-        boneData_.isBoneTatch_ = true;
-        _pTarget->KillMe();
-
-        Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
+            pBoneSuck_ = (BoneSuck*)FindObject(boneSuckName);
+            SetKillTime(boneData_.killTimeWait_);
+            static int noDeathBoneSuck = 99999;
+            pBoneSuck_->SetKillTime(noDeathBoneSuck);
+            SetKillTime(noDeathBoneSuck);
+            boneData_.isBoneTatch_ = true;
+            _pTarget->KillMe();
+        }
     }
     ++number_;
     if (number_ >= woodBoxs.size())

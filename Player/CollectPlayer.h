@@ -17,6 +17,7 @@ class SceneManager;
 class ItemObjectManager;
 class StateManager;
 class ImageManager;
+class ParticleManager;
 
 namespace
 {
@@ -73,6 +74,7 @@ private:
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
 	ImageManager* pImageManager_;
+	ParticleManager* pParticleManager_;
 public:
 
 	/// <summary>

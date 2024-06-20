@@ -218,6 +218,7 @@
     </ClCompile>
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -406,6 +407,7 @@
     </ClInclude>
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="ParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
