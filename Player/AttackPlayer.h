@@ -99,7 +99,7 @@ public:
 	/// </summary>
 	void Update() override;
 
-	void UpdateSlow();
+	void UpdateHitStop();
 
 	/// <summary>
 	/// •`‰æŠÖ”

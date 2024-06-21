@@ -11,6 +11,9 @@
 //-----------------------------------------------------------
 namespace Model
 {
+	extern int slowTime_;
+	extern int slowTimeWait_;
+
 	//モデル情報
 	struct ModelData
 	{
@@ -26,7 +29,6 @@ namespace Model
 		//アニメーションのフレーム
 		float nowFrame, animSpeed;
 		int startFrame, endFrame;
-
 
 		//初期化
 		ModelData() : pFbx(nullptr), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0)
@@ -72,7 +74,7 @@ namespace Model
 	//引数：startFrame	開始フレーム
 	//引数：endFrame	終了フレーム
 	//引数：animSpeed	アニメーション速度
-	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed);
+	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed,int slowTimeWait = 1);
 
 	void SetOnceAnimFrame(int _handle, int _startFrame, int _endFrame, float _animSpeed,int _num);
 

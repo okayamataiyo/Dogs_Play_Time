@@ -108,7 +108,7 @@ void AttackPlayer::Update()
     hhh = Direct3D::GetFPS();
     if (slowTime_ == slowTimeWait_)
     {
-        UpdateSlow();
+        UpdateHitStop();
         slowTime_ = 0;
     }
 
@@ -122,9 +122,13 @@ void AttackPlayer::Update()
     }
 }
 
-void AttackPlayer::UpdateSlow()
+void AttackPlayer::UpdateHitStop()
 {
-
+    PlayerFall();
+    if (!stunData_.isStun_)
+    {
+        PlayerMove();
+    }
 }
 
 void AttackPlayer::BothViewDraw()
@@ -230,7 +234,6 @@ void AttackPlayer::UpdatePlay()
     }
 
     PlayerCamera();
-    PlayerFall();
     PlayerRayCast();
     PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
@@ -247,10 +250,7 @@ void AttackPlayer::UpdatePlay()
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
-    if (!stunData_.isStun_)
-    {
-        PlayerMove();
-    }
+
     if (gameData_.score_ >= gameData_.scoreMax_)
     {
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
@@ -349,7 +349,7 @@ void AttackPlayer::PlayerJumpStateFunc()
 void AttackPlayer::PlayerStunStateFunc()
 {
     PlayerBase::PlayerStunStateFunc();
-    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_,2);
 }
 
 void AttackPlayer::PlayerStun(int _timeLimit)

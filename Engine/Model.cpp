@@ -8,7 +8,8 @@ namespace Model
 	std::vector<ModelData*>	_datas;
 
 	int prevNum = 0;
-
+	int slowTime_ = 0;
+	int slowTimeWait_ = 1;
 	//初期化
 	void Initialize()
 	{
@@ -65,18 +66,20 @@ namespace Model
 			return (int)_datas.size() - 1;
 	}
 
-
-
 	//描画
 	void Draw(int handle)
 	{
+		slowTime_++;
 		if (handle < 0 || handle >= _datas.size() || _datas[handle] == nullptr)
 		{
 			return;
 		}
-
-		//アニメーションを進める
-		_datas[handle]->nowFrame += _datas[handle]->animSpeed;
+		if (slowTime_ == slowTimeWait_)
+		{
+			//アニメーションを進める
+			_datas[handle]->nowFrame += _datas[handle]->animSpeed;
+			slowTime_ = 0;
+		}
 
 		//最後までアニメーションしたら戻す
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
@@ -137,9 +140,10 @@ namespace Model
 
 
 	//アニメーションのフレーム数をセット
-	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed)
+	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed,int slowTimeWait)
 	{
 		_datas[handle]->SetAnimFrame(startFrame, endFrame, animSpeed);
+		slowTimeWait_ = slowTimeWait;
 	}
 
 	void SetOnceAnimFrame(int _handle, int _startFrame, int _endFrame, float _animSpeed,int _num)
