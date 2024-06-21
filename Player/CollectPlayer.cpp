@@ -406,7 +406,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
 
     if (_pTarget->GetObjectName() == attackPlayerName)
     {
-        PlayerStun(stunData_.hitStopTime_);
+        PlayerStun(stunData_.stunTime_);
         stunData_.isKnockBack_ = true;
         stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);

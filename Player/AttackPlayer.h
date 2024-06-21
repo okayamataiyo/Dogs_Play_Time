@@ -55,7 +55,9 @@ private:
 	int floorHModel_;				//‚·‚è”²‚¯°ƒ‚ƒfƒ‹”Ô†
 	int number_;
 	int attackOrCollect_;
-
+	int hhh;
+	int slowTime_;
+	int slowTimeWait_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -96,6 +98,8 @@ public:
 	/// XVŠÖ”
 	/// </summary>
 	void Update() override;
+
+	void UpdateSlow();
 
 	/// <summary>
 	/// •`‰æŠÖ”

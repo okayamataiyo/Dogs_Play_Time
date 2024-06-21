@@ -29,7 +29,7 @@ AttackPlayer::AttackPlayer(GameObject* _pParent)
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
-    ,pBoneImageManager_{nullptr}, pParticleManager_{nullptr}
+, pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{0},slowTimeWait_{1}
 {
     pParent_ = _pParent;
 }
@@ -104,6 +104,14 @@ void AttackPlayer::Initialize()
 
 void AttackPlayer::Update()
 {
+    slowTime_++;
+    hhh = Direct3D::GetFPS();
+    if (slowTime_ == slowTimeWait_)
+    {
+        UpdateSlow();
+        slowTime_ = 0;
+    }
+
     //ステートマネージャーの更新
     pStateManager_->Update();
     switch (gameState_)
@@ -112,6 +120,11 @@ void AttackPlayer::Update()
     case GAMESTATE::PLAY:           UpdatePlay();       break;
     case GAMESTATE::GAMEOVER:       UpdateGameOver();   break;
     }
+}
+
+void AttackPlayer::UpdateSlow()
+{
+
 }
 
 void AttackPlayer::BothViewDraw()
@@ -127,10 +140,12 @@ void AttackPlayer::LeftViewDraw()
 
 void AttackPlayer::RightViewDraw()
 {
+
 }
 
 void AttackPlayer::UPSubViewDraw()
 {
+
 }
 
 void AttackPlayer::Release()
@@ -221,9 +236,11 @@ void AttackPlayer::UpdatePlay()
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
+        slowTimeWait_ = 3;
         stunData_.stunTimeCounter_++;
         if (stunData_.stunTimeCounter_ >= stunData_.stunLimit_)
         {
+            slowTimeWait_ = 1;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
             gameState_ = GAMESTATE::PLAY;
@@ -406,7 +423,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
 
     if (_pTarget->GetObjectName() == collectPlayerName)
     {
-        PlayerStun(stunData_.hitStopTime_);
+        PlayerStun(stunData_.stunTime_);
         stunData_.isKnockBack_ = true;
         stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pCollectPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);

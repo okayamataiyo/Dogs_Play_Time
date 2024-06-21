@@ -13,6 +13,13 @@ namespace Direct3D
 	//その辺を司るのがスワップチェーン
 	IDXGISwapChain* pSwapChain_ = nullptr;
 
+	int FPS = 0;
+
+	int GetFPS()
+	{
+		return FPS;
+	}
+
 	//【レンダーターゲットビュー】
 	//描画したいものと、描画先（上でいう画用紙）の橋渡しをするもの
 	ID3D11RenderTargetView* pRenderTargetView_ = nullptr;
@@ -51,6 +58,8 @@ namespace Direct3D
 	float					prevVP_ = 0;
 	int						isChangeView_ = (int)VIEWSTATE::LEFTVIEW;
 	bool					isFinishView_ = false;
+
+
 
 
 

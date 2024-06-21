@@ -5,7 +5,7 @@
 #include <time.h>
 #include <chrono>
 #include "Direct3D.h"
-#include "global.h"
+#include "Global.h"
 #include "RootObject.h"
 #include "Model.h"
 #include "Image.h"
@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				//時間計測関連
 				lastUpdateTime = nowTime;	//現在の時間（最後に画面を更新した時間）を覚えておく
 				FPS++;						//画面更新回数をカウントする
-
+				Direct3D::FPS = FPS;
 
 				if (Input::IsKeyDown(DIK_P))
 				{
@@ -153,6 +153,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				for (int i = 0u; i < 3; i++) {
 					Direct3D::SetViewPort(i);	//ビューポートにセット
+					
 					Camera::Update(i);			//カメラを更新
 					//全オブジェクトを描画
 					//ルートオブジェクトのDrawを呼んだあと、自動的に子、孫のUpdateが呼ばれる
@@ -160,6 +161,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 					//エフェクトの描画
 					VFX::Draw();
+					
 				}
 
 				ImGui::Render();

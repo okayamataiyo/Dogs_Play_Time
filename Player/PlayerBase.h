@@ -145,14 +145,14 @@ protected:
 	{
 		int stunTimeCounter_;	//スタンしてからどのくらい経ったか
 		int stunLimit_;		//スタンしている時間
-		int hitStopTime_;		//ヒットストップの時間
+		int stunTime_;		//ヒットストップの時間
 		int getUpTime_;		//スタンしてから起き上がる時間
 		float knockbackSpeed_;
 		XMVECTOR vecKnockbackDirection_;
 		bool isStun_;		//スタンしているかどうか
 		bool isKnockBack_;	//ノックバックしているかどうか
 		StunData()
-			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, hitStopTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.3f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
+			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, stunTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.3f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
 		{
 
 		}

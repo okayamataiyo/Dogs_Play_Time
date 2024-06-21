@@ -26,6 +26,10 @@ namespace Direct3D
 	//GPUに命令を出すためのやつ
 	extern ID3D11DeviceContext*    pContext_;
 
+	extern int FPS;
+
+	extern int GetFPS();
+
 	//■シェーダー関連で必要なセット
 	enum SHADER_TYPE
 	{
