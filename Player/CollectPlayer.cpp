@@ -186,6 +186,8 @@ void CollectPlayer::UpdatePlay()
         int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
+        pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+        SetKillTime(boneData_.killTimeWait_);
     }
 
     if (diveData_.isDive_ && !diveData_.isDived_)

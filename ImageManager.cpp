@@ -30,7 +30,7 @@ void ImageManager::Initialize()
 	buttonTransform_.position_ = { -0.3f,-0.5f,0.0f };
 	for (int i = 0; i < (int)BONESTATE::BONENUM; ++i)
 	{
-		boneTransform_[i].position_ = {-0.9f + i * 0.1f,0.9f,0.0f};
+		boneTransform_[i].position_ = {-0.9f + i * 0.15f,0.9f,0.0f};
 		boneTransform_[i].scale_ = {0.2f,0.2f,0.2f};
 	}
 }
