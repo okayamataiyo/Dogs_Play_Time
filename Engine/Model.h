@@ -11,8 +11,6 @@
 //-----------------------------------------------------------
 namespace Model
 {
-	extern int slowTime_;
-	extern int slowTimeWait_;
 
 	//モデル情報
 	struct ModelData
@@ -74,7 +72,7 @@ namespace Model
 	//引数：startFrame	開始フレーム
 	//引数：endFrame	終了フレーム
 	//引数：animSpeed	アニメーション速度
-	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed,int slowTimeWait = 1);
+	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed);
 
 	void SetOnceAnimFrame(int _handle, int _startFrame, int _endFrame, float _animSpeed,int _num);
 

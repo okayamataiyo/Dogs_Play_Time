@@ -99,7 +99,7 @@ void PlayerBase::PlayerStunStateFunc()
 {
     animData_.startFrame_ = 140;
     animData_.endFrame_ = 200;
-    animData_.animSpeed_ = 0.5f;
+    animData_.animSpeed_ = 0.25f;
 }
 
 void PlayerBase::PlayerScore()

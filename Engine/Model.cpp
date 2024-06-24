@@ -8,8 +8,6 @@ namespace Model
 	std::vector<ModelData*>	_datas;
 
 	int prevNum = 0;
-	int slowTime_ = 0;
-	int slowTimeWait_ = 1;
 	//初期化
 	void Initialize()
 	{
@@ -69,17 +67,12 @@ namespace Model
 	//描画
 	void Draw(int handle)
 	{
-		slowTime_++;
 		if (handle < 0 || handle >= _datas.size() || _datas[handle] == nullptr)
 		{
 			return;
 		}
-		if (slowTime_ == slowTimeWait_)
-		{
-			//アニメーションを進める
-			_datas[handle]->nowFrame += _datas[handle]->animSpeed;
-			slowTime_ = 0;
-		}
+		//アニメーションを進める
+		_datas[handle]->nowFrame += _datas[handle]->animSpeed;
 
 		//最後までアニメーションしたら戻す
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
@@ -92,7 +85,6 @@ namespace Model
 			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame);
 		}
 	}
-
 
 	//任意のモデルを開放
 	void Release(int handle)
@@ -140,10 +132,9 @@ namespace Model
 
 
 	//アニメーションのフレーム数をセット
-	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed,int slowTimeWait)
+	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed)
 	{
 		_datas[handle]->SetAnimFrame(startFrame, endFrame, animSpeed);
-		slowTimeWait_ = slowTimeWait;
 	}
 
 	void SetOnceAnimFrame(int _handle, int _startFrame, int _endFrame, float _animSpeed,int _num)
@@ -154,7 +145,6 @@ namespace Model
 		}
 		prevNum = _num;
 	}
-
 	//現在のアニメーションのフレームを取得
 	int GetAnimFrame(int handle)
 	{

@@ -55,7 +55,6 @@ private:
 	int floorHModel_;				//‚·‚è”²‚¯°ƒ‚ƒfƒ‹”Ô†
 	int number_;
 	int attackOrCollect_;
-	int hhh;
 	int slowTime_;
 	int slowTimeWait_;
 

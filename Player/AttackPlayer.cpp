@@ -105,7 +105,6 @@ void AttackPlayer::Initialize()
 void AttackPlayer::Update()
 {
     slowTime_++;
-    hhh = Direct3D::GetFPS();
     if (slowTime_ == slowTimeWait_)
     {
         UpdateHitStop();
@@ -239,7 +238,7 @@ void AttackPlayer::UpdatePlay()
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
-        slowTimeWait_ = 3;
+        slowTimeWait_ = 5;
         stunData_.stunTimeCounter_++;
         if (stunData_.stunTimeCounter_ >= stunData_.stunLimit_)
         {
@@ -349,7 +348,7 @@ void AttackPlayer::PlayerJumpStateFunc()
 void AttackPlayer::PlayerStunStateFunc()
 {
     PlayerBase::PlayerStunStateFunc();
-    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_,2);
+    Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
 void AttackPlayer::PlayerStun(int _timeLimit)
