@@ -104,15 +104,9 @@ void AttackPlayer::Initialize()
 
 void AttackPlayer::Update()
 {
-    slowTime_++;
-    if (slowTime_ == slowTimeWait_)
-    {
-        UpdateHitStop();
-        slowTime_ = 0;
-    }
-
     //ステートマネージャーの更新
     pStateManager_->Update();
+
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
@@ -121,13 +115,9 @@ void AttackPlayer::Update()
     }
 }
 
-void AttackPlayer::UpdateHitStop()
+void AttackPlayer::UpdateSlow()
 {
-    PlayerFall();
-    if (!stunData_.isStun_)
-    {
-        PlayerMove();
-    }
+    PlayerKnockback();
 }
 
 void AttackPlayer::BothViewDraw()
@@ -234,22 +224,31 @@ void AttackPlayer::UpdatePlay()
 
     PlayerCamera();
     PlayerRayCast();
-    PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
-        slowTimeWait_ = 5;
+        slowTimeWait_ = slowTimeNum_;
         stunData_.stunTimeCounter_++;
         if (stunData_.stunTimeCounter_ >= stunData_.stunLimit_)
         {
-            slowTimeWait_ = 1;
+            slowTimeWait_ = slowTimeNum_;
+            slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
             gameState_ = GAMESTATE::PLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
-
+    slowTime_++;
+    if (slowTime_ == slowTimeWait_)
+    {
+        UpdateSlow();
+        slowTime_ = 0;
+    }
+    if (!stunData_.isStun_)
+    {
+        PlayerMove();
+    }
     if (gameData_.score_ >= gameData_.scoreMax_)
     {
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)

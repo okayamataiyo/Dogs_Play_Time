@@ -57,6 +57,8 @@ private:
 	int attackOrCollect_;
 	int slowTime_;
 	int slowTimeWait_;
+	const int slowTimeNum_ = 2;
+	const int defaultTimeNum_ = 1;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -98,7 +100,7 @@ public:
 	/// </summary>
 	void Update() override;
 
-	void UpdateHitStop();
+	void UpdateSlow();
 
 	/// <summary>
 	/// ï`âÊä÷êî
