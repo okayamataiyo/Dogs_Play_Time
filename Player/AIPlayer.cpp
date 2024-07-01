@@ -20,40 +20,37 @@
 #include "../ImageManager.h"
 #include "../ParticleManager.h"
 #include "../UIManager.h"
-#include "AttackPlayer.h"
-#include "CollectPlayer.h"
 #include "AIPlayer.h"
+#include "CollectPlayer.h"
+#include "AttackPlayer.h"
 
-AttackPlayer::AttackPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
-    ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
-    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
-    , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
-, pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{0},slowTimeWait_{1}
+AIPlayer::AIPlayer(GameObject* _pParent)
+    :PlayerBase(_pParent, aIPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
+    , number_{ 0 }, gameState_{ GAMESTATE::READY },isSelector_{false}
+    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
+    ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
+    , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{ nullptr }
+    , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{ 0 }, slowTimeWait_{ 1 },coolTime_{0}
 {
     pParent_ = _pParent;
 }
 
-AttackPlayer::~AttackPlayer()
+AIPlayer::~AIPlayer()
 {
 }
 
-void AttackPlayer::Initialize()
+void AIPlayer::Initialize()
 {
-    //▼INIファイルからデータのロード
-    attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
-    gameData_.walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
-    for (int i = 0; i < sizeof(soundAttackPlayerNames) / sizeof(soundAttackPlayerNames[initZeroInt]); i++)
+    for (int i = 0; i < sizeof(soundAIPlayerNames) / sizeof(soundAIPlayerNames[initZeroInt]); i++)
     {
-        soundName = soundFolderName + soundAttackPlayerNames[i] + soundModifierName;
+        soundName = soundFolderName + soundAIPlayerNames[i] + soundModifierName;
         hSound_[i] = Audio::Load(soundName);
         assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
-    std::string modelName = modelFolderName + attackPlayerName + modelModifierName;
+    std::string modelName = modelFolderName + "AttackPlayer" + modelModifierName;
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
@@ -84,14 +81,6 @@ void AttackPlayer::Initialize()
     pStateManager_->AddState("JumpState", new AttackPlayerJumpState(pStateManager_));
     pStateManager_->AddState("StunState", new AttackPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
-    if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
-    {
-        gameData_.padID_ = (int)PADIDSTATE::FIRST;
-    }
-    if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
-    {
-        gameData_.padID_ = (int)PADIDSTATE::SECONDS;
-    }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
@@ -101,10 +90,11 @@ void AttackPlayer::Initialize()
     pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
 }
 
-void AttackPlayer::Update()
+void AIPlayer::Update()
 {
     //ステートマネージャーの更新
     pStateManager_->Update();
+
     switch (gameState_)
     {
     case GAMESTATE::READY:          UpdateReady();      break;
@@ -113,39 +103,39 @@ void AttackPlayer::Update()
     }
 }
 
-void AttackPlayer::UpdateSlow()
+void AIPlayer::UpdateSlow()
 {
+    PlayerKnockback();
 }
 
-void AttackPlayer::BothViewDraw()
+void AIPlayer::BothViewDraw()
 {
     Model::SetTransform(hModel_, transform_);
     Model::Draw(hModel_);
 }
 
-void AttackPlayer::LeftViewDraw()
+void AIPlayer::LeftViewDraw()
 {
 
 }
 
-void AttackPlayer::RightViewDraw()
+void AIPlayer::RightViewDraw()
 {
 
 }
 
-void AttackPlayer::UPSubViewDraw()
+void AIPlayer::UPSubViewDraw()
 {
 
 }
 
-void AttackPlayer::Release()
+void AIPlayer::Release()
 {
     SAFE_DELETE(pStateManager_);
 }
 
-void AttackPlayer::UpdateReady()
+void AIPlayer::UpdateReady()
 {
-    PlayerCamera();
     RayCastData stageDataDown;
     stageHModel_ = pStage_->GetModelHandle();         //モデル番号を取得
     floorHModel_ = pFloor_->GetModelHandle();
@@ -168,31 +158,16 @@ void AttackPlayer::UpdateReady()
     jumpData_.positionY_ = transform_.position_.y;
 }
 
-void AttackPlayer::UpdatePlay()
+void AIPlayer::UpdatePlay()
 {
-    PlayerBase::UpdatePlay();
-    if (Input::IsKeyDown(DIK_A))
-    {
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-        {
-            pDogs_Walk_PlayScene_->SetGameStop();
-        }
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            pDogs_Fight_PlayScene_->SetGameStop();
-        }
-        gameState_ = GAMESTATE::GAMEOVER;
-    }
+    Selector();
     //落ちた時の処理
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
         int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
-        if (pBoneSuck_ != nullptr)
-        {
-            pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
-        }
+
         SetKillTime(boneData_.killTimeWait_);
     }
 
@@ -205,26 +180,7 @@ void AttackPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-    gameData_.scoreTimeCounter_++;
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-    {
-        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
-        {
-    		PlayerScore();
-        }
-    }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-    {
-        if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
-        {
-            PlayerScore();
-        }
-    }
-
-    PlayerCamera();
-    PlayerFall();
     PlayerRayCast();
-    PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
@@ -249,18 +205,6 @@ void AttackPlayer::UpdatePlay()
     if (!stunData_.isStun_)
     {
         PlayerMove();
-    }
-    if (gameData_.score_ >= gameData_.scoreMax_)
-    {
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
-        {
-            pDogs_Walk_PlayScene_->SetGameStop();
-        }
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            pDogs_Fight_PlayScene_->SetGameStop();
-        }
-        gameState_ = GAMESTATE::GAMEOVER;
     }
     if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
     {
@@ -300,63 +244,81 @@ void AttackPlayer::UpdatePlay()
     IsDive();
 }
 
-void AttackPlayer::UpdateGameOver()
+void AIPlayer::UpdateGameOver()
 {
-    pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
-    pImageManager_->SecInit();
-    if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
-    {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));
-	}
-    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
-    {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
-    }
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
-    {
-        //▼INIファイルへの書き込み
-        WritePrivateProfileString("PLAYERSCORE", "AttackPlayerScore", std::to_string(gameData_.score_).c_str(), "Setting/PlayerSetting.ini");
-        WritePrivateProfileString("PLAYERSCORE", "CollectPlayerScore", std::to_string(pCollectPlayer_->GetScore()).c_str(), "Setting/PlayerSetting.ini");
-        pSceneManager_->ChangeScene(SCENE_ID_GAMEOVER);
-    }
 }
 
-void AttackPlayer::PlayerWaitStateFunc()
+void AIPlayer::PlayerWaitStateFunc()
 {
     PlayerBase::PlayerWaitStateFunc();
     Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
-void AttackPlayer::PlayerWalkStateFunc()
+void AIPlayer::PlayerWalkStateFunc()
 {
     PlayerBase::PlayerWalkStateFunc();
     Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
-void AttackPlayer::PlayerRunStateFunc()
+void AIPlayer::PlayerRunStateFunc()
 {
     PlayerBase::PlayerRunStateFunc();
     Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
-void AttackPlayer::PlayerJumpStateFunc()
+void AIPlayer::PlayerJumpStateFunc()
 {
     PlayerBase::PlayerJumpStateFunc();
     Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
-void AttackPlayer::PlayerStunStateFunc()
+void AIPlayer::PlayerStunStateFunc()
 {
     PlayerBase::PlayerStunStateFunc();
     Model::SetAnimFrame(hModel_, animData_.startFrame_, animData_.endFrame_, animData_.animSpeed_);
 }
 
-void AttackPlayer::PlayerStun(int _timeLimit)
+void AIPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
 }
 
-void AttackPlayer::OnCollision(GameObject* _pTarget)
+int AIPlayer::ActionDir()
+{
+    XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+    dir = XMVector3Normalize(dir);
+    transform_.position_.x += 0.3f * XMVectorGetX(-dir);
+    transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
+
+    //向き変更
+    XMFLOAT3 m;
+    XMStoreFloat3(&m, -dir);
+    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+}
+
+int AIPlayer::Selector()
+{
+    ++coolTime_;
+    if (coolTime_ >= 100)
+    {
+        SequenceAttack();
+        isSelector_ = true;
+        coolTime_ = 0;
+    }
+    return isSelector_;
+}
+
+int AIPlayer::SequenceAttack()
+{
+
+}
+
+int AIPlayer::Decorator()
+{
+}
+
+void AIPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
     if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
@@ -398,22 +360,6 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
             transform_.position_ = moveData_.positionPrev_;
         }
     }
-    if (_pTarget->GetObjectName() == boneName)
-    {
-        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
-        {
-            pParticleManager_->CreateVFX(transform_.position_);
-            //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
-
-            pBoneSuck_ = Instantiate<BoneSuck>(this);;
-            SetKillTime(boneData_.killTimeWait_);
-            static int noDeathBoneSuck = 99999;
-            pBoneSuck_->SetKillTime(noDeathBoneSuck);
-            SetKillTime(noDeathBoneSuck);
-            boneData_.isBoneTatch_ = true;
-            _pTarget->KillMe();
-        }
-    }
     ++number_;
     if (number_ >= woodBoxs.size())
     {
@@ -428,284 +374,70 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
         if (boneData_.killTime_ < boneData_.killTimeMax_)
         {
-            if (pBoneSuck_ != nullptr)
-            {
-                pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
-            }
             SetKillTime(boneData_.killTimeWait_);
         }
     }
 
-    if (_pTarget->GetObjectName() == aIPlayerName)
+    if (_pTarget->GetObjectName() == attackPlayerName)
     {
         PlayerStun(stunData_.stunTime_);
         stunData_.isKnockBack_ = true;
-        stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAIPlayer_->GetVecPos());
+        stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
         if (boneData_.killTime_ < boneData_.killTimeMax_)
         {
-            if (pBoneSuck_ != nullptr)
-            {
-                pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
-            }
             SetKillTime(boneData_.killTimeWait_);
         }
     }
 }
 
-void AttackPlayer::PlayerScore()
+void AIPlayer::PlayerScore()
 {
     PlayerBase::PlayerScore();
 }
 
-void AttackPlayer::PlayerCamera()
+void AIPlayer::PlayerCamera()
 {
     PlayerBase::PlayerCamera();
-    struct float2
-    {
-        float x, y;
-    };
-
-    struct XMMATRIX2
-    {
-        XMMATRIX x, y;
-    };
-    static float2 padRotMove = {};
-    float2 sigmaRot = {};
-    XMMATRIX2 mat2Rot = {};
-    XMMATRIX matRot = {};
-    float deadZone = 0.8f;
-    XMVECTOR vecDir = {};
-    XMFLOAT3 floDir_ = {};
-    static float floLen = 0.0f;
-    float floCameraLen = 30.0f;
-    float floKnockbackLenRecedes = 5.0f;
-    XMFLOAT3 mouseMove = Input::GetMouseMove();
-    XMFLOAT3 padStickR = {};
-    padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
-    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
-    {
-        if (moveData_.i_ == false)
-        {
-            moveData_.i_ = true;
-            moveData_.CamPosNum_ -= 1;
-        }
-    }
-    else
-    {
-        moveData_.i_ = false;
-    }
-    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
-    {
-        if (moveData_.j_ == false)
-        {
-            moveData_.j_ = true;
-            moveData_.CamPosNum_ += 1;
-        }
-    }
-    else
-    {
-        moveData_.j_ = false;
-    }
-    if (moveData_.CamPosNum_ <= 0)
-    {
-        moveData_.CamPosNum_ = 0;
-    }
-    if (moveData_.CamPosNum_ >= 4)
-    {
-        moveData_.CamPosNum_ = 3;
-    }
-    dirData_.vecCam_.x = moveData_.CamPos_[moveData_.CamPosNum_];
-    const float padSens = 25;
-    const float floLenRecedes = 1.0f;
-    const float floLenApproach = 1.0f;
-    const float degreesMin = 0.0f;
-    const float degreesMax = -88.0f;
-    const float degreesToRadians = 3.14f / 180.0f;
-    padRotMove.x = padStickR.x;
-    padRotMove.y = -padStickR.y;
-
-    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
-    {
-        floLen -= floLenRecedes;
-    }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, gameData_.padID_))
-    {
-        floLen += floLenApproach;
-    }
-
-    vecDir = vecFront;
-    dirData_.vecCam_.x += padRotMove.y / padSens;
-    dirData_.vecCam_.y += padRotMove.x / padSens;
-
-    sigmaRot.y = dirData_.vecCam_.y;
-    sigmaRot.x = -dirData_.vecCam_.x;
-
-    if (sigmaRot.x > degreesMin * degreesToRadians)
-    {
-        sigmaRot.x = degreesMin;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
-    }
-    if (sigmaRot.x < degreesMax * degreesToRadians)
-    {
-        sigmaRot.x = degreesMax * degreesToRadians;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
-    }
-
-    mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
-    mat2Rot.y = XMMatrixRotationY(sigmaRot.y);
-
-    matRot = mat2Rot.x * mat2Rot.y;
-    vecDir = XMVector3Transform(vecDir, matRot);
-    vecDir = XMVector3Normalize(vecDir);
-    if (stunData_.isStun_)
-    {
-        static int floCameraLenPrev = floCameraLen;
-        if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
-        {
-            ++floCameraLen;
-        }
-    }
-    else
-    {
-        static int floCameraLenPrev = floCameraLen;
-        if (floCameraLen >= floCameraLenPrev - floKnockbackLenRecedes)
-        {
-            --floCameraLen;
-        }
-    }
-    vecDir *= floLen + floCameraLen;
-    vecDir += XMLoadFloat3(&transform_.position_);
-    XMStoreFloat3(&floDir_, vecDir);
-    Camera::SetPosition(floDir_, gameData_.padID_);
-    Camera::SetTarget(transform_.position_, gameData_.padID_);
 }
 
-void AttackPlayer::PlayerFall()
+void AIPlayer::PlayerFall()
 {
     PlayerBase::PlayerFall();
 }
 
-void AttackPlayer::PlayerMove()
+void AIPlayer::PlayerMove()
 {
-    dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     PlayerBase::PlayerMove();
-    const float walkSpeed = 0.4f;
-    const float runSpeed = 0.6f;
-    // プレイヤーの移動処理
-    if (!moveData_.isRun_)
-    {
-        moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
-    }
-    else
-    {
-        moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
-    }
-    //向き変更
-    XMFLOAT3 m;
-    XMStoreFloat3(&m, dirData_.vecMove_);
-    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
-
-    float pi = 3.14f;					//円周率
-    float halfPi = pi / 2;				//円周率の半分
-
-    //XMConvertToRadians = degree角をradian角に(ただ)変換する
-    //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
-    const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
-    dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
-    dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
-
-    const float deadZone = 0.3f;		//コントローラーのデットゾーン
-    const float plusDir = 1.0f;
-    const float minusDir = -1.0f;
-    moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
-    moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
-    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
-    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
-    {
-        ApplyMovement(plusDir, plusDir);
-    }
-    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
-    {
-        ApplyMovement(minusDir, minusDir);
-    }
-    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
-    {
-        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(plusDir, plusDir);
-    }
-    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
-    {
-        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(minusDir, minusDir);
-    }
-
-    const float outerWallPosFront = 99.0f;		//前の外壁の位置
-    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
-    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
-    const float outerWallPosRight = -99.0f;		//右の外壁の位置
-
-    if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
-    {
-        transform_.position_.z = moveData_.positionPrev_.z;
-    }
-    if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
-    {
-        transform_.position_.x = moveData_.positionPrev_.x;
-    }
-
-    if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
-    {
-        XMVECTOR vecCam = {};
-        moveData_.CamPositionVec_ = Camera::VecGetPosition(gameData_.padID_);
-        vecCam = -(moveData_.CamPositionVec_ - Camera::VecGetTarget(gameData_.padID_));
-        XMFLOAT3 camRot = {};
-        XMStoreFloat3(&camRot, vecCam);
-        camRot.y = 0;
-        vecCam = XMLoadFloat3(&camRot);
-        vecCam = XMVector3Normalize(vecCam);
-        dirData_.vecMove_ = vecCam;
-    }
-
-    if (Input::IsPadButton(XINPUT_GAMEPAD_A, gameData_.padID_) && !jumpData_.isJump_)
-    {
-        PlayerJumpPower();
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)],soundData_.soundVolumeHalf_);
-    }
 }
 
-void AttackPlayer::PlayerJump()
+void AIPlayer::PlayerJump()
 {
 
 }
 
-void AttackPlayer::PlayerJumpPower()
+void AIPlayer::PlayerJumpPower()
 {
     PlayerBase::PlayerJumpPower();
 }
 
-void AttackPlayer::PlayerDive()
+void AIPlayer::PlayerDive()
 {
     PlayerBase::PlayerDive();
 }
 
-void AttackPlayer::PlayerDivePower()
+void AIPlayer::PlayerDivePower()
 {
     //とびつきの処理
     PlayerBase::PlayerDivePower();
 }
 
-void AttackPlayer::PlayerKnockback()
+void AIPlayer::PlayerKnockback()
 {
     PlayerBase::PlayerKnockback();
 }
 
-void AttackPlayer::PlayerRayCast()
+void AIPlayer::PlayerRayCast()
 {
     float rayFloorDistUp = 0.0f;
     float rayStageBlockDistDown = 0.0f;
@@ -723,7 +455,7 @@ void AttackPlayer::PlayerRayCast()
     stageHModel_ = pStage_->GetModelHandle();         //モデル番号を取得
     floorHModel_ = pFloor_->GetModelHandle();
 
-    for (int i = 0;i < pItemObjectManager_->GetFloors().size(); i++)
+    for (int i = 0; i < pItemObjectManager_->GetFloors().size(); i++)
     {
         //▼上の法線(すり抜け床のため)
         floorDataUp.start = transform_.position_;           //レイの発射位置
@@ -815,46 +547,42 @@ void AttackPlayer::PlayerRayCast()
     moveData_.positionPrev_ = transform_.position_;
 }
 
-void AttackPlayer::PlayerRevival()
+void AIPlayer::PlayerRevival()
 {
     PlayerBase::PlayerRevival();
 }
 
-void AttackPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
+void AIPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
     PlayerBase::SetKnockback(_vecKnockbackDirection, _knockbackSpeed);
 }
 
-void AttackPlayer::SetImageSecInit()
+void AIPlayer::SetImageSecInit()
 {
     pBoneImageManager_->SecInit();
 }
 
-void AttackPlayer::IsMove()
+void AIPlayer::IsMove()
 {
     PlayerBase::IsMove();
 }
 
-void AttackPlayer::IsJump()
+void AIPlayer::IsJump()
 {
     PlayerBase::IsJump();
 }
 
-void AttackPlayer::IsRun()
+void AIPlayer::IsRun()
 {
     PlayerBase::IsRun();
 }
 
-void AttackPlayer::IsStun()
+void AIPlayer::IsStun()
 {
     PlayerBase::IsStun();
 }
 
-void AttackPlayer::IsDive()
+void AIPlayer::IsDive()
 {
     PlayerBase::IsDive();
-    if (Input::GetPadTrrigerR(gameData_.padID_))
-    {
-        diveData_.isDive_ = true;
-    }
 }

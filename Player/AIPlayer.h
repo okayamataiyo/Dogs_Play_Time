@@ -5,13 +5,11 @@
 
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
-class AttackPlayer;
-class AIPlayer;
+class CollectPlayer;
 class SphereCollider;
 class WoodBox;
-class BoneSuck;
+class Text;
 class Stage;
-class StageBlock;
 class Floor;
 class SceneManager;
 class ItemObjectManager;
@@ -22,22 +20,29 @@ class UIManager;
 
 namespace
 {
-	std::string soundCollectPlayerNames[] =
+	std::string soundAIPlayerNames[] =
 	{
 		"Stun",
 		"Walk",
 		"Jump",
 		"Run",
-		"CollectBone",
 	};
 
-	std::string collectPlayerName = "CollectPlayer";
+	std::string aIPlayerName = "AIPlayer";
+
+	enum class TREE
+	{
+		READY = 0,
+		SUCCESS,
+		FAILURE,
+		RUNNING,
+	};
 }
 
 /// <summary>
-/// 収集するプレイヤーを管理するクラス
+/// 邪魔するプレイヤーを管理するクラス
 /// </summary>
-class CollectPlayer : public PlayerBase
+class AIPlayer : public PlayerBase
 {
 private:
 
@@ -53,23 +58,25 @@ private:
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号
 	int hSound_[5];					//サウンド番号
-	int stageBlockHModel_;			//ステージブロックモデル番号
 	int stageHModel_;				//ステージモデル番号
-	int floorHModel_;				//すり抜け床
+	int floorHModel_;				//すり抜け床モデル番号
 	int number_;
-	int attackOrCollectInverse_;
+	int slowTime_;
+	int slowTimeWait_;
+	const int slowTimeNum_ = 2;
+	const int defaultTimeNum_ = 1;
+	bool isSelector_;
+	int coolTime_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
+	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
-	AIPlayer* pAIPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
-	BoneSuck* pBoneSuck_;
 	Stage* pStage_;
-	StageBlock* pStageBlock_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
@@ -83,12 +90,12 @@ public:
 	/// コンストラクタ関数
 	/// </summary>
 	/// <param name="_parent">親の名前</param>
-	CollectPlayer(GameObject* _pParent);
+	AIPlayer(GameObject* _pParent);
 
 	/// <summary>
 	/// デストラクタ関数
 	/// </summary>
-	~CollectPlayer();
+	~AIPlayer();
 
 	/// <summary>
 	/// 初期化関数
@@ -99,6 +106,8 @@ public:
 	/// 更新関数
 	/// </summary>
 	void Update() override;
+
+	void UpdateSlow();
 
 	/// <summary>
 	/// 描画関数
@@ -166,6 +175,14 @@ public:
 	/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
+	int ActionDir();
+
+	int Selector();
+
+	int SequenceAttack();
+
+	int Decorator();
+
 	void IsMove() override;
 
 	void IsJump() override;
@@ -180,9 +197,9 @@ public:
 
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
 
-	void SetAttackPlayer(AttackPlayer* _pAttackPlayer) { pAttackPlayer_ = _pAttackPlayer; }
+	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
-	void SetAIPlayer(AIPlayer* _pAIPlayer) { pAIPlayer_ = _pAIPlayer; }
+	void SetAttackPlayer(AttackPlayer* _pAttackPlayer) { pAttackPlayer_ = _pAttackPlayer; }
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 
@@ -198,7 +215,7 @@ public:
 
 	bool GetIsDive() override { return diveData_.isDive_; }
 
-	bool GetIsBoneTatch() {return boneData_.isBoneTatch_; }
+	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
 

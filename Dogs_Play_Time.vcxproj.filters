@@ -219,6 +219,9 @@
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="Player\AIPlayer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -408,6 +411,9 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="Player\AIPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

@@ -140,9 +140,11 @@ void ActorAttackPlayer::PlayerFall()
 void ActorAttackPlayer::PlayerMove()
 {
     PlayerBase::PlayerMove();
-
-    transform_.position_.x += moveData_.padMoveSpeed_.x;
-    transform_.position_.z += moveData_.padMoveSpeed_.z;
+    if (!isSelect_)
+    {
+        transform_.position_.x += moveData_.padMoveSpeed_.x;
+        transform_.position_.z += moveData_.padMoveSpeed_.z;
+    }
 }
 
 void ActorAttackPlayer::IsMove()

@@ -173,6 +173,7 @@
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Player\ActorAttackPlayer.cpp" />
     <ClCompile Include="Player\ActorCollectPlayer.cpp" />
+    <ClCompile Include="Player\AIPlayer.cpp" />
     <ClCompile Include="Player\AttackPlayer.cpp" />
     <ClCompile Include="Player\CollectPlayer.cpp" />
     <ClCompile Include="Player\PlayerBase.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Player\ActorAttackPlayer.h" />
     <ClInclude Include="Player\ActorCollectPlayer.h" />
+    <ClInclude Include="Player\AIPlayer.h" />
     <ClInclude Include="Player\AttackPlayer.h" />
     <ClInclude Include="Player\CollectPlayer.h" />
     <ClInclude Include="Player\PlayerBase.h" />

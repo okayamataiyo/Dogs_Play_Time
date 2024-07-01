@@ -6,10 +6,10 @@
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
 class CollectPlayer;
+class AIPlayer;
 class SphereCollider;
 class WoodBox;
 class BoneSuck;
-class Text;
 class Stage;
 class Floor;
 class SceneManager;
@@ -65,10 +65,10 @@ private:
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	CollectPlayer* pCollectPlayer_;
+	AIPlayer* pAIPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
 	BoneSuck* pBoneSuck_;
-	Text* pText_;
 	Stage* pStage_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
@@ -183,6 +183,8 @@ public:
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
+
+	void SetAIPlayer(AIPlayer* _pAIPlayer) { pAIPlayer_ = _pAIPlayer; }
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 

@@ -21,6 +21,7 @@ namespace
 class SceneManager;
 class AttackPlayer;
 class CollectPlayer;
+class AIPlayer;
 class ItemObjectManager;
 class StageObjectManager;
 class ImageManager;
@@ -101,6 +102,7 @@ private:
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
     CollectPlayer* pCollectPlayer_;
+    AIPlayer* pAIPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
     ImageManager* pImageManager_;
