@@ -132,6 +132,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BehaviourTree\BehaviourTreeManager.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -194,6 +195,8 @@
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviourTree\BehaviourTreeBase.h" />
+    <ClInclude Include="BehaviourTree\BehaviourTreeManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
