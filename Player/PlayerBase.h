@@ -152,7 +152,7 @@ protected:
 		bool isStun_;		//スタンしているかどうか
 		bool isKnockBack_;	//ノックバックしているかどうか
 		StunData()
-			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, stunTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.3f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
+			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, stunTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.8f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
 		{
 
 		}
@@ -265,7 +265,7 @@ protected:
 
 	virtual void SetVecPos(XMVECTOR _vecMove) = 0;
 
-	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f);
+	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.3f);
 
 	virtual bool GetIsMove() = 0;
 

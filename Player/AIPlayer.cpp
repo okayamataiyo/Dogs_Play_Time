@@ -295,6 +295,7 @@ int AIPlayer::ActionDir()
     XMStoreFloat3(&m, -dir);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
     dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+    return 0;
 }
 
 int AIPlayer::Selector()
@@ -311,11 +312,13 @@ int AIPlayer::Selector()
 
 int AIPlayer::SequenceAttack()
 {
-
+    ActionDir();
+    return 0;
 }
 
 int AIPlayer::Decorator()
 {
+    return 0;
 }
 
 void AIPlayer::OnCollision(GameObject* _pTarget)
