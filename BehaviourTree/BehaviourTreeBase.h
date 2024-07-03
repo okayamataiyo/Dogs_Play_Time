@@ -3,12 +3,13 @@ class BehaviourTreeManager;
 
 namespace
 {
+
 	enum class TREE
 	{
-		READY = 0,
-		SUCCESS,
-		FAILURE,
-		RUNNING,
+		READY = 0,	//初期値
+		SUCCESS,	//ノードの実行が成功した
+		FAILURE,	//ノードの実行が失敗した
+		RUNNING,	//ノードの実行がまだ終わっていない
 	};
 }
 
@@ -32,9 +33,5 @@ public:
 	virtual void UpdateState() = 0;
 	//状態から出る時の後処理
 	virtual void ExitState() = 0;
-	virtual TREE Action() = 0;
-	virtual TREE Selector() = 0;
-	virtual TREE Sequence() = 0;
-	virtual TREE Decorator() = 0;
 
 };

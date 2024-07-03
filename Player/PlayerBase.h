@@ -60,12 +60,19 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
-		const float CamPos_[4] = { 0.1f,0.3f,0.8f,1.4f };
-		int CamPosNum_;
-		bool i_;
-		bool j_;
+		const float CamPosY_[4] = { 0.1f,0.3f,0.8f,1.4f };
+		int CamPosYNum_;
+		bool camUpFlag_;
+		bool camDownFlag_;
+		const float CamPosZ_[4] = { -5.0f,10.0f,20.0f,30.0f };
+		int CamPosZNum_;
+		float floLen_;
+		bool camZForwardFlag_;
+		bool camZBackFlag_;
+
 		MoveData()
 			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
+			,CamPosYNum_{0},CamPosZNum_{0},floLen_{0.0f}
 		{
 
 		}
@@ -227,7 +234,7 @@ protected:
 	virtual void PlayerJumpStateFunc();
 	virtual void PlayerStunStateFunc();
 
-	virtual void PlayerScore();
+	virtual void PlayerAddScore();
 
 	virtual void PlayerCamera();
 

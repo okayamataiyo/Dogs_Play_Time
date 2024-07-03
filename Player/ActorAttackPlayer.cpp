@@ -118,7 +118,7 @@ void ActorAttackPlayer::OnCollision(GameObject* _pTarget)
 {
 }
 
-void ActorAttackPlayer::PlayerScore()
+void ActorAttackPlayer::PlayerAddScore()
 {
 }
 

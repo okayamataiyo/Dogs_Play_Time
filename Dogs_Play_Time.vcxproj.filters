@@ -231,6 +231,7 @@
     <ClCompile Include="State\AIPlayerState.cpp">
       <Filter>State</Filter>
     </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerBehaviourTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -432,6 +433,7 @@
     <ClInclude Include="State\AIPlayerState.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerBehaviourTree.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

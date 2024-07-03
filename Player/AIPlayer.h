@@ -6,6 +6,7 @@
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
 class CollectPlayer;
+class AttackPlayer;
 class SphereCollider;
 class WoodBox;
 class Text;
@@ -14,6 +15,7 @@ class Floor;
 class SceneManager;
 class ItemObjectManager;
 class StateManager;
+class BehaviourTreeManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
@@ -29,14 +31,6 @@ namespace
 	};
 
 	std::string aIPlayerName = "AIPlayer";
-
-	enum class TREE
-	{
-		READY = 0,
-		SUCCESS,
-		FAILURE,
-		RUNNING,
-	};
 }
 
 /// <summary>
@@ -65,8 +59,10 @@ private:
 	int slowTimeWait_;
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
-	bool isSelector_;
+	bool isWaitSelector_;
 	int coolTime_;
+	int attackTime_;
+	int attackTimeWait_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -81,6 +77,7 @@ private:
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
+	BehaviourTreeManager* pBehaviourTreeManager_;
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
@@ -126,8 +123,8 @@ public:
 	void UpdatePlay();
 	void UpdateGameOver();
 
-	void PlayerAttackDirActionStateFunc();
-	void PlayerAttackGoActionStateFunc();
+	void PlayerWaitActionTreeFunc();
+	void PlayerAttackActionTreeFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -140,7 +137,7 @@ public:
 	/// <param name="_pTarget">“–‚½‚Á‚½‘ŠŽè</param>
 	void OnCollision(GameObject* _pTarget) override;
 
-	void PlayerScore() override;
+	void PlayerAddScore() override;
 
 	void PlayerCamera() override;
 
@@ -208,6 +205,8 @@ public:
 	bool GetIsStun() override { return stunData_.isStun_; }
 
 	bool GetIsDive() override { return diveData_.isDive_; }
+
+	bool GetIsWaitSelector() { return isWaitSelector_; }
 
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 

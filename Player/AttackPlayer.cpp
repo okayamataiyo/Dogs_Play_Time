@@ -210,14 +210,14 @@ void AttackPlayer::UpdatePlay()
     {
         if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
-    		PlayerScore();
+    		PlayerAddScore();
         }
     }
     if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
     {
         if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
-            PlayerScore();
+            PlayerAddScore();
         }
     }
 
@@ -287,7 +287,7 @@ void AttackPlayer::UpdatePlay()
 
     if (boneData_.killTime_ <= 0 && boneData_.isBoneTatch_)
     {
-        PlayerScore();
+        PlayerAddScore();
         pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         boneData_.isBoneTatch_ = false;
         Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
@@ -453,9 +453,9 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
     }
 }
 
-void AttackPlayer::PlayerScore()
+void AttackPlayer::PlayerAddScore()
 {
-    PlayerBase::PlayerScore();
+    PlayerBase::PlayerAddScore();
 }
 
 void AttackPlayer::PlayerCamera()
@@ -477,7 +477,6 @@ void AttackPlayer::PlayerCamera()
     float deadZone = 0.8f;
     XMVECTOR vecDir = {};
     XMFLOAT3 floDir_ = {};
-    static float floLen = 0.0f;
     float floCameraLen = 30.0f;
     float floKnockbackLenRecedes = 5.0f;
     XMFLOAT3 mouseMove = Input::GetMouseMove();
@@ -485,37 +484,37 @@ void AttackPlayer::PlayerCamera()
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
     if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
     {
-        if (moveData_.i_ == false)
+        if (moveData_.camUpFlag_ == false)
         {
-            moveData_.i_ = true;
-            moveData_.CamPosNum_ -= 1;
+            moveData_.camUpFlag_ = true;
+            moveData_.CamPosYNum_ -= 1;
         }
     }
     else
     {
-        moveData_.i_ = false;
+        moveData_.camUpFlag_ = false;
     }
     if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
     {
-        if (moveData_.j_ == false)
+        if (moveData_.camDownFlag_ == false)
         {
-            moveData_.j_ = true;
-            moveData_.CamPosNum_ += 1;
+            moveData_.camDownFlag_ = true;
+            moveData_.CamPosYNum_ += 1;
         }
     }
     else
     {
-        moveData_.j_ = false;
+        moveData_.camDownFlag_ = false;
     }
-    if (moveData_.CamPosNum_ <= 0)
+    if (moveData_.CamPosYNum_ <= 0)
     {
-        moveData_.CamPosNum_ = 0;
+        moveData_.CamPosYNum_ = 0;
     }
-    if (moveData_.CamPosNum_ >= 4)
+    if (moveData_.CamPosYNum_ >= 4)
     {
-        moveData_.CamPosNum_ = 3;
+        moveData_.CamPosYNum_ = 3;
     }
-    dirData_.vecCam_.x = moveData_.CamPos_[moveData_.CamPosNum_];
+    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
     const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
@@ -527,13 +526,37 @@ void AttackPlayer::PlayerCamera()
 
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
     {
-        floLen -= floLenRecedes;
+        if (moveData_.camZForwardFlag_ == false)
+        {
+            moveData_.camZForwardFlag_ = true;
+            moveData_.CamPosZNum_ -= 1;
+        }
+    }
+    else
+    {
+        moveData_.camZForwardFlag_ = false;
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, gameData_.padID_))
     {
-        floLen += floLenApproach;
+        if (moveData_.camZBackFlag_ == false)
+        {
+            moveData_.camZBackFlag_ = true;
+            moveData_.CamPosZNum_ += 1;
+        }
     }
-
+    else
+    {
+        moveData_.camZBackFlag_ = false;
+    }
+    if (moveData_.CamPosZNum_ <= 0)
+    {
+        moveData_.CamPosZNum_ = 0;
+    }
+    if (moveData_.CamPosZNum_ >= 4)
+    {
+        moveData_.CamPosZNum_ = 3;
+    }
+    moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
     vecDir = vecFront;
     dirData_.vecCam_.x += padRotMove.y / padSens;
     dirData_.vecCam_.y += padRotMove.x / padSens;
@@ -574,7 +597,7 @@ void AttackPlayer::PlayerCamera()
             --floCameraLen;
         }
     }
-    vecDir *= floLen + floCameraLen;
+    vecDir *= moveData_.floLen_ + floCameraLen;
     vecDir += XMLoadFloat3(&transform_.position_);
     XMStoreFloat3(&floDir_, vecDir);
     Camera::SetPosition(floDir_, gameData_.padID_);

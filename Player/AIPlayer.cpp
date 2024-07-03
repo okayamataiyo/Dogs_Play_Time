@@ -14,7 +14,9 @@
 #include "../ItemObject/ItemObjectManager.h"
 #include "../StageObject/Stage.h"
 #include "../State/StateManager.h"
-#include "../State/AttackPlayerState.h"
+#include "../State/AIPlayerState.h"
+#include "../BehaviourTree/BehaviourTreeManager.h"
+#include "../BehaviourTree/AIPlayerBehaviourTree.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../ImageManager.h"
@@ -26,10 +28,11 @@
 
 AIPlayer::AIPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, aIPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
-    , number_{ 0 }, gameState_{ GAMESTATE::READY },isSelector_{false}
+    , number_{ 0 }, gameState_{ GAMESTATE::READY },isWaitSelector_{false},attackTime_{0}, attackTimeWait_{30}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{ nullptr }
+    , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }
+    ,pBehaviourTreeManager_{nullptr}, pImageManager_{nullptr}
     , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{ 0 }, slowTimeWait_{ 1 },coolTime_{0}
 {
     pParent_ = _pParent;
@@ -74,12 +77,16 @@ void AIPlayer::Initialize()
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
+    pBehaviourTreeManager_ = new BehaviourTreeManager(this);
+    pBehaviourTreeManager_->AddState("WaitActionTree", new AIPlayerWaitActionTree(pBehaviourTreeManager_));
+    pBehaviourTreeManager_->AddState("AttackActionTree", new AIPlayerAttackActionTree(pBehaviourTreeManager_));
+    pBehaviourTreeManager_->ChangeState("WaitActionTree");
     pStateManager_ = new StateManager(this);
-    pStateManager_->AddState("WalkState", new AttackPlayerWalkState(pStateManager_));
-    pStateManager_->AddState("WaitState", new AttackPlayerWaitState(pStateManager_));
-    pStateManager_->AddState("RunState", new AttackPlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new AttackPlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new AttackPlayerStunState(pStateManager_));
+    pStateManager_->AddState("WalkState", new AIPlayerWalkState(pStateManager_));
+    pStateManager_->AddState("WaitState", new AIPlayerWaitState(pStateManager_));
+    pStateManager_->AddState("RunState", new AIPlayerRunState(pStateManager_));
+    pStateManager_->AddState("JumpState", new AIPlayerJumpState(pStateManager_));
+    pStateManager_->AddState("StunState", new AIPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
@@ -93,6 +100,7 @@ void AIPlayer::Initialize()
 void AIPlayer::Update()
 {
     //ステートマネージャーの更新
+    pBehaviourTreeManager_->Update();
     pStateManager_->Update();
 
     switch (gameState_)
@@ -132,6 +140,7 @@ void AIPlayer::UPSubViewDraw()
 void AIPlayer::Release()
 {
     SAFE_DELETE(pStateManager_);
+    SAFE_DELETE(pBehaviourTreeManager_);
 }
 
 void AIPlayer::UpdateReady()
@@ -214,28 +223,6 @@ void AIPlayer::UpdatePlay()
         Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
     }
-    if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, gameData_.padID_) && !jumpData_.isJump_ && moveData_.isMove_)
-    {
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundData_.soundVolumeHalf_);
-    }
-
-    if (boneData_.isBoneTatch_)
-    {
-        if (boneData_.killTime_ > 0)
-        {
-            --boneData_.killTime_;
-        }
-    }
-
-    if (boneData_.killTime_ <= 0 && boneData_.isBoneTatch_)
-    {
-        PlayerScore();
-        pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
-        boneData_.isBoneTatch_ = false;
-        Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
-        boneData_.killTime_ = boneData_.killTimeMax_;
-    }
     IsMove();
     IsJump();
     IsRun();
@@ -247,12 +234,40 @@ void AIPlayer::UpdateGameOver()
 {
 }
 
-void AIPlayer::PlayerAttackDirActionStateFunc()
+void AIPlayer::PlayerWaitActionTreeFunc()
 {
+    if (!isWaitSelector_)
+    {
+        ++coolTime_;
+    }
+    if (coolTime_ >= 100)
+    {
+        isWaitSelector_ = true;
+        coolTime_ = 0;
+    }
 }
 
-void AIPlayer::PlayerAttackGoActionStateFunc()
+void AIPlayer::PlayerAttackActionTreeFunc()
 {
+    ++attackTime_;
+    if (attackTime_ <= attackTimeWait_)
+    {
+        XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+        dir = XMVector3Normalize(dir);
+        transform_.position_.x += 0.3f * XMVectorGetX(-dir);
+        transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
+
+        //向き変更
+        XMFLOAT3 m;
+        XMStoreFloat3(&m, -dir);
+        transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+        dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+    }
+    else
+    {
+        isWaitSelector_ = false;
+        attackTime_ = 0;
+    }
 }
 
 void AIPlayer::PlayerWaitStateFunc()
@@ -288,41 +303,6 @@ void AIPlayer::PlayerStunStateFunc()
 void AIPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
-}
-
-int AIPlayer::ActionDir()
-{
-    XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
-    dir = XMVector3Normalize(dir);
-    transform_.position_.x += 0.3f * XMVectorGetX(-dir);
-    transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
-
-    //向き変更
-    XMFLOAT3 m;
-    XMStoreFloat3(&m, -dir);
-    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
-}
-
-int AIPlayer::Selector()
-{
-    ++coolTime_;
-    if (coolTime_ >= 100)
-    {
-        SequenceAttack();
-        isSelector_ = true;
-        coolTime_ = 0;
-    }
-    return isSelector_;
-}
-
-int AIPlayer::SequenceAttack()
-{
-
-}
-
-int AIPlayer::Decorator()
-{
 }
 
 void AIPlayer::OnCollision(GameObject* _pTarget)
@@ -398,9 +378,9 @@ void AIPlayer::OnCollision(GameObject* _pTarget)
     }
 }
 
-void AIPlayer::PlayerScore()
+void AIPlayer::PlayerAddScore()
 {
-    PlayerBase::PlayerScore();
+    PlayerBase::PlayerAddScore();
 }
 
 void AIPlayer::PlayerCamera()

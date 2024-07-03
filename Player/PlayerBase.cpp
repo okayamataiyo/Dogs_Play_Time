@@ -102,7 +102,7 @@ void PlayerBase::PlayerStunStateFunc()
     animData_.animSpeed_ = 0.25f;
 }
 
-void PlayerBase::PlayerScore()
+void PlayerBase::PlayerAddScore()
 {
     gameData_.score_ += gameData_.scoreAmount_;
 }
@@ -208,14 +208,14 @@ void PlayerBase::SetVecPos(XMVECTOR _vecMove)
 void PlayerBase::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)
 {
     // ノックバックの方向と速度を設定する処理
-    float knockbackPosx = (_knockbackSpeed * XMVectorGetX(_vecKnockbackDirection)) * boneData_.killTimeWait_;
-    float knockbackPosz = (_knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection)) * boneData_.killTimeWait_;
-    knockbackPosx = transform_.position_.x / knockbackPosx;
-    knockbackPosz = transform_.position_.z / knockbackPosz;
-    transform_.position_.x += Direct3D::EaseFunc.at("InExpo")(knockbackPosx);
-    transform_.position_.z += Direct3D::EaseFunc.at("InExpo")(knockbackPosz);
-//    transform_.position_.x += _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
-//    transform_.position_.z += _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
+    //float knockbackPosx = (_knockbackSpeed * XMVectorGetX(_vecKnockbackDirection)) * boneData_.killTimeWait_;
+    //float knockbackPosz = (_knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection)) * boneData_.killTimeWait_;
+    //knockbackPosx = transform_.position_.x / knockbackPosx;
+    //knockbackPosz = transform_.position_.z / knockbackPosz;
+    //transform_.position_.x += Direct3D::EaseFunc.at("InExpo")(knockbackPosx);
+    //transform_.position_.z += Direct3D::EaseFunc.at("InExpo")(knockbackPosz);
+    transform_.position_.x += _knockbackSpeed * XMVectorGetX(_vecKnockbackDirection);
+    transform_.position_.z += _knockbackSpeed * XMVectorGetZ(_vecKnockbackDirection);
 }
 
 XMVECTOR PlayerBase::GetVecPos()

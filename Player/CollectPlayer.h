@@ -129,7 +129,7 @@ public:
 	/// <param name="_pTarget">“–‚½‚Á‚½‘ŠŽè</param>
 	void OnCollision(GameObject* _pTarget) override;
 
-	void PlayerScore() override;
+	void PlayerAddScore() override;
 
 	void PlayerCamera() override;
 
