@@ -4,7 +4,7 @@
 #include "AIPlayerBehaviourTree.h"
 
 AIPlayerWaitActionTree::AIPlayerWaitActionTree(BehaviourTreeManager* _pBehaviourTreeManager)
-	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{ nullptr }
+	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{ nullptr },treeState_{TREE::READY}
 {
 	pAIPlayer_ = (AIPlayer*)(pBehaviourTreeManager_->GetGameObject());
 }
@@ -28,7 +28,7 @@ void AIPlayerWaitActionTree::ExitState()
 }
 
 AIPlayerAttackActionTree::AIPlayerAttackActionTree(BehaviourTreeManager* _pBehaviourTreeManager)
-	:BehaviourTreeBase(_pBehaviourTreeManager),pAIPlayer_{nullptr}
+	:BehaviourTreeBase(_pBehaviourTreeManager),pAIPlayer_{nullptr},treeState_{TREE::READY}
 {
 	pAIPlayer_ = (AIPlayer*)(pBehaviourTreeManager_->GetGameObject());
 }
