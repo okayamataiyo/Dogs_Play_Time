@@ -189,6 +189,7 @@
     <ClCompile Include="StageObject\Stage.cpp" />
     <ClCompile Include="StageObject\StageBlock.cpp" />
     <ClCompile Include="StageObject\StageObjectManager.cpp" />
+    <ClCompile Include="State\AIPlayerState.cpp" />
     <ClCompile Include="State\AttackPlayerState.cpp" />
     <ClCompile Include="State\CollectPlayerState.cpp" />
     <ClCompile Include="State\StateManager.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="StageObject\StageBlock.h" />
     <ClInclude Include="StageObject\StageObjectBase.h" />
     <ClInclude Include="StageObject\StageObjectManager.h" />
+    <ClInclude Include="State\AIPlayerState.h" />
     <ClInclude Include="State\AttackPlayerState.h" />
     <ClInclude Include="State\CollectPlayerState.h" />
     <ClInclude Include="State\StateBase.h" />

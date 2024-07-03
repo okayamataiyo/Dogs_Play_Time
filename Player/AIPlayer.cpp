@@ -160,7 +160,6 @@ void AIPlayer::UpdateReady()
 
 void AIPlayer::UpdatePlay()
 {
-    Selector();
     //—‚¿‚½‚Ìˆ—
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
@@ -248,6 +247,14 @@ void AIPlayer::UpdateGameOver()
 {
 }
 
+void AIPlayer::PlayerAttackDirActionStateFunc()
+{
+}
+
+void AIPlayer::PlayerAttackGoActionStateFunc()
+{
+}
+
 void AIPlayer::PlayerWaitStateFunc()
 {
     PlayerBase::PlayerWaitStateFunc();
@@ -283,40 +290,31 @@ void AIPlayer::PlayerStun(int _timeLimit)
     PlayerBase::PlayerStun(_timeLimit);
 }
 
-int AIPlayer::ActionDir()
-{
-    XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
-    dir = XMVector3Normalize(dir);
-    transform_.position_.x += 0.3f * XMVectorGetX(-dir);
-    transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
-
-    //Œü‚«•ÏX
-    XMFLOAT3 m;
-    XMStoreFloat3(&m, -dir);
-    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
-}
-
-int AIPlayer::Selector()
-{
-    ++coolTime_;
-    if (coolTime_ >= 100)
-    {
-        SequenceAttack();
-        isSelector_ = true;
-        coolTime_ = 0;
-    }
-    return isSelector_;
-}
-
-int AIPlayer::SequenceAttack()
-{
-
-}
-
-int AIPlayer::Decorator()
-{
-}
+//int AIPlayer::ActionDir()
+//{
+//    XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+//    dir = XMVector3Normalize(dir);
+//    transform_.position_.x += 0.3f * XMVectorGetX(-dir);
+//    transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
+//
+//    //Œü‚«•ÏX
+//    XMFLOAT3 m;
+//    XMStoreFloat3(&m, -dir);
+//    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+//    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+//}
+//
+//int AIPlayer::Selector()
+//{
+//    ++coolTime_;
+//    if (coolTime_ >= 100)
+//    {
+//        SequenceAttack();
+//        isSelector_ = true;
+//        coolTime_ = 0;
+//    }
+//    return isSelector_;
+//}
 
 void AIPlayer::OnCollision(GameObject* _pTarget)
 {

@@ -126,6 +126,8 @@ public:
 	void UpdatePlay();
 	void UpdateGameOver();
 
+	void PlayerAttackDirActionStateFunc();
+	void PlayerAttackGoActionStateFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -174,14 +176,6 @@ public:
 	/// </summary>
 	/// <param name="_timeLimit">_timeLimitïbÇ‹Ç≈ÅAìÆÇ©ÇπÇ»Ç¢</param>
 	void PlayerStun(int _timeLimit = 60) override;
-
-	int ActionDir();
-
-	int Selector();
-
-	int SequenceAttack();
-
-	int Decorator();
 
 	void IsMove() override;
 
