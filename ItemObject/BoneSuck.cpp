@@ -64,6 +64,7 @@ void BoneSuck::BothViewDraw()
 
 void BoneSuck::LeftViewDraw()
 {
+
 }
 
 void BoneSuck::RightViewDraw()
