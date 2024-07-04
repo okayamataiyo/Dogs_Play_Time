@@ -123,7 +123,8 @@ public:
 	void UpdatePlay();
 	void UpdateGameOver();
 
-	void PlayerWaitActionTreeFunc();
+	void PlayerWaitSelectorTreeFunc();
+	void PlayerAttackDecoratorTreeFunc();
 	void PlayerAttackActionTreeFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();

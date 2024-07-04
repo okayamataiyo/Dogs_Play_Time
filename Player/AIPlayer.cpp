@@ -78,9 +78,10 @@ void AIPlayer::Initialize()
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
     pBehaviourTreeManager_ = new BehaviourTreeManager(this);
-    pBehaviourTreeManager_->AddState("WaitActionTree", new AIPlayerWaitActionTree(pBehaviourTreeManager_));
+    pBehaviourTreeManager_->AddState("WaitSelectorTree", new AIPlayerWaitSelectorTree(pBehaviourTreeManager_));
     pBehaviourTreeManager_->AddState("AttackActionTree", new AIPlayerAttackActionTree(pBehaviourTreeManager_));
-    pBehaviourTreeManager_->ChangeState("WaitActionTree");
+    pBehaviourTreeManager_->AddState("AttackDecoratorTree", new AIPlayerAttackDecoratorTree(pBehaviourTreeManager_));
+    pBehaviourTreeManager_->ChangeState("WaitSelectorTree");
     pStateManager_ = new StateManager(this);
     pStateManager_->AddState("WalkState", new AIPlayerWalkState(pStateManager_));
     pStateManager_->AddState("WaitState", new AIPlayerWaitState(pStateManager_));
@@ -234,7 +235,12 @@ void AIPlayer::UpdateGameOver()
 {
 }
 
-void AIPlayer::PlayerWaitActionTreeFunc()
+void AIPlayer::PlayerWaitSelectorTreeFunc()
+{
+
+}
+
+void AIPlayer::PlayerAttackDecoratorTreeFunc()
 {
     if (!isWaitSelector_)
     {

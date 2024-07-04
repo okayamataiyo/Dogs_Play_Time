@@ -4,7 +4,8 @@
 #include "StateManager.h"
 #include "AttackPlayerState.h"
 
-AttackPlayerWaitState::AttackPlayerWaitState(StateManager* _pStateManager) : StateBase(_pStateManager), pCollectPlayer_{ nullptr }, pAttackPlayer_{ nullptr }
+AttackPlayerWaitState::AttackPlayerWaitState(StateManager* _pStateManager) 
+	: StateBase(_pStateManager), pCollectPlayer_{ nullptr }, pAttackPlayer_{ nullptr }
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
@@ -42,7 +43,8 @@ void AttackPlayerWaitState::ExitState()
 {
 }
 
-AttackPlayerWalkState::AttackPlayerWalkState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerWalkState::AttackPlayerWalkState(StateManager* _pStateManager) 
+	: StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
@@ -81,7 +83,8 @@ void AttackPlayerWalkState::ExitState()
 {
 }
 
-AttackPlayerRunState::AttackPlayerRunState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerRunState::AttackPlayerRunState(StateManager* _pStateManager) 
+	: StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());
@@ -119,7 +122,8 @@ void AttackPlayerRunState::ExitState()
 {
 }
 
-AttackPlayerJumpState::AttackPlayerJumpState(StateManager* _pStateManager) : StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
+AttackPlayerJumpState::AttackPlayerJumpState(StateManager* _pStateManager) 
+	: StateBase(_pStateManager),pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 	pCollectPlayer_ = (CollectPlayer*)(pStateManager_->GetGameObject());
 	pAttackPlayer_ = (AttackPlayer*)(pStateManager_->GetGameObject());

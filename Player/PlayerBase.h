@@ -4,7 +4,8 @@
 
 namespace
 {
-	enum class PLAYERSTATE {
+	enum class PLAYERSTATE
+	{
 		COLLECTPLAYER = 0,
 		ATTACKPLAYER,
 		PLAYERNUM

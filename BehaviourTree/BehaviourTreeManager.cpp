@@ -2,8 +2,9 @@
 
 //コンストラクタ
 BehaviourTreeManager::BehaviourTreeManager(GameObject* _pParent)
-	:pParent_(_pParent),currentBefaviourTree_(nullptr)
+	:pParent_(_pParent), currentBefaviourTree_(nullptr)
 {
+
 }
 
 //デストラクタ

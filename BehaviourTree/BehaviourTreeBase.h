@@ -1,4 +1,5 @@
 #pragma once
+//インクルード
 class BehaviourTreeManager;
 
 namespace
@@ -22,7 +23,6 @@ public:
 	BehaviourTreeBase(BehaviourTreeManager* _manager)
 		:pBehaviourTreeManager_(_manager)
 	{
-
 	}
 
 	//デストラクタ
@@ -33,5 +33,4 @@ public:
 	virtual void UpdateState() = 0;
 	//状態から出る時の後処理
 	virtual void ExitState() = 0;
-
 };

@@ -3,38 +3,61 @@
 #include "BehaviourTreeManager.h"
 #include "AIPlayerBehaviourTree.h"
 
-AIPlayerWaitActionTree::AIPlayerWaitActionTree(BehaviourTreeManager* _pBehaviourTreeManager)
-	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{ nullptr },treeState_{TREE::READY}
+AIPlayerWaitSelectorTree::AIPlayerWaitSelectorTree(BehaviourTreeManager* _pBehaviourTreeManager)
+	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{nullptr}, treeState_{TREE::READY}
 {
 	pAIPlayer_ = (AIPlayer*)(pBehaviourTreeManager_->GetGameObject());
 }
 
-void AIPlayerWaitActionTree::EnterState()
+void AIPlayerWaitSelectorTree::EnterState()
+{
+	treeState_ = TREE::RUNNING;
+}
+
+void AIPlayerWaitSelectorTree::UpdateState()
+{
+	pBehaviourTreeManager_->ChangeState("AttackDecoratorTree");
+}
+
+void AIPlayerWaitSelectorTree::ExitState()
 {
 
 }
 
-void AIPlayerWaitActionTree::UpdateState()
+AIPlayerAttackDecoratorTree::AIPlayerAttackDecoratorTree(BehaviourTreeManager* _pBehaviourTreeManager)
+	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{nullptr}, treeState_{TREE::READY}
 {
-	pAIPlayer_->PlayerWaitActionTreeFunc();
+	pAIPlayer_ = (AIPlayer*)(pBehaviourTreeManager_->GetGameObject());
+}
+
+void AIPlayerAttackDecoratorTree::EnterState()
+{
+	treeState_ = TREE::RUNNING;
+}
+
+void AIPlayerAttackDecoratorTree::UpdateState()
+{
+	pAIPlayer_->PlayerAttackDecoratorTreeFunc();
 	if (pAIPlayer_->GetIsWaitSelector())
 	{
-		pBehaviourTreeManager_->ChangeState("AttackActionTree");
+		pBehaviourTreeManager_->ChangeState("ActionActionTree");
 	}
 }
 
-void AIPlayerWaitActionTree::ExitState()
+void AIPlayerAttackDecoratorTree::ExitState()
 {
+
 }
 
 AIPlayerAttackActionTree::AIPlayerAttackActionTree(BehaviourTreeManager* _pBehaviourTreeManager)
-	:BehaviourTreeBase(_pBehaviourTreeManager),pAIPlayer_{nullptr},treeState_{TREE::READY}
+	:BehaviourTreeBase(_pBehaviourTreeManager), pAIPlayer_{nullptr}, treeState_{TREE::READY}
 {
 	pAIPlayer_ = (AIPlayer*)(pBehaviourTreeManager_->GetGameObject());
 }
 
 void AIPlayerAttackActionTree::EnterState()
 {
+	treeState_ = TREE::RUNNING;
 }
 
 void AIPlayerAttackActionTree::UpdateState()
