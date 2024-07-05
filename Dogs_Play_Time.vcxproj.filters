@@ -225,13 +225,15 @@
     <ClCompile Include="Player\AIPlayer.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\BehaviourTreeManager.cpp">
-      <Filter>BehaviourTree</Filter>
-    </ClCompile>
     <ClCompile Include="State\AIPlayerState.cpp">
       <Filter>State</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerBehaviourTree.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\Node.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -424,16 +426,18 @@
     <ClInclude Include="Player\AIPlayer.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\BehaviourTreeBase.h">
-      <Filter>BehaviourTree</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviourTree\BehaviourTreeManager.h">
-      <Filter>BehaviourTree</Filter>
-    </ClInclude>
     <ClInclude Include="State\AIPlayerState.h">
       <Filter>State</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerBehaviourTree.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\Work.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\Node.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

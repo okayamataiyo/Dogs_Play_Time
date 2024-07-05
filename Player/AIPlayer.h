@@ -15,7 +15,6 @@ class Floor;
 class SceneManager;
 class ItemObjectManager;
 class StateManager;
-class BehaviourTreeManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
@@ -77,7 +76,6 @@ private:
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
 	StateManager* pStateManager_;
-	BehaviourTreeManager* pBehaviourTreeManager_;
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;

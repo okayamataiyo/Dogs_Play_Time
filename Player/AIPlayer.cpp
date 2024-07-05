@@ -15,8 +15,6 @@
 #include "../StageObject/Stage.h"
 #include "../State/StateManager.h"
 #include "../State/AIPlayerState.h"
-#include "../BehaviourTree/BehaviourTreeManager.h"
-#include "../BehaviourTree/AIPlayerBehaviourTree.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
 #include "../ImageManager.h"
@@ -31,8 +29,7 @@ AIPlayer::AIPlayer(GameObject* _pParent)
     , number_{ 0 }, gameState_{ GAMESTATE::READY },isWaitSelector_{false},attackTime_{0}, attackTimeWait_{30}
     , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
-    , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }
-    ,pBehaviourTreeManager_{nullptr}, pImageManager_{nullptr}
+    , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{nullptr}
     , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{ 0 }, slowTimeWait_{ 1 },coolTime_{0}
 {
     pParent_ = _pParent;
@@ -77,11 +74,6 @@ void AIPlayer::Initialize()
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
-    pBehaviourTreeManager_ = new BehaviourTreeManager(this);
-    pBehaviourTreeManager_->AddState("WaitSelectorTree", new AIPlayerWaitSelectorTree(pBehaviourTreeManager_));
-    pBehaviourTreeManager_->AddState("AttackActionTree", new AIPlayerAttackActionTree(pBehaviourTreeManager_));
-    pBehaviourTreeManager_->AddState("AttackDecoratorTree", new AIPlayerAttackDecoratorTree(pBehaviourTreeManager_));
-    pBehaviourTreeManager_->ChangeState("WaitSelectorTree");
     pStateManager_ = new StateManager(this);
     pStateManager_->AddState("WalkState", new AIPlayerWalkState(pStateManager_));
     pStateManager_->AddState("WaitState", new AIPlayerWaitState(pStateManager_));
@@ -101,7 +93,6 @@ void AIPlayer::Initialize()
 void AIPlayer::Update()
 {
     //ステートマネージャーの更新
-    pBehaviourTreeManager_->Update();
     pStateManager_->Update();
 
     switch (gameState_)
@@ -141,7 +132,6 @@ void AIPlayer::UPSubViewDraw()
 void AIPlayer::Release()
 {
     SAFE_DELETE(pStateManager_);
-    SAFE_DELETE(pBehaviourTreeManager_);
 }
 
 void AIPlayer::UpdateReady()
