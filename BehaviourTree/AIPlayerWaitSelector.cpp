@@ -1,15 +1,11 @@
 //インクルード
-#include "../Engine/GameObject.h"
-#include "../Player/AIPlayer.h"
 #include "AIPlayerWaitSelector.h"
 
-NodeState AIPlayerWaitSelector::operator()()
+AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode)
+	:Node(nullptr)
 {
-	pAIPlayer_ = (AIPlayer*)FindObject
-	if()
-	return NodeState();
 }
 
-AIPlayerWaitSelector::AIPlayerWaitSelector()
+void AIPlayerWaitSelector::Update()
 {
 }

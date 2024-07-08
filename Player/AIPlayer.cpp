@@ -17,6 +17,7 @@
 #include "../State/AIPlayerState.h"
 #include "../Scene/Dogs_Walk_PlayScene.h"
 #include "../Scene/Dogs_Fight_PlayScene.h"
+#include "../BehaviourTree/Node.h"
 #include "../ImageManager.h"
 #include "../ParticleManager.h"
 #include "../UIManager.h"
@@ -25,14 +26,14 @@
 #include "AttackPlayer.h"
 
 AIPlayer::AIPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, aIPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
+    :PlayerBase(_pParent, aIPlayerName),pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
     , number_{ 0 }, gameState_{ GAMESTATE::READY },isWaitSelector_{false},attackTime_{0}, attackTimeWait_{30}
-    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
+    , slowTime_{ 0 }, slowTimeWait_{ 1 }, coolTime_{ 0 }
+    ,pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{nullptr}
-    , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{ 0 }, slowTimeWait_{ 1 },coolTime_{0}
+    , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr },pNode_{nullptr}
 {
-    pParent_ = _pParent;
 }
 
 AIPlayer::~AIPlayer()
@@ -88,6 +89,7 @@ void AIPlayer::Initialize()
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
     pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pNode_ = new Node();
 }
 
 void AIPlayer::Update()

@@ -18,6 +18,7 @@ class StateManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
+class Node;
 
 namespace
 {
@@ -79,6 +80,7 @@ private:
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
+	Node* pNode_;
 public:
 
 	/// <summary>

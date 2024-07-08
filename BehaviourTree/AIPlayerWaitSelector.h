@@ -1,12 +1,13 @@
 #pragma once
 //インクルード
-#include "Work.h"
+#include "../BehaviourTree/Node.h"
 
-class AIPlayerWaitSelector : public Work
+class AIPlayerWaitSelector : public Node
 {
 public:
-	NodeState operator()() override;
-	AIPlayerWaitSelector();
+	AIPlayerWaitSelector(Node* _pParentNode);
+
 private:
+	void Update() override;
 };
 
