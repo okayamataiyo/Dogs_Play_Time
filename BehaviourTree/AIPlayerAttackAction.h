@@ -3,16 +3,20 @@
 #include "Node.h"
 
 class GameObject;
+class AIPlayer;
 
-class AIPlayerWaitAction : public Node
+class AIPlayerAttackAction : public Node
 {
 public:
-	AIPlayerWaitAction(Node* _pParentNode,GameObject* _pGameObject);
+	AIPlayerAttackAction(Node* _pParentNode, GameObject* _pGameObject);
+	~AIPlayerAttackAction();
 	void ChoiceUpdate() override;
 	void ReadyUpdate() override;
 	void RunningUpdate() override;
 	void SuccessUpdate() override;
 	void FailureUpdate() override;
+
 private:
+	AIPlayer* pAIPlayer_;
 };
 

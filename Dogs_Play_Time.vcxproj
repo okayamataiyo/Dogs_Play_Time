@@ -132,9 +132,10 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp" />
-    <ClCompile Include="BehaviourTree\Node.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -198,6 +199,8 @@
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h" />
     <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h" />
     <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h" />
     <ClInclude Include="BehaviourTree\Node.h" />

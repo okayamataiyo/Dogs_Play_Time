@@ -1,13 +1,25 @@
 #pragma once
 //インクルード
-#include "../BehaviourTree/Node.h"
+#include "Node.h"
+
+class GameObject;
+class AIPlayerWaitAction;
+class AIPlayerAttackDecorator;
 
 class AIPlayerWaitSelector : public Node
 {
 public:
-	AIPlayerWaitSelector(Node* _pParentNode);
+	AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject);
+	~AIPlayerWaitSelector();
+	void ChoiceUpdate() override;
+	void ReadyUpdate() override;
+	void RunningUpdate() override;
+	void SuccessUpdate() override;
+	void FailureUpdate() override;
 
 private:
-	void Update() override;
+
+	AIPlayerWaitAction* pAIPlayerWaitAction_;
+	AIPlayerAttackDecorator* pAIPlayerAttackDecorator_;
 };
 

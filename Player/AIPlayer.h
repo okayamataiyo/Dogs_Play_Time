@@ -18,7 +18,7 @@ class StateManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
-class Node;
+class AIPlayerWaitSelector;
 
 namespace
 {
@@ -59,10 +59,10 @@ private:
 	int slowTimeWait_;
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
-	bool isWaitSelector_;
 	int coolTime_;
 	int attackTime_;
 	int attackTimeWait_;
+	bool isAttack_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -80,7 +80,7 @@ private:
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
-	Node* pNode_;
+	AIPlayerWaitSelector* pAIPlayerWaitSelector_;
 public:
 
 	/// <summary>
@@ -123,9 +123,7 @@ public:
 	void UpdatePlay();
 	void UpdateGameOver();
 
-	void PlayerWaitSelectorTreeFunc();
-	void PlayerAttackDecoratorTreeFunc();
-	void PlayerAttackActionTreeFunc();
+	void PlayerAttackActionFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -207,7 +205,7 @@ public:
 
 	bool GetIsDive() override { return diveData_.isDive_; }
 
-	bool GetIsWaitSelector() { return isWaitSelector_; }
+	bool GetIsAttack() { return isAttack_; }
 
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 
