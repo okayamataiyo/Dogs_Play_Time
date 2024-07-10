@@ -51,7 +51,7 @@ void AIPlayer::Initialize()
         assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
-    std::string modelName = modelFolderName + "AttackPlayer" + modelModifierName;
+    std::string modelName = modelFolderName + aIPlayerName + modelModifierName;
     hModel_ = Model::Load(modelName);
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
@@ -246,8 +246,8 @@ void AIPlayer::PlayerAttackActionFunc()
         --attackTime_;
         if (attackTime_ <= 0)
         {
-            coolTime_ = 0;
-            attackTime_ = 0;
+            coolTime_ = attackTimeWait_;
+            attackTime_ = attackTimeWait_;
             isAttack_ = false;
         }
 

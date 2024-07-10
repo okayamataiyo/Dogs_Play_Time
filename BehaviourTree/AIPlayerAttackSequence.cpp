@@ -1,12 +1,12 @@
 //インクルード
-#include "AIPlayerWaitSelector.h"
+#include "AIPlayerAttackSequence.h"
 #include "AIPlayerWaitAction.h"
 #include "AIPlayerAttackDecorator.h"
 #include "../Engine/Global.h"
 
-AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject)
-	:Node(_pParentNode,_pGameObject)
-	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackDecorator_{nullptr}
+AIPlayerAttackSequence::AIPlayerAttackSequence(Node* _pParentNode, GameObject* _pGameObject)
+	:Node(_pParentNode, _pGameObject)
+	, pAIPlayerWaitAction_{ nullptr }, pAIPlayerAttackDecorator_{ nullptr }
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 	nodeData_.pParentNode_ = _pParentNode;
@@ -15,13 +15,13 @@ AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGame
 	pAIPlayerAttackDecorator_ = new AIPlayerAttackDecorator(this, nodeData_.pGameObject_);
 }
 
-AIPlayerWaitSelector::~AIPlayerWaitSelector()
+AIPlayerAttackSequence::~AIPlayerAttackSequence()
 {
 	SAFE_DELETE(pAIPlayerWaitAction_);
 	SAFE_DELETE(pAIPlayerAttackDecorator_);
 }
 
-void AIPlayerWaitSelector::ChoiceUpdate()
+void AIPlayerAttackSequence::ChoiceUpdate()
 {
 	switch (nodeData_.myNodeState_)
 	{
@@ -40,11 +40,11 @@ void AIPlayerWaitSelector::ChoiceUpdate()
 	}
 }
 
-void AIPlayerWaitSelector::ReadyUpdate()
+void AIPlayerAttackSequence::ReadyUpdate()
 {
 }
 
-void AIPlayerWaitSelector::RunningUpdate()
+void AIPlayerAttackSequence::RunningUpdate()
 {
 	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::READY)
 	{
@@ -73,12 +73,12 @@ void AIPlayerWaitSelector::RunningUpdate()
 	}
 }
 
-void AIPlayerWaitSelector::SuccessUpdate()
+void AIPlayerAttackSequence::SuccessUpdate()
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 }
 
-void AIPlayerWaitSelector::FailureUpdate()
+void AIPlayerAttackSequence::FailureUpdate()
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 }

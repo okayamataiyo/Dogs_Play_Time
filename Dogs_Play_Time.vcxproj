@@ -134,6 +134,8 @@
   <ItemGroup>
     <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -201,6 +203,8 @@
   <ItemGroup>
     <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h" />
     <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h" />
     <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h" />
     <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h" />
     <ClInclude Include="BehaviourTree\Node.h" />

@@ -231,7 +231,19 @@
     <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp">
       <Filter>BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\Node.cpp">
+    <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp">
       <Filter>BehaviourTree</Filter>
     </ClCompile>
   </ItemGroup>
@@ -432,10 +444,22 @@
     <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h">
       <Filter>BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\Work.h">
+    <ClInclude Include="BehaviourTree\Node.h">
       <Filter>BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\Node.h">
+    <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h">
       <Filter>BehaviourTree</Filter>
     </ClInclude>
   </ItemGroup>

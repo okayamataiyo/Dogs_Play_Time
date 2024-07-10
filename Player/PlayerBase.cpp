@@ -98,7 +98,7 @@ void PlayerBase::PlayerJumpStateFunc()
 void PlayerBase::PlayerStunStateFunc()
 {
     animData_.startFrame_ = 140;
-    animData_.endFrame_ = 200;
+    animData_.endFrame_ = 340;
     animData_.animSpeed_ = 0.25f;
 }
 
