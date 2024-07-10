@@ -27,12 +27,11 @@
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
     ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
-    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
+    , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
 , pBoneImageManager_{ nullptr }, pParticleManager_{ nullptr }, slowTime_{0},slowTimeWait_{1}
 {
-    pParent_ = _pParent;
 }
 
 AttackPlayer::~AttackPlayer()
@@ -180,6 +179,7 @@ void AttackPlayer::UpdatePlay()
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
             pDogs_Fight_PlayScene_->SetGameStop();
+            pDogs_Fight_PlayScene_->SetNowGauge(gameData_.score_);
         }
         gameState_ = GAMESTATE::GAMEOVER;
     }

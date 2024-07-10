@@ -262,7 +262,7 @@ void ImageManager::RightAttackDraw()
 
 void ImageManager::AddGaugeScale(float _v)
 {
-	const float decScale = 150.0f;
+	const float decScale = 120.0f;
 	gaugeTransform_.scale_.x -= (_v / decScale);
 }
 
