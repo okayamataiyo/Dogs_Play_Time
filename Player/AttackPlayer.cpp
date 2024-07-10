@@ -179,7 +179,6 @@ void AttackPlayer::UpdatePlay()
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
         {
             pDogs_Fight_PlayScene_->SetGameStop();
-            pDogs_Fight_PlayScene_->SetNowGauge(gameData_.score_);
         }
         gameState_ = GAMESTATE::GAMEOVER;
     }

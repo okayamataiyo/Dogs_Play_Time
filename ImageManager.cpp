@@ -260,10 +260,9 @@ void ImageManager::RightAttackDraw()
 	}
 }
 
-void ImageManager::AddGaugeScale(float _v)
+void ImageManager::AddGaugeScale(float _animGauge)
 {
-	const float decScale = 120.0f;
-	gaugeTransform_.scale_.x -= (_v / decScale);
+	gaugeTransform_.scale_.x -= _animGauge / 120;
 }
 
 void ImageManager::SecInit()

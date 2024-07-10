@@ -19,6 +19,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	,woodBoxCountMax_{5},changeScore_{100},hSound_{-1,-1,-1,-1}
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
+
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
 	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pAttackImageManager_{nullptr},pCollectImageManager_{nullptr}
 {
@@ -102,11 +103,11 @@ void Dogs_Fight_PlayScene::Update()
 {
 	if (pAttackPlayer_->GetIsBoneTatch())
 	{
-		pAttackImageManager_->AddGaugeScale((animGauge_ * 9 + nowGauge_) / 10);
+		pCollectImageManager_->AddGaugeScale(0.102f);
 	}
 	if (pCollectPlayer_->GetIsBoneTatch())
 	{
-		pCollectImageManager_->AddGaugeScale((animGauge_ * 9 + nowGauge_) / 10);
+		pCollectImageManager_->AddGaugeScale(0.102f);
 	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{

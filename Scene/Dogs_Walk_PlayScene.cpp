@@ -102,7 +102,7 @@ void Dogs_Walk_PlayScene::Initialize()
 
 void Dogs_Walk_PlayScene::Update()
 {
-	pImageManager_->AddGaugeScale(0.1f);
+	pImageManager_->AddGaugeScale(0.08f);
 	if((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);

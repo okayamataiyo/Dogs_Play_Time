@@ -77,7 +77,7 @@ private:
     //▼演出で使うメンバ変数
     int time_;                         //時間を表す
     bool isGameStop_;                  //ゲームが止まったか
-    int nowGauge_, maxGauge_, animGauge_;
+
 
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
@@ -107,7 +107,6 @@ public:
     void AddWoodBoxCount(int _woodBoxCount) { woodBoxCount_ += _woodBoxCount; }
     ItemObjectManager* GetItemObjectManager() { return pItemObjectManager_; }
     void HideCursor() { while (::ShowCursor(false) >= 0); }
-    void SetNowGauge(int _nowGauge) { nowGauge_ = _nowGauge; }
     void SetGameStop();
 };
 

@@ -102,7 +102,7 @@ public:
 
 	void SetGaugeMode(int _mode);
 
-	void AddGaugeScale(float _v);
+	void AddGaugeScale(float _animGauge);
 
 	void AddValue(float _v);
 
