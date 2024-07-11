@@ -77,7 +77,7 @@ private:
     //▼演出で使うメンバ変数
     int time_;                         //時間を表す
     bool isGameStop_;                  //ゲームが止まったか
-
+    bool isPause_;
 
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
