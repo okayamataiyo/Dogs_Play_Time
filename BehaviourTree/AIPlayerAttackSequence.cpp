@@ -1,24 +1,26 @@
 //インクルード
 #include "AIPlayerAttackSequence.h"
-#include "AIPlayerWaitAction.h"
 #include "AIPlayerAttackDecorator.h"
+#include "AIPlayerAttackSeeAction.h"
+#include "../Player/AIPlayer.h"
 #include "../Engine/Global.h"
 
 AIPlayerAttackSequence::AIPlayerAttackSequence(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)
-	, pAIPlayerWaitAction_{ nullptr }, pAIPlayerAttackDecorator_{ nullptr }
+	,nodeChildren_{NODECHILDREN::ATTACKSEEACTION}
+	,pAIPlayerAttackDecorator_{ nullptr },pAIPlayerAttackSeeAction_{nullptr},pAIPlayer_{(AIPlayer*)_pGameObject}
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
-	pAIPlayerWaitAction_ = new AIPlayerWaitAction(this, nodeData_.pGameObject_);
 	pAIPlayerAttackDecorator_ = new AIPlayerAttackDecorator(this, nodeData_.pGameObject_);
+	pAIPlayerAttackSeeAction_ = new AIPlayerAttackSeeAction(this, nodeData_.pGameObject_);
 }
 
 AIPlayerAttackSequence::~AIPlayerAttackSequence()
 {
-	SAFE_DELETE(pAIPlayerWaitAction_);
 	SAFE_DELETE(pAIPlayerAttackDecorator_);
+	SAFE_DELETE(pAIPlayerAttackSeeAction_);
 }
 
 void AIPlayerAttackSequence::ChoiceUpdate()
@@ -46,30 +48,52 @@ void AIPlayerAttackSequence::ReadyUpdate()
 
 void AIPlayerAttackSequence::RunningUpdate()
 {
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::READY)
+	switch(nodeChildren_)
 	{
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::RUNNING);
-		pAIPlayerAttackDecorator_->ChoiceUpdate();
-	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::RUNNING)
-	{
-		pAIPlayerAttackDecorator_->ChoiceUpdate();
-	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::SUCCESS)
-	{
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
-	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::FAILURE)
-	{
-		pAIPlayerWaitAction_->ChoiceUpdate();
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::FAILURE;
-	}
-	if (pAIPlayerWaitAction_->GetMyNodeState() == NODESTATE::SUCCESS)
-	{
-		pAIPlayerWaitAction_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+	case NODECHILDREN::ATTACKSEEACTION:
+		if (pAIPlayerAttackSeeAction_->GetMyNodeState() == NODESTATE::READY)
+		{
+			pAIPlayerAttackSeeAction_->SetMyNodeState(NODESTATE::RUNNING);
+		}
+		if (pAIPlayerAttackSeeAction_->GetMyNodeState() == NODESTATE::RUNNING)
+		{
+			if (pAIPlayer_->GetIsAttackSee())
+			{
+				pAIPlayerAttackSeeAction_->ChoiceUpdate();
+			}
+		}
+		if (pAIPlayerAttackSeeAction_->GetMyNodeState() == NODESTATE::SUCCESS)
+		{
+			pAIPlayerAttackSeeAction_->SetMyNodeState(NODESTATE::READY);
+			nodeChildren_ = NODECHILDREN::ATTACKDECORATOR;
+		}
+		if (pAIPlayerAttackSeeAction_->GetMyNodeState() == NODESTATE::FAILURE)
+		{
+			pAIPlayerAttackSeeAction_->SetMyNodeState(NODESTATE::READY);
+		}
+		break;
+	case NODECHILDREN::ATTACKDECORATOR:
+		if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::READY)
+		{
+			pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::RUNNING);
+		}
+		if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::RUNNING)
+		{
+			pAIPlayerAttackDecorator_->ChoiceUpdate();
+			nodeData_.myNodeState_ = pAIPlayerAttackDecorator_->GetMyNodeState();
+		}
+		if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::SUCCESS)
+		{
+			pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
+			nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+			nodeChildren_ = NODECHILDREN::ATTACKSEEACTION;
+		}
+		if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::FAILURE)
+		{
+			pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
+			nodeData_.myNodeState_ = NODESTATE::FAILURE;
+		}
+		break;
 	}
 }
 

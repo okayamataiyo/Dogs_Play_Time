@@ -40,8 +40,8 @@ void AIPlayerAttackSeeAction::ReadyUpdate()
 
 void AIPlayerAttackSeeAction::RunningUpdate()
 {
-	pAIPlayer_->PlayerAttackActionFunc();
-	if (!pAIPlayer_->GetIsAttack())
+	pAIPlayer_->PlayerAttackSeeActionFunc();
+	if (!pAIPlayer_->GetIsAttackSee())
 	{
 		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
 	}

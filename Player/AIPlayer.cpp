@@ -26,9 +26,11 @@
 #include "AttackPlayer.h"
 
 AIPlayer::AIPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, aIPlayerName),pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
-    , number_{ 0 }, gameState_{ GAMESTATE::READY }, attackTimeWait_{30}, attackTime_{ 30 },coolTime_{ 30 }, isAttack_{false}
-    , slowTime_{ 0 }, slowTimeWait_{ 1 }
+    :PlayerBase(_pParent, aIPlayerName)
+    ,pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
+    , number_{ 0 }, gameState_{ GAMESTATE::READY },coolTime_{ 60 },coolTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
+    ,attackSeeTime_{30},attackSeeTimeWait_{30}, isAttack_{false},isAttackSee_{false}
+    , slowTime_{ 0 }, slowTimeWait_{ 1 }, dir_{}
     ,pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{nullptr}
@@ -171,7 +173,7 @@ void AIPlayer::UpdatePlay()
     --coolTime_;
     if (coolTime_ <= 0)
     {
-        isAttack_ = true;
+        isAttackSee_ = true;
     }
 
     //óéÇøÇΩéûÇÃèàóù
@@ -241,27 +243,34 @@ void AIPlayer::UpdateGameOver()
 
 void AIPlayer::PlayerAttackActionFunc()
 {
-    if (isAttack_)
+    --attackTime_;
+    if (attackTime_ <= 0)
     {
-        --attackTime_;
-        if (attackTime_ <= 0)
-        {
-            coolTime_ = attackTimeWait_;
-            attackTime_ = attackTimeWait_;
-            isAttack_ = false;
-        }
-
-        XMVECTOR dir = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
-        dir = XMVector3Normalize(dir);
-        transform_.position_.x += 0.3f * XMVectorGetX(-dir);
-        transform_.position_.z += 0.3f * XMVectorGetZ(-dir);
-
-        //å¸Ç´ïœçX
-        XMFLOAT3 m;
-        XMStoreFloat3(&m, -dir);
-        transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-        dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+        coolTime_ = coolTimeWait_;
+        attackTime_ = attackTimeWait_;
+        isAttack_ = false;
     }
+    transform_.position_.x += 0.3f * XMVectorGetX(-dir_);
+    transform_.position_.z += 0.3f * XMVectorGetZ(-dir_);
+
+}
+
+void AIPlayer::PlayerAttackSeeActionFunc()
+{
+    --attackSeeTime_;
+    if(attackSeeTime_ <= 0)
+    {
+        attackSeeTime_ = attackSeeTimeWait_;
+        isAttackSee_ = false;
+        isAttack_ = true;
+    }
+    //å¸Ç´ïœçX
+    dir_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+    dir_ = XMVector3Normalize(dir_);
+    XMFLOAT3 m;
+    XMStoreFloat3(&m, -dir_);
+    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 }
 
 void AIPlayer::PlayerWaitStateFunc()

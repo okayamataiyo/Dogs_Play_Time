@@ -3,8 +3,9 @@
 #include "Node.h"
 
 class GameObject;
-class AIPlayerWaitAction;
 class AIPlayerAttackDecorator;
+class AIPlayerAttackSeeAction;
+class AIPlayer;
 
 class AIPlayerAttackSequence : public Node
 {
@@ -18,8 +19,13 @@ public:
 	void FailureUpdate() override;
 
 private:
-
-	AIPlayerWaitAction* pAIPlayerWaitAction_;
+	enum class NODECHILDREN
+	{
+		ATTACKSEEACTION = 0,
+		ATTACKDECORATOR,
+	}nodeChildren_;
+	AIPlayer* pAIPlayer_;
 	AIPlayerAttackDecorator* pAIPlayerAttackDecorator_;
+	AIPlayerAttackSeeAction* pAIPlayerAttackSeeAction_;
 };
 

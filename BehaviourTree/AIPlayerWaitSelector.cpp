@@ -1,24 +1,25 @@
 //インクルード
 #include "AIPlayerWaitSelector.h"
 #include "AIPlayerWaitAction.h"
-#include "AIPlayerAttackDecorator.h"
+#include "AIPlayerAttackSequence.h"
+#include "../Player/AIPlayer.h"
 #include "../Engine/Global.h"
 
 AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject)
 	:Node(_pParentNode,_pGameObject)
-	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackDecorator_{nullptr}
+	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackSequence_{nullptr},pAIPlayer_{(AIPlayer*)_pGameObject}
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
 	pAIPlayerWaitAction_ = new AIPlayerWaitAction(this, nodeData_.pGameObject_);
-	pAIPlayerAttackDecorator_ = new AIPlayerAttackDecorator(this, nodeData_.pGameObject_);
+	pAIPlayerAttackSequence_ = new AIPlayerAttackSequence(this, nodeData_.pGameObject_);
 }
 
 AIPlayerWaitSelector::~AIPlayerWaitSelector()
 {
 	SAFE_DELETE(pAIPlayerWaitAction_);
-	SAFE_DELETE(pAIPlayerAttackDecorator_);
+	SAFE_DELETE(pAIPlayerAttackSequence_);
 }
 
 void AIPlayerWaitSelector::ChoiceUpdate()
@@ -46,24 +47,28 @@ void AIPlayerWaitSelector::ReadyUpdate()
 
 void AIPlayerWaitSelector::RunningUpdate()
 {
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::READY)
+	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::READY)
 	{
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::RUNNING);
-		pAIPlayerAttackDecorator_->ChoiceUpdate();
+		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::RUNNING);
 	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::RUNNING)
+	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::RUNNING)
 	{
-		pAIPlayerAttackDecorator_->ChoiceUpdate();
+		pAIPlayerAttackSequence_->ChoiceUpdate();
+		if (!pAIPlayer_->GetIsAttackSee())
+		{
+			pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::FAILURE);
+			nodeData_.myNodeState_ = NODESTATE::FAILURE;
+		}
 	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::SUCCESS)
+	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::SUCCESS)
 	{
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
+		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::READY);
 		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
 	}
-	if (pAIPlayerAttackDecorator_->GetMyNodeState() == NODESTATE::FAILURE)
+	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::FAILURE)
 	{
 		pAIPlayerWaitAction_->ChoiceUpdate();
-		pAIPlayerAttackDecorator_->SetMyNodeState(NODESTATE::READY);
+		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::READY);
 		nodeData_.myNodeState_ = NODESTATE::FAILURE;
 	}
 	if (pAIPlayerWaitAction_->GetMyNodeState() == NODESTATE::SUCCESS)

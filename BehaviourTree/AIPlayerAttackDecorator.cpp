@@ -48,17 +48,25 @@ void AIPlayerAttackDecorator::RunningUpdate()
 	if (pAIPlayer_->GetIsAttack())
 	{
 		pAIPlayerAttackAction_->SetMyNodeState(NODESTATE::RUNNING);
-		pAIPlayerAttackAction_->ChoiceUpdate();
 		nodeData_.myNodeState_ = pAIPlayerAttackAction_->GetMyNodeState();
 	}
 	else
 	{
 		nodeData_.myNodeState_ = NODESTATE::FAILURE;
 	}
+	if (pAIPlayerAttackAction_->GetMyNodeState() == NODESTATE::RUNNING)
+	{
+		pAIPlayerAttackAction_->ChoiceUpdate();
+	}
 	if (pAIPlayerAttackAction_->GetMyNodeState() == NODESTATE::SUCCESS)
 	{
 		pAIPlayerAttackAction_->SetMyNodeState(NODESTATE::READY);
 		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+	}
+	if (pAIPlayerAttackAction_->GetMyNodeState() == NODESTATE::FAILURE)
+	{
+		pAIPlayerAttackAction_->SetMyNodeState(NODESTATE::READY);
+		nodeData_.myNodeState_ = NODESTATE::FAILURE;
 	}
 }
 

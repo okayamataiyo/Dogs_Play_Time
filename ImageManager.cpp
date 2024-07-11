@@ -262,7 +262,7 @@ void ImageManager::RightAttackDraw()
 
 void ImageManager::AddGaugeScale(float _animGauge)
 {
-	gaugeTransform_.scale_.x -= _animGauge / 120;
+	gaugeTransform_.scale_.x -= _animGauge / maxGauge_;
 }
 
 void ImageManager::SecInit()

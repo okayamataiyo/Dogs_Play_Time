@@ -60,9 +60,14 @@ private:
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
 	int coolTime_;
+	int coolTimeWait_;
 	int attackTime_;
 	int attackTimeWait_;
 	bool isAttack_;
+	int attackSeeTime_;
+	int attackSeeTimeWait_;
+	bool isAttackSee_;
+	XMVECTOR dir_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -124,6 +129,7 @@ public:
 	void UpdateGameOver();
 
 	void PlayerAttackActionFunc();
+	void PlayerAttackSeeActionFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -206,6 +212,7 @@ public:
 	bool GetIsDive() override { return diveData_.isDive_; }
 
 	bool GetIsAttack() { return isAttack_; }
+	bool GetIsAttackSee() { return isAttackSee_; }
 
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 

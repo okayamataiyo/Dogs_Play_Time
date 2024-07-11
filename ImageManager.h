@@ -70,6 +70,7 @@ private:
 	int imageHeight_;
 	int left_;
 	int width_;
+	const float maxGauge_ = 120;
 	Transform imageTransform_;
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
