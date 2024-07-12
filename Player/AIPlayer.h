@@ -59,14 +59,17 @@ private:
 	int slowTimeWait_;
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
-	int coolTime_;
-	int coolTimeWait_;
+	int waitTime_;
+	int waitTimeWait_;
 	int attackTime_;
 	int attackTimeWait_;
 	bool isAttack_;
+	bool isAttackFinish_;
 	int attackSeeTime_;
 	int attackSeeTimeWait_;
 	bool isAttackSee_;
+	bool isAttackSeeFinish_;
+	int random_value_;
 	XMVECTOR dir_;
 
 	GAMESTATE gameState_;
@@ -179,6 +182,8 @@ public:
 	/// <param name="_timeLimit">_timeLimitïbÇ‹Ç≈ÅAìÆÇ©ÇπÇ»Ç¢</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
+	void PlayerOuterWall() override;
+
 	void IsMove() override;
 
 	void IsJump() override;
@@ -212,7 +217,10 @@ public:
 	bool GetIsDive() override { return diveData_.isDive_; }
 
 	bool GetIsAttack() { return isAttack_; }
+
 	bool GetIsAttackSee() { return isAttackSee_; }
+
+	bool GetIsAttackSeeFinish() { return isAttackSeeFinish_; }
 
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 

@@ -165,6 +165,10 @@ void CollectPlayer::UpdateReady()
 
 void CollectPlayer::UpdatePlay()
 {
+    PlayerCamera();
+    PlayerFall();
+    PlayerRayCast();
+    PlayerKnockback();
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_D))
     {
@@ -205,10 +209,6 @@ void CollectPlayer::UpdatePlay()
     {
         PlayerAddScore();
     }
-    PlayerCamera();
-    PlayerFall();
-    PlayerRayCast();
-    PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
@@ -337,6 +337,11 @@ void CollectPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
     Audio::Play(hSound_[((int)SOUNDSTATE::STUN)], soundData_.soundVolume_);
+}
+
+void CollectPlayer::PlayerOuterWall()
+{
+    PlayerBase::PlayerOuterWall();
 }
 
 void CollectPlayer::OnCollision(GameObject* _pTarget)
@@ -686,6 +691,7 @@ void CollectPlayer::PlayerMove()
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)], soundData_.soundVolumeHalf_);
     }
+    PlayerOuterWall();
 }
 
 void CollectPlayer::PlayerJump()

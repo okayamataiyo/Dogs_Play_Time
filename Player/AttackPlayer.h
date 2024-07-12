@@ -168,6 +168,8 @@ public:
 	/// <param name="_timeLimit">_timeLimitïbÇ‹Ç≈ÅAìÆÇ©ÇπÇ»Ç¢</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
+	void PlayerOuterWall() override;
+
 	void IsMove() override;
 
 	void IsJump() override;

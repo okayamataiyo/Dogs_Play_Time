@@ -258,6 +258,8 @@ protected:
 	virtual void PlayerRevival();
 
 	virtual void PlayerStun(int _timeLimit = 60) = 0;
+
+	virtual void PlayerOuterWall();
 	
 	void ApplyMovement(float moveX, float moveZ);
 

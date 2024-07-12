@@ -194,6 +194,23 @@ void PlayerBase::PlayerStun(int _timeLimit)
     stunData_.stunLimit_ = _timeLimit;
 }
 
+void PlayerBase::PlayerOuterWall()
+{
+    const float outerWallPosFront = 99.0f;		//前の外壁の位置
+    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
+    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
+    const float outerWallPosRight = -99.0f;		//右の外壁の位置
+
+    if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
+    {
+        transform_.position_.z = moveData_.positionPrev_.z;
+    }
+    if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
+    {
+        transform_.position_.x = moveData_.positionPrev_.x;
+    }
+}
+
 void PlayerBase::ApplyMovement(float moveX, float moveZ)
 {
     transform_.position_.x += moveX * moveData_.padMoveSpeed_.x;

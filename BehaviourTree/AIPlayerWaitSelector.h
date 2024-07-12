@@ -5,7 +5,6 @@
 class GameObject;
 class AIPlayerWaitAction;
 class AIPlayerAttackSequence;
-class AIPlayer;
 
 class AIPlayerWaitSelector : public Node
 {
@@ -19,7 +18,6 @@ public:
 	void FailureUpdate() override;
 
 private:
-	AIPlayer* pAIPlayer_;
 	AIPlayerWaitAction* pAIPlayerWaitAction_;
 	AIPlayerAttackSequence* pAIPlayerAttackSequence_;
 };

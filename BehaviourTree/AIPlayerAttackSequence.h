@@ -5,7 +5,6 @@
 class GameObject;
 class AIPlayerAttackDecorator;
 class AIPlayerAttackSeeAction;
-class AIPlayer;
 
 class AIPlayerAttackSequence : public Node
 {
@@ -24,7 +23,6 @@ private:
 		ATTACKSEEACTION = 0,
 		ATTACKDECORATOR,
 	}nodeChildren_;
-	AIPlayer* pAIPlayer_;
 	AIPlayerAttackDecorator* pAIPlayerAttackDecorator_;
 	AIPlayerAttackSeeAction* pAIPlayerAttackSeeAction_;
 };

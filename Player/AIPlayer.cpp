@@ -1,4 +1,5 @@
 //インクルード
+#include <random>
 #include "../Engine/Input.h"
 #include "../Engine/Model.h"
 #include "../Engine/Direct3D.h"
@@ -28,9 +29,9 @@
 AIPlayer::AIPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, aIPlayerName)
     ,pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
-    , number_{ 0 }, gameState_{ GAMESTATE::READY },coolTime_{ 60 },coolTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
-    ,attackSeeTime_{30},attackSeeTimeWait_{30}, isAttack_{false},isAttackSee_{false}
-    , slowTime_{ 0 }, slowTimeWait_{ 1 }, dir_{}
+    , number_{ 0 }, gameState_{ GAMESTATE::READY },waitTime_{ 60 },waitTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
+    ,attackSeeTime_{60},attackSeeTimeWait_{60}, isAttack_{false},isAttackFinish_{false}, isAttackSee_{false}, isAttackSeeFinish_{false}
+    , slowTime_{ 0 }, slowTimeWait_{ 1 }, dir_{}, random_value_{0}
     ,pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
     ,pAttackPlayer_{nullptr}, pWoodBox_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr }, pItemObjectManager_{ nullptr }, pStateManager_{ nullptr }, pImageManager_{nullptr}
@@ -164,14 +165,16 @@ void AIPlayer::UpdateReady()
 
 void AIPlayer::UpdatePlay()
 {
+    PlayerFall();
+    PlayerRayCast();
     pAIPlayerWaitSelector_->ChoiceUpdate();
     if (pAIPlayerWaitSelector_->GetMyNodeState() == NODESTATE::READY)
     {
         pAIPlayerWaitSelector_->SetMyNodeState(NODESTATE::RUNNING);
     }
 
-    --coolTime_;
-    if (coolTime_ <= 0)
+    --waitTime_;
+    if (waitTime_ <= 0)
     {
         isAttackSee_ = true;
     }
@@ -195,7 +198,6 @@ void AIPlayer::UpdatePlay()
         }
         PlayerDive();
     }
-    PlayerRayCast();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
@@ -243,29 +245,51 @@ void AIPlayer::UpdateGameOver()
 
 void AIPlayer::PlayerAttackActionFunc()
 {
+    isAttackSeeFinish_ = false;
     --attackTime_;
     if (attackTime_ <= 0)
     {
-        coolTime_ = coolTimeWait_;
+        waitTime_ = waitTimeWait_;
         attackTime_ = attackTimeWait_;
         isAttack_ = false;
+        isAttackSee_ = false;
+        isAttackFinish_ = true;
     }
     transform_.position_.x += 0.3f * XMVectorGetX(-dir_);
     transform_.position_.z += 0.3f * XMVectorGetZ(-dir_);
-
 }
 
 void AIPlayer::PlayerAttackSeeActionFunc()
 {
+    isAttackFinish_ = false;
     --attackSeeTime_;
     if(attackSeeTime_ <= 0)
     {
         attackSeeTime_ = attackSeeTimeWait_;
-        isAttackSee_ = false;
+        isAttackSeeFinish_ = true;
         isAttack_ = true;
     }
+
+    if (waitTime_ >= 0)
+    {
+        //乱数生成器の設定
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(1, 2);
+
+        //1から2までのランダムな値の作成
+        random_value_ = dis(gen);
+    }
+
     //向き変更
-    dir_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+    if (random_value_ == 1)
+    {
+        dir_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
+    }
+    if (random_value_ == 2)
+    {
+        dir_ = (XMLoadFloat3(&transform_.position_) - pCollectPlayer_->GetVecPos());
+    }
     dir_ = XMVector3Normalize(dir_);
     XMFLOAT3 m;
     XMStoreFloat3(&m, -dir_);
@@ -306,6 +330,11 @@ void AIPlayer::PlayerStunStateFunc()
 void AIPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
+}
+
+void AIPlayer::PlayerOuterWall()
+{
+    PlayerBase::PlayerOuterWall();
 }
 
 void AIPlayer::OnCollision(GameObject* _pTarget)
@@ -398,6 +427,7 @@ void AIPlayer::PlayerFall()
 
 void AIPlayer::PlayerMove()
 {
+    PlayerOuterWall();
     PlayerBase::PlayerMove();
 }
 

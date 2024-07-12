@@ -2,12 +2,11 @@
 #include "AIPlayerWaitSelector.h"
 #include "AIPlayerWaitAction.h"
 #include "AIPlayerAttackSequence.h"
-#include "../Player/AIPlayer.h"
 #include "../Engine/Global.h"
 
 AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject)
 	:Node(_pParentNode,_pGameObject)
-	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackSequence_{nullptr},pAIPlayer_{(AIPlayer*)_pGameObject}
+	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackSequence_{nullptr}
 {
 	nodeData_.myNodeState_ = NODESTATE::READY;
 	nodeData_.pParentNode_ = _pParentNode;
@@ -54,11 +53,6 @@ void AIPlayerWaitSelector::RunningUpdate()
 	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::RUNNING)
 	{
 		pAIPlayerAttackSequence_->ChoiceUpdate();
-		if (!pAIPlayer_->GetIsAttackSee())
-		{
-			pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::FAILURE);
-			nodeData_.myNodeState_ = NODESTATE::FAILURE;
-		}
 	}
 	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::SUCCESS)
 	{

@@ -169,6 +169,10 @@ void AttackPlayer::UpdateReady()
 
 void AttackPlayer::UpdatePlay()
 {
+    PlayerCamera();
+    PlayerFall();
+    PlayerRayCast();
+    PlayerKnockback();
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_A))
     {
@@ -219,11 +223,6 @@ void AttackPlayer::UpdatePlay()
             PlayerAddScore();
         }
     }
-
-    PlayerCamera();
-    PlayerFall();
-    PlayerRayCast();
-    PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
@@ -353,6 +352,11 @@ void AttackPlayer::PlayerStunStateFunc()
 void AttackPlayer::PlayerStun(int _timeLimit)
 {
     PlayerBase::PlayerStun(_timeLimit);
+}
+
+void AttackPlayer::PlayerOuterWall()
+{
+    PlayerBase::PlayerOuterWall();
 }
 
 void AttackPlayer::OnCollision(GameObject* _pTarget)
@@ -665,20 +669,6 @@ void AttackPlayer::PlayerMove()
         ApplyMovement(minusDir, minusDir);
     }
 
-    const float outerWallPosFront = 99.0f;		//前の外壁の位置
-    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
-    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
-    const float outerWallPosRight = -99.0f;		//右の外壁の位置
-
-    if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
-    {
-        transform_.position_.z = moveData_.positionPrev_.z;
-    }
-    if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
-    {
-        transform_.position_.x = moveData_.positionPrev_.x;
-    }
-
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
     {
         XMVECTOR vecCam = {};
@@ -699,6 +689,7 @@ void AttackPlayer::PlayerMove()
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)],soundData_.soundVolumeHalf_);
     }
+    PlayerOuterWall();
 }
 
 void AttackPlayer::PlayerJump()
