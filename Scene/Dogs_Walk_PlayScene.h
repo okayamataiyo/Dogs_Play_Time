@@ -21,6 +21,7 @@ namespace
 class SceneManager;
 class AttackPlayer;
 class CollectPlayer;
+class AIPlayer;
 class ItemObjectManager;
 class StageObjectManager;
 class ImageManager;
@@ -58,8 +59,6 @@ private:
     float vecLengthRecedes_;
     float vecLengthApproach_;
     int woodBoxCountMax_;
-    int mousePosX_;
-    int mousePosY_;
     int changeScore_;
     XMFLOAT3 camVec_[2];
     Transform floorPosition_[3];
@@ -103,6 +102,7 @@ private:
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
     CollectPlayer* pCollectPlayer_;
+    AIPlayer* pAIPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
     ImageManager* pImageManager_;

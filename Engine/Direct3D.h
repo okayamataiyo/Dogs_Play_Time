@@ -4,7 +4,13 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <map>
+#include <functional>
+#include <string>
 
+using std::map;
+using std::function;
+using std::string;
 //リンカ
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -25,6 +31,10 @@ namespace Direct3D
 	//【コンテキスト】
 	//GPUに命令を出すためのやつ
 	extern ID3D11DeviceContext*    pContext_;
+
+	extern int FPS;
+
+	extern int GetFPS();
 
 	//■シェーダー関連で必要なセット
 	enum SHADER_TYPE
@@ -92,6 +102,8 @@ namespace Direct3D
 	extern int		viewPortType_;		//ビューポートの種類
 
 	////////////////////////ここからは関数///////////////////////////////
+
+	extern map<string, function<double(double)>> EaseFunc;
 
 	//初期化処理
 	//引数：hWnd			ウィンドウハンドル

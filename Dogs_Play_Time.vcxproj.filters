@@ -48,6 +48,9 @@
     <Filter Include="State">
       <UniqueIdentifier>{99395ec2-5ef2-4efd-b9a5-1ebca1506df9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BehaviourTree">
+      <UniqueIdentifier>{fb085fe0-7545-4ceb-927f-35e3080c25a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -219,6 +222,30 @@
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="Player\AIPlayer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="State\AIPlayerState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -408,6 +435,33 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="Player\AIPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="State\AIPlayerState.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\Node.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

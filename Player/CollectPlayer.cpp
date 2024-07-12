@@ -25,16 +25,16 @@
 #include "../UIManager.h"
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
+#include "AIPlayer.h"
 
 CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
     , number_{ 0 }, gameState_{GAMESTATE::READY},attackOrCollectInverse_{0}
-    , pParent_{ nullptr }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr }, pCollision_{ nullptr }
-    , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pText_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
+    , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr },pAIPlayer_{nullptr}, pCollision_{nullptr}
+    , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr},pBoneImageManager_{nullptr}
     ,pParticleManager_{nullptr}
 {
-    pParent_ = _pParent;
 }
 
 CollectPlayer::~CollectPlayer()
@@ -84,8 +84,6 @@ void CollectPlayer::Initialize()
     pStateManager_->AddState("JumpState", new CollectPlayerJumpState(pStateManager_));
     pStateManager_->AddState("StunState", new CollectPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
-    pText_ = new Text;
-    pText_->Initialize();
     if (attackOrCollectInverse_ == (int)PADIDSTATE::FIRST)
     {
         gameData_.padID_ = (int)PADIDSTATE::FIRST;
@@ -167,6 +165,10 @@ void CollectPlayer::UpdateReady()
 
 void CollectPlayer::UpdatePlay()
 {
+    PlayerCamera();
+    PlayerFall();
+    PlayerRayCast();
+    PlayerKnockback();
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_D))
     {
@@ -186,7 +188,10 @@ void CollectPlayer::UpdatePlay()
         int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
-        pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+        if (pBoneSuck_ != nullptr)
+        {
+            pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+        }
         SetKillTime(boneData_.killTimeWait_);
     }
 
@@ -202,12 +207,8 @@ void CollectPlayer::UpdatePlay()
     gameData_.scoreTimeCounter_++;
     if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
     {
-        PlayerScore();
+        PlayerAddScore();
     }
-    PlayerCamera();
-    PlayerFall();
-    PlayerRayCast();
-    PlayerKnockback();
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
@@ -261,7 +262,7 @@ void CollectPlayer::UpdatePlay()
 
     if (boneData_.killTime_ <= 0 && boneData_.isBoneTatch_)
     {
-        PlayerScore();
+        PlayerAddScore();
         if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
         {
             pDogs_Walk_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
@@ -338,6 +339,11 @@ void CollectPlayer::PlayerStun(int _timeLimit)
     Audio::Play(hSound_[((int)SOUNDSTATE::STUN)], soundData_.soundVolume_);
 }
 
+void CollectPlayer::PlayerOuterWall()
+{
+    PlayerBase::PlayerOuterWall();
+}
+
 void CollectPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
@@ -408,26 +414,186 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
 
     if (_pTarget->GetObjectName() == attackPlayerName)
     {
-        PlayerStun(stunData_.hitStopTime_);
+        PlayerStun(stunData_.stunTime_);
         stunData_.isKnockBack_ = true;
         stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAttackPlayer_->GetVecPos());
         stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
         if (boneData_.killTime_ < boneData_.killTimeMax_)
         {
-            pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+            if (pBoneSuck_ != nullptr)
+            {
+                pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+            }
+            SetKillTime(boneData_.killTimeWait_);
+        }
+    }
+
+    if (_pTarget->GetObjectName() == aIPlayerName)
+    {
+        PlayerStun(stunData_.stunTime_);
+        stunData_.isKnockBack_ = true;
+        stunData_.vecKnockbackDirection_ = (XMLoadFloat3(&transform_.position_) - pAIPlayer_->GetVecPos());
+        stunData_.vecKnockbackDirection_ = XMVector3Normalize(stunData_.vecKnockbackDirection_);
+        if (boneData_.killTime_ < boneData_.killTimeMax_)
+        {
+            if (pBoneSuck_ != nullptr)
+            {
+                pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
+            }
             SetKillTime(boneData_.killTimeWait_);
         }
     }
 }
 
-void CollectPlayer::PlayerScore()
+void CollectPlayer::PlayerAddScore()
 {
-    PlayerBase::PlayerScore();
+    PlayerBase::PlayerAddScore();
 }
 
 void CollectPlayer::PlayerCamera()
 {
     PlayerBase::PlayerCamera();
+    struct float2
+    {
+        float x, y;
+    };
+
+    struct XMMATRIX2
+    {
+        XMMATRIX x, y;
+    };
+    static float2 padRotMove = {};
+    float2 sigmaRot = {};
+    XMMATRIX2 mat2Rot = {};
+    XMMATRIX matRot = {};
+    float deadZone = 0.8f;
+    XMVECTOR vecDir = {};
+    XMFLOAT3 floDir_ = {};
+    float floCameraLen = 30.0f;
+    float floKnockbackLenRecedes = 5.0f;
+    XMFLOAT3 mouseMove = Input::GetMouseMove();
+    XMFLOAT3 padStickR = {};
+    padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
+    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
+    {
+        if (moveData_.camUpFlag_ == false)
+        {
+            moveData_.camUpFlag_ = true;
+            moveData_.CamPosYNum_ -= 1;
+        }
+    }
+    else
+    {
+        moveData_.camUpFlag_ = false;
+    }
+    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
+    {
+        if (moveData_.camDownFlag_ == false)
+        {
+            moveData_.camDownFlag_ = true;
+            moveData_.CamPosYNum_ += 1;
+        }
+    }
+    else
+    {
+        moveData_.camDownFlag_ = false;
+    }
+    if (moveData_.CamPosYNum_ <= 0)
+    {
+        moveData_.CamPosYNum_ = 0;
+    }
+    if (moveData_.CamPosYNum_ >= 4)
+    {
+        moveData_.CamPosYNum_ = 3;
+    }
+    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
+    const float padSens = 25;
+    const float floLenRecedes = 1.0f;
+    const float floLenApproach = 1.0f;
+    const float degreesMin = 0.0f;
+    const float degreesMax = -88.0f;
+    const float degreesToRadians = 3.14f / 180.0f;
+    padRotMove.x = padStickR.x;
+    padRotMove.y = -padStickR.y;
+
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
+    {
+        if (moveData_.camZForwardFlag_ == false)
+        {
+            moveData_.camZForwardFlag_ = true;
+            moveData_.CamPosZNum_ -= 1;
+        }
+    }
+    else
+    {
+        moveData_.camZForwardFlag_ = false;
+    }
+    if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_DOWN, gameData_.padID_))
+    {
+        if (moveData_.camZBackFlag_ == false)
+        {
+            moveData_.camZBackFlag_ = true;
+            moveData_.CamPosZNum_ += 1;
+        }
+    }
+    else
+    {
+        moveData_.camZBackFlag_ = false;
+    }
+    if (moveData_.CamPosZNum_ <= 0)
+    {
+        moveData_.CamPosZNum_ = 0;
+    }
+    if (moveData_.CamPosZNum_ >= 4)
+    {
+        moveData_.CamPosZNum_ = 3;
+    }
+    moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
+    vecDir = vecFront;
+    dirData_.vecCam_.x += padRotMove.y / padSens;
+    dirData_.vecCam_.y += padRotMove.x / padSens;
+
+    sigmaRot.y = dirData_.vecCam_.y;
+    sigmaRot.x = -dirData_.vecCam_.x;
+
+    if (sigmaRot.x > degreesMin * degreesToRadians)
+    {
+        sigmaRot.x = degreesMin;
+        dirData_.vecCam_.x -= padRotMove.y / padSens;
+    }
+    if (sigmaRot.x < degreesMax * degreesToRadians)
+    {
+        sigmaRot.x = degreesMax * degreesToRadians;
+        dirData_.vecCam_.x -= padRotMove.y / padSens;
+    }
+
+    mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
+    mat2Rot.y = XMMatrixRotationY(sigmaRot.y);
+
+    matRot = mat2Rot.x * mat2Rot.y;
+    vecDir = XMVector3Transform(vecDir, matRot);
+    vecDir = XMVector3Normalize(vecDir);
+    if (stunData_.isStun_)
+    {
+        static int floCameraLenPrev = floCameraLen;
+        if (floCameraLen <= floCameraLenPrev + floKnockbackLenRecedes)
+        {
+            ++floCameraLen;
+        }
+    }
+    else
+    {
+        static int floCameraLenPrev = floCameraLen;
+        if (floCameraLen >= floCameraLenPrev - floKnockbackLenRecedes)
+        {
+            --floCameraLen;
+        }
+    }
+    vecDir *= moveData_.floLen_ + floCameraLen;
+    vecDir += XMLoadFloat3(&transform_.position_);
+    XMStoreFloat3(&floDir_, vecDir);
+    Camera::SetPosition(floDir_, gameData_.padID_);
+    Camera::SetTarget(transform_.position_, gameData_.padID_);
 }
 
 void CollectPlayer::PlayerFall()
@@ -439,6 +605,72 @@ void CollectPlayer::PlayerMove()
 {
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     PlayerBase::PlayerMove();
+    const float walkSpeed = 0.4f;
+    const float runSpeed = 0.6f;
+    // プレイヤーの移動処理
+    if (!moveData_.isRun_)
+    {
+        moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
+    }
+    else
+    {
+        moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
+    }
+    //向き変更
+    XMFLOAT3 m;
+    XMStoreFloat3(&m, dirData_.vecMove_);
+    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
+    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+
+    float pi = 3.14f;					//円周率
+    float halfPi = pi / 2;				//円周率の半分
+
+    //XMConvertToRadians = degree角をradian角に(ただ)変換する
+    //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
+    const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
+    dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
+    dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
+
+    const float deadZone = 0.3f;		//コントローラーのデットゾーン
+    const float plusDir = 1.0f;
+    const float minusDir = -1.0f;
+    moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
+    moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
+    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
+    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
+    {
+        ApplyMovement(plusDir, plusDir);
+    }
+    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
+    {
+        ApplyMovement(minusDir, minusDir);
+    }
+    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
+    {
+        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        ApplyMovement(plusDir, plusDir);
+    }
+    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
+    {
+        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        ApplyMovement(minusDir, minusDir);
+    }
+
+    const float outerWallPosFront = 99.0f;		//前の外壁の位置
+    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
+    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
+    const float outerWallPosRight = -99.0f;		//右の外壁の位置
+
+    if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
+    {
+        transform_.position_.z = moveData_.positionPrev_.z;
+    }
+    if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
+    {
+        transform_.position_.x = moveData_.positionPrev_.x;
+    }
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
     {
         XMVECTOR vecCam = {};
@@ -459,6 +691,7 @@ void CollectPlayer::PlayerMove()
         Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
         Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)], soundData_.soundVolumeHalf_);
     }
+    PlayerOuterWall();
 }
 
 void CollectPlayer::PlayerJump()
@@ -626,6 +859,10 @@ void CollectPlayer::IsStun()
 void CollectPlayer::IsDive()
 {
     PlayerBase::IsDive();
+    if (Input::GetPadTrrigerR(gameData_.padID_))
+    {
+        diveData_.isDive_ = true;
+    }
 }
 
 void CollectPlayer::SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed)

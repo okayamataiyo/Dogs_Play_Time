@@ -8,7 +8,6 @@ namespace Model
 	std::vector<ModelData*>	_datas;
 
 	int prevNum = 0;
-
 	//初期化
 	void Initialize()
 	{
@@ -65,8 +64,6 @@ namespace Model
 			return (int)_datas.size() - 1;
 	}
 
-
-
 	//描画
 	void Draw(int handle)
 	{
@@ -74,7 +71,6 @@ namespace Model
 		{
 			return;
 		}
-
 		//アニメーションを進める
 		_datas[handle]->nowFrame += _datas[handle]->animSpeed;
 
@@ -89,7 +85,6 @@ namespace Model
 			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame);
 		}
 	}
-
 
 	//任意のモデルを開放
 	void Release(int handle)
@@ -150,7 +145,6 @@ namespace Model
 		}
 		prevNum = _num;
 	}
-
 	//現在のアニメーションのフレームを取得
 	int GetAnimFrame(int handle)
 	{

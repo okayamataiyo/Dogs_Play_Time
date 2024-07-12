@@ -112,7 +112,7 @@ void ActorCollectPlayer::OnCollision(GameObject* _pTarget)
 {
 }
 
-void ActorCollectPlayer::PlayerScore()
+void ActorCollectPlayer::PlayerAddScore()
 {
 }
 
@@ -134,9 +134,11 @@ void ActorCollectPlayer::PlayerFall()
 void ActorCollectPlayer::PlayerMove()
 {
     PlayerBase::PlayerMove();
-    
-    transform_.position_.x += moveData_.padMoveSpeed_.x;
-    transform_.position_.z += moveData_.padMoveSpeed_.z;
+    if (!isSelect_)
+    {
+        transform_.position_.x += moveData_.padMoveSpeed_.x;
+        transform_.position_.z += moveData_.padMoveSpeed_.z;
+    }
 }
 
 void ActorCollectPlayer::PlayerJump()

@@ -70,6 +70,7 @@ private:
 	int imageHeight_;
 	int left_;
 	int width_;
+	const float maxGauge_ = 120;
 	Transform imageTransform_;
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
@@ -102,7 +103,7 @@ public:
 
 	void SetGaugeMode(int _mode);
 
-	void AddGaugeScale(float _v);
+	void AddGaugeScale(float _animGauge);
 
 	void AddValue(float _v);
 

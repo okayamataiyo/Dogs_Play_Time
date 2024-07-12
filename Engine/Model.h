@@ -11,6 +11,7 @@
 //-----------------------------------------------------------
 namespace Model
 {
+
 	//モデル情報
 	struct ModelData
 	{
@@ -26,7 +27,6 @@ namespace Model
 		//アニメーションのフレーム
 		float nowFrame, animSpeed;
 		int startFrame, endFrame;
-
 
 		//初期化
 		ModelData() : pFbx(nullptr), nowFrame(0), startFrame(0), endFrame(0), animSpeed(0)

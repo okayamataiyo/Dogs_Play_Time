@@ -16,9 +16,10 @@
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent,Dogs_Fight_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}
 	,stageBlockNum_{3},lengthRecedes_{5},degreesMin_{0.0f},degreesMax_{-88.0f},degreesToRadians_{3.14f / 180.0f},vecLengthRecedes_{1.0f},vecLengthApproach_{1.0f}
-	,woodBoxCountMax_{5},mousePosX_{600},mousePosY_{600},changeScore_{100},hSound_{-1,-1,-1,-1}
+	,woodBoxCountMax_{5},changeScore_{100},hSound_{-1,-1,-1,-1}
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
+	,isPause_{nullptr}
 	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
 	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pAttackImageManager_{nullptr},pCollectImageManager_{nullptr}
 {
@@ -102,7 +103,7 @@ void Dogs_Fight_PlayScene::Update()
 {
 	if (pAttackPlayer_->GetIsBoneTatch())
 	{
-		pAttackImageManager_->AddGaugeScale(0.102f);
+		pCollectImageManager_->AddGaugeScale(0.102f);
 	}
 	if (pCollectPlayer_->GetIsBoneTatch())
 	{
@@ -125,14 +126,9 @@ void Dogs_Fight_PlayScene::Update()
 	attackPlayerPosition_.x += woodBoxFrontPosition_ * XMVectorGetX(attackPlayerDirection_);
 	attackPlayerPosition_.y += -2.0f;
 	attackPlayerPosition_.z += woodBoxFrontPosition_ * XMVectorGetZ(attackPlayerDirection_);
-	static bool isPause = false;
 	if (Input::IsKeyDown(DIK_P))
 	{
-		isPause = !isPause;
-	}
-	if (!isPause)
-	{
-		SetCursorPos(mousePosX_, mousePosY_);
+		isPause_ = !isPause_;
 	}
 	HideCursor();
 	BoneSummons();

@@ -6,10 +6,10 @@
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
 class CollectPlayer;
-class AIPlayer;
+class AttackPlayer;
 class SphereCollider;
 class WoodBox;
-class BoneSuck;
+class Text;
 class Stage;
 class Floor;
 class SceneManager;
@@ -18,10 +18,11 @@ class StateManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
+class AIPlayerWaitSelector;
 
 namespace
 {
-	std::string soundAttackPlayerNames[] =
+	std::string soundAIPlayerNames[] =
 	{
 		"Stun",
 		"Walk",
@@ -29,13 +30,13 @@ namespace
 		"Run",
 	};
 
-	std::string attackPlayerName = "AttackPlayer";
+	std::string aIPlayerName = "AIPlayer";
 }
 
 /// <summary>
 /// 邪魔するプレイヤーを管理するクラス
 /// </summary>
-class AttackPlayer : public PlayerBase
+class AIPlayer : public PlayerBase
 {
 private:
 
@@ -54,21 +55,31 @@ private:
 	int stageHModel_;				//ステージモデル番号
 	int floorHModel_;				//すり抜け床モデル番号
 	int number_;
-	int attackOrCollect_;
 	int slowTime_;
 	int slowTimeWait_;
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
+	int waitTime_;
+	int waitTimeWait_;
+	int attackTime_;
+	int attackTimeWait_;
+	bool isAttack_;
+	bool isAttackFinish_;
+	int attackSeeTime_;
+	int attackSeeTimeWait_;
+	bool isAttackSee_;
+	bool isAttackSeeFinish_;
+	int random_value_;
+	XMVECTOR dir_;
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	CollectPlayer* pCollectPlayer_;
-	AIPlayer* pAIPlayer_;
+	AttackPlayer* pAttackPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
-	BoneSuck* pBoneSuck_;
 	Stage* pStage_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
@@ -77,18 +88,19 @@ private:
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
+	AIPlayerWaitSelector* pAIPlayerWaitSelector_;
 public:
 
 	/// <summary>
 	/// コンストラクタ関数
 	/// </summary>
 	/// <param name="_parent">親の名前</param>
-	AttackPlayer(GameObject* _pParent);
+	AIPlayer(GameObject* _pParent);
 
 	/// <summary>
 	/// デストラクタ関数
 	/// </summary>
-	~AttackPlayer();
+	~AIPlayer();
 
 	/// <summary>
 	/// 初期化関数
@@ -119,6 +131,8 @@ public:
 	void UpdatePlay();
 	void UpdateGameOver();
 
+	void PlayerAttackActionFunc();
+	void PlayerAttackSeeActionFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -186,7 +200,7 @@ public:
 
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
 
-	void SetAIPlayer(AIPlayer* _pAIPlayer) { pAIPlayer_ = _pAIPlayer; }
+	void SetAttackPlayer(AttackPlayer* _pAttackPlayer) { pAttackPlayer_ = _pAttackPlayer; }
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 
@@ -201,6 +215,12 @@ public:
 	bool GetIsStun() override { return stunData_.isStun_; }
 
 	bool GetIsDive() override { return diveData_.isDive_; }
+
+	bool GetIsAttack() { return isAttack_; }
+
+	bool GetIsAttackSee() { return isAttackSee_; }
+
+	bool GetIsAttackSeeFinish() { return isAttackSeeFinish_; }
 
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
 

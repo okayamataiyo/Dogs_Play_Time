@@ -132,6 +132,12 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -173,6 +179,7 @@
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Player\ActorAttackPlayer.cpp" />
     <ClCompile Include="Player\ActorCollectPlayer.cpp" />
+    <ClCompile Include="Player\AIPlayer.cpp" />
     <ClCompile Include="Player\AttackPlayer.cpp" />
     <ClCompile Include="Player\CollectPlayer.cpp" />
     <ClCompile Include="Player\PlayerBase.cpp" />
@@ -187,12 +194,20 @@
     <ClCompile Include="StageObject\Stage.cpp" />
     <ClCompile Include="StageObject\StageBlock.cpp" />
     <ClCompile Include="StageObject\StageObjectManager.cpp" />
+    <ClCompile Include="State\AIPlayerState.cpp" />
     <ClCompile Include="State\AttackPlayerState.cpp" />
     <ClCompile Include="State\CollectPlayerState.cpp" />
     <ClCompile Include="State\StateManager.cpp" />
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h" />
+    <ClInclude Include="BehaviourTree\Node.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
@@ -238,6 +253,7 @@
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Player\ActorAttackPlayer.h" />
     <ClInclude Include="Player\ActorCollectPlayer.h" />
+    <ClInclude Include="Player\AIPlayer.h" />
     <ClInclude Include="Player\AttackPlayer.h" />
     <ClInclude Include="Player\CollectPlayer.h" />
     <ClInclude Include="Player\PlayerBase.h" />
@@ -253,6 +269,7 @@
     <ClInclude Include="StageObject\StageBlock.h" />
     <ClInclude Include="StageObject\StageObjectBase.h" />
     <ClInclude Include="StageObject\StageObjectManager.h" />
+    <ClInclude Include="State\AIPlayerState.h" />
     <ClInclude Include="State\AttackPlayerState.h" />
     <ClInclude Include="State\CollectPlayerState.h" />
     <ClInclude Include="State\StateBase.h" />

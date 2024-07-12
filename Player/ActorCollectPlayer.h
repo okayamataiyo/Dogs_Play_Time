@@ -45,7 +45,7 @@ public:
 
 	void OnCollision(GameObject* _pTarget)override;
 
-	void PlayerScore() override;
+	void PlayerAddScore() override;
 
 	void PlayerCamera() override;
 

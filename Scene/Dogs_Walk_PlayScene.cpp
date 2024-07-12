@@ -6,6 +6,7 @@
 #include "../Engine/Audio.h"
 #include "../Player/AttackPlayer.h"
 #include "../Player/CollectPlayer.h"
+#include "../Player/AIPlayer.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/FrameBox.h"
 #include "../ItemObject/BoneSuck.h"
@@ -17,12 +18,12 @@
 Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent, Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
 	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
-	, woodBoxCountMax_{5}, mousePosX_{600}, mousePosY_{600}, changeScore_{100}, hSound_{-1,-1,-1}
+	, woodBoxCountMax_{5}, changeScore_{100}, hSound_{-1,-1,-1}
 	, random_value_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}
 	, collectPlayerPosition_{}, collectPlayerDirection_{},boneFrontPosition_{2.0f}, woodBoxCount_{0}
 	, attackPlayerPosition_{}, attackPlayerDirection_{},woodBoxFrontPosition_{10.0f},time_{1.0f}, isGameStop_{false}
 	,pSceneManager_{nullptr}, pAttackPlayer_{nullptr}, pCollectPlayer_{nullptr}, pItemObjectManager_{nullptr}, pStageObjectManager_{nullptr}
-	,pImageManager_{nullptr}
+	,pImageManager_{nullptr},pAIPlayer_{nullptr}
 {
 
 }
@@ -68,18 +69,21 @@ void Dogs_Walk_PlayScene::Initialize()
 
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
-
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
 	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
+	pAIPlayer_ = Instantiate<AIPlayer>(this);
 	camVec_[attackOrCollectInverse_] = XMFLOAT3(0, 5, -10);
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX,DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
+	pAttackPlayer_->SetAIPlayer(pAIPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
-	XMFLOAT3 firstPPos = { -3,0,0 };
-	XMFLOAT3 secondsPPos = { 3,0,0 };
-	pAttackPlayer_->SetPosition(firstPPos);
-	pCollectPlayer_->SetPosition(secondsPPos);
+	pCollectPlayer_->SetAIPlayer(pAIPlayer_);
+	pAIPlayer_->SetCollectPlayer(pCollectPlayer_);
+	pAIPlayer_->SetAttackPlayer(pAttackPlayer_);
+	pAttackPlayer_->SetPosition(XMFLOAT3(3,0,0));
+	pCollectPlayer_->SetPosition(XMFLOAT3(-3,0,0));
+	pAIPlayer_->SetPosition(XMFLOAT3(0,0,-6));
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 
@@ -98,7 +102,7 @@ void Dogs_Walk_PlayScene::Initialize()
 
 void Dogs_Walk_PlayScene::Update()
 {
-	pImageManager_->AddGaugeScale(0.1f);
+	pImageManager_->AddGaugeScale(0.08f);
 	if((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
@@ -127,10 +131,6 @@ void Dogs_Walk_PlayScene::Update()
 	if (Input::IsKeyDown(DIK_P))
 	{
 		isPause = !isPause;
-	}
-	if (!isPause)
-	{
-		SetCursorPos(mousePosX_, mousePosY_);
 	}
 	HideCursor();
 	BoneSummons();

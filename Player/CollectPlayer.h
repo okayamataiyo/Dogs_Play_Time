@@ -6,10 +6,10 @@
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
 class AttackPlayer;
+class AIPlayer;
 class SphereCollider;
 class WoodBox;
 class BoneSuck;
-class Text;
 class Stage;
 class StageBlock;
 class Floor;
@@ -64,10 +64,10 @@ private:
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
 	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	AttackPlayer* pAttackPlayer_;
+	AIPlayer* pAIPlayer_;
 	SphereCollider* pCollision_;
 	WoodBox* pWoodBox_;
 	BoneSuck* pBoneSuck_;
-	Text* pText_;
 	Stage* pStage_;
 	StageBlock* pStageBlock_;
 	Floor* pFloor_;
@@ -129,7 +129,7 @@ public:
 	/// <param name="_pTarget">ìñÇΩÇ¡ÇΩëäéË</param>
 	void OnCollision(GameObject* _pTarget) override;
 
-	void PlayerScore() override;
+	void PlayerAddScore() override;
 
 	void PlayerCamera() override;
 
@@ -166,6 +166,8 @@ public:
 	/// <param name="_timeLimit">_timeLimitïbÇ‹Ç≈ÅAìÆÇ©ÇπÇ»Ç¢</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
+	void PlayerOuterWall() override;
+
 	void IsMove() override;
 
 	void IsJump() override;
@@ -181,6 +183,8 @@ public:
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
 
 	void SetAttackPlayer(AttackPlayer* _pAttackPlayer) { pAttackPlayer_ = _pAttackPlayer; }
+
+	void SetAIPlayer(AIPlayer* _pAIPlayer) { pAIPlayer_ = _pAIPlayer; }
 
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
 

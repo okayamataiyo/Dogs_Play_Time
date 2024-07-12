@@ -58,8 +58,6 @@ private:
     float vecLengthRecedes_;
     float vecLengthApproach_;
     int woodBoxCountMax_;
-    int mousePosX_;
-    int mousePosY_;
     int changeScore_;
     XMFLOAT3 camVec_[2];
     Transform floorPosition_[3];
@@ -79,6 +77,7 @@ private:
     //▼演出で使うメンバ変数
     int time_;                         //時間を表す
     bool isGameStop_;                  //ゲームが止まったか
+    bool isPause_;
 
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;

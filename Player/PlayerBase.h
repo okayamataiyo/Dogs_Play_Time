@@ -4,7 +4,8 @@
 
 namespace
 {
-	enum class PLAYERSTATE {
+	enum class PLAYERSTATE
+	{
 		COLLECTPLAYER = 0,
 		ATTACKPLAYER,
 		PLAYERNUM
@@ -60,12 +61,19 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
-		const float CamPos_[4] = { 0.1f,0.3f,0.8f,1.4f };
-		int CamPosNum_;
-		bool i_;
-		bool j_;
+		const float CamPosY_[4] = { 0.1f,0.3f,0.8f,1.4f };
+		int CamPosYNum_;
+		bool camUpFlag_;
+		bool camDownFlag_;
+		const float CamPosZ_[4] = { -5.0f,10.0f,20.0f,30.0f };
+		int CamPosZNum_;
+		float floLen_;
+		bool camZForwardFlag_;
+		bool camZBackFlag_;
+
 		MoveData()
 			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
+			,CamPosYNum_{0},CamPosZNum_{0},floLen_{0.0f}
 		{
 
 		}
@@ -145,14 +153,14 @@ protected:
 	{
 		int stunTimeCounter_;	//スタンしてからどのくらい経ったか
 		int stunLimit_;		//スタンしている時間
-		int hitStopTime_;		//ヒットストップの時間
+		int stunTime_;		//ヒットストップの時間
 		int getUpTime_;		//スタンしてから起き上がる時間
 		float knockbackSpeed_;
 		XMVECTOR vecKnockbackDirection_;
 		bool isStun_;		//スタンしているかどうか
 		bool isKnockBack_;	//ノックバックしているかどうか
 		StunData()
-			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, hitStopTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.3f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
+			:stunTimeCounter_{ 0 }, stunLimit_{ 0 }, stunTime_{ 10 }, getUpTime_{ 30 }, knockbackSpeed_{ 0.8f }, vecKnockbackDirection_{}, isStun_{ false }, isKnockBack_{ false }
 		{
 
 		}
@@ -227,7 +235,7 @@ protected:
 	virtual void PlayerJumpStateFunc();
 	virtual void PlayerStunStateFunc();
 
-	virtual void PlayerScore();
+	virtual void PlayerAddScore();
 
 	virtual void PlayerCamera();
 
@@ -250,6 +258,8 @@ protected:
 	virtual void PlayerRevival();
 
 	virtual void PlayerStun(int _timeLimit = 60) = 0;
+
+	virtual void PlayerOuterWall();
 	
 	void ApplyMovement(float moveX, float moveZ);
 
@@ -265,7 +275,7 @@ protected:
 
 	virtual void SetVecPos(XMVECTOR _vecMove) = 0;
 
-	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f);
+	virtual void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.3f);
 
 	virtual bool GetIsMove() = 0;
 

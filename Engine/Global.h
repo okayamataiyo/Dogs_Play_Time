@@ -25,8 +25,15 @@ namespace
 		DOGSFIGHT,
 	};
 
+	enum class SLOWSTATE
+	{
+		DEFAULT = 1,
+		SLOW = 3,
+	};
+
 	int PlayerScore_[2] = { 0,0 };
 	int winOrLose_ = (int)WINORLOSE::WIN;
+
 }
 
 //安全にメモリを開放するためのマクロ
@@ -70,7 +77,6 @@ static std::string modelModifierName = ".fbx";
 static std::string imageModifierName = ".png";
 static std::string iniFolderName = "Setting/";
 static std::string iniModifierName = ".ini";
-
 // INIファイルからfloatを取得する関数
 static float GetPrivateProfileFloat(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpDefault, LPCTSTR lpFileName)
 {
