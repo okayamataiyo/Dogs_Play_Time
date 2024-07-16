@@ -45,6 +45,8 @@ AIPlayer::~AIPlayer()
 
 void AIPlayer::Initialize()
 {
+    //▼INIファイルからデータのロード
+    gameData_.walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
     //▼サウンドデータのロード
     std::string soundName;
     for (int i = 0; i < sizeof(soundAIPlayerNames) / sizeof(soundAIPlayerNames[initZeroInt]); i++)

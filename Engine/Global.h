@@ -34,6 +34,13 @@ namespace
 	int PlayerScore_[2] = { 0,0 };
 	int winOrLose_ = (int)WINORLOSE::WIN;
 
+	enum class PLAYERNUMSTATE
+	{
+		ATTACKPLAYER = 0,
+		COLLECTPLAYER,
+		AIPLAYER,
+		PLAYERNUM,
+	};
 }
 
 //安全にメモリを開放するためのマクロ

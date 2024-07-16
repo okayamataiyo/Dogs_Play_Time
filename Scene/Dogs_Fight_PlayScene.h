@@ -20,6 +20,7 @@ namespace
 class SceneManager;
 class AttackPlayer;
 class CollectPlayer;
+class AIPlayer;
 class ItemObjectManager;
 class StageObjectManager;
 class ImageManager;
@@ -61,6 +62,7 @@ private:
     int changeScore_;
     XMFLOAT3 camVec_[2];
     Transform floorPosition_[3];
+    XMFLOAT3 playerFirstPos_[(int)PLAYERNUMSTATE::PLAYERNUM];
     float length_;
     //▼サウンドに関するメンバ変数
     int hSound_[(int)SOUNDSTATE::MAX];
@@ -82,6 +84,7 @@ private:
     SceneManager* pSceneManager_;
     AttackPlayer* pAttackPlayer_;
     CollectPlayer* pCollectPlayer_;
+    AIPlayer* pAIPlayer_;
     ItemObjectManager* pItemObjectManager_;
     StageObjectManager* pStageObjectManager_;
     ImageManager* pAttackImageManager_;

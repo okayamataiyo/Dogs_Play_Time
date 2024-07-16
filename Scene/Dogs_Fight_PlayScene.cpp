@@ -5,6 +5,7 @@
 #include "../Engine/Audio.h"
 #include "../Player/AttackPlayer.h"
 #include "../Player/CollectPlayer.h"
+#include "../Player/AIPlayer.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/FrameBox.h"
 #include "../ItemObject/BoneSuck.h"
@@ -20,7 +21,7 @@ Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	, random_value_{ 0 },soundVolume_{0.05f},soundVolumeHalf_{soundVolume_ / 2.0f},length_{30.0f},boneCount_{0}
 	, woodBoxCount_{ 0 }, attackPlayerPosition_{}, attackPlayerDirection_{}, woodBoxFrontPosition_{ 10.0f }, isGameStop_{ false }
 	,isPause_{nullptr}
-	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr }
+	, pSceneManager_{ nullptr }, pAttackPlayer_{ nullptr }, pCollectPlayer_{ nullptr },pAIPlayer_{nullptr}
 	, pItemObjectManager_{ nullptr }, pStageObjectManager_{ nullptr },pAttackImageManager_{nullptr},pCollectImageManager_{nullptr}
 {
 }
@@ -71,13 +72,20 @@ void Dogs_Fight_PlayScene::Initialize()
 	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
 	camVec_[attackOrCollectInverse_] = XMFLOAT3(0, 5, -10);
+	pAIPlayer_ = Instantiate<AIPlayer>(this);
 	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX, DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
+	pAttackPlayer_->SetAIPlayer(pAIPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
-	XMFLOAT3 firstPPos = { -3,0,0 };
-	XMFLOAT3 secondsPPos = { 3,0,0 };
-	pAttackPlayer_->SetPosition(firstPPos);
-	pCollectPlayer_->SetPosition(secondsPPos);
+	pCollectPlayer_->SetAIPlayer(pAIPlayer_);
+	pAIPlayer_->SetCollectPlayer(pCollectPlayer_);
+	pAIPlayer_->SetAttackPlayer(pAttackPlayer_);
+	playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER] = XMFLOAT3(0,0, 8);
+	playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
+	playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER] = XMFLOAT3(0, 0, 0);
+	pAttackPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER]);
+	pCollectPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER]);
+	pAIPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER]);
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 
@@ -103,11 +111,11 @@ void Dogs_Fight_PlayScene::Update()
 {
 	if (pAttackPlayer_->GetIsBoneTatch())
 	{
-		pCollectImageManager_->AddGaugeScale(0.102f);
+		pAttackImageManager_->AddGaugeScale(0.08f);
 	}
 	if (pCollectPlayer_->GetIsBoneTatch())
 	{
-		pCollectImageManager_->AddGaugeScale(0.102f);
+		pCollectImageManager_->AddGaugeScale(0.08f);
 	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{

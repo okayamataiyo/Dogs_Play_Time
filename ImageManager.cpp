@@ -338,7 +338,7 @@ void ImageManager::SecInit()
 
 	if (gaugeState_ == GAUGESTATE::WALK)
 	{
-		gaugeTransform_.position_ = { -0.96f,0.0f,0.0f };
+		gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
 		gaugeTransform_.scale_ = { 4.8f,9.5f,1.0f };
 		gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
 		gaugeFrameTransform_.scale_ = { 5.0f,12.0f,1.0f };

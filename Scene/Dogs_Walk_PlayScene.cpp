@@ -81,9 +81,9 @@ void Dogs_Walk_PlayScene::Initialize()
 	pCollectPlayer_->SetAIPlayer(pAIPlayer_);
 	pAIPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pAIPlayer_->SetAttackPlayer(pAttackPlayer_);
-	pAttackPlayer_->SetPosition(XMFLOAT3(3,0,0));
-	pCollectPlayer_->SetPosition(XMFLOAT3(-3,0,0));
-	pAIPlayer_->SetPosition(XMFLOAT3(0,0,-6));
+	playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER] = XMFLOAT3(0, 0, 8);
+	playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
+	playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER] = XMFLOAT3(0, 0, 0);
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 

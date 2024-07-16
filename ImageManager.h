@@ -15,6 +15,8 @@ enum class IMAGESTATE
 	NONE,
 	TIMEGAUGE,
 	BONE,
+	ONEP,
+	TWOP,
 };
 
 enum class GAUGESTATE
