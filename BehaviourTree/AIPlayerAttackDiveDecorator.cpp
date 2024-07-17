@@ -54,28 +54,30 @@ void AIPlayerAttackDiveDecorator::RunningUpdate()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 1);
 	//1‚©‚ç2‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€‚È’l‚Ìì¬
-	isDive_ = dis(gen);
-	if (isDive_ == true)
+	isDive_ = (bool)dis(gen);
+
+	auto& node = pAIPlayerAttackDiveAction_;
+	if (isDive_)
 	{
-		pAIPlayerAttackDiveAction_->SetMyNodeState(RUNNING);
-		nodeData_.myNodeState_ = pAIPlayerAttackDiveAction_->GetMyNodeState();
+		node->SetMyNodeState(RUNNING);
+		nodeData_.myNodeState_ = node->GetMyNodeState();
 	}
 	else
 	{
 		nodeData_.myNodeState_ = FAILURE;
 	}
-	if (pAIPlayerAttackDiveAction_->GetMyNodeState() == RUNNING)
+	if (node->GetMyNodeState() == RUNNING)
 	{
-		pAIPlayerAttackDiveAction_->ChoiceUpdate();
+		node->ChoiceUpdate();
 	}
-	if (pAIPlayerAttackDiveAction_->GetMyNodeState() == SUCCESS)
+	if (node->GetMyNodeState() == SUCCESS)
 	{
-		pAIPlayerAttackDiveAction_->SetMyNodeState(READY);
+		node->SetMyNodeState(READY);
 		nodeData_.myNodeState_ = SUCCESS;
 	}
-	if (pAIPlayerAttackDiveAction_->GetMyNodeState() == FAILURE)
+	if (node->GetMyNodeState() == FAILURE)
 	{
-		pAIPlayerAttackDiveAction_->SetMyNodeState(READY);
+		node->SetMyNodeState(READY);
 		nodeData_.myNodeState_ = FAILURE;
 	}
 }

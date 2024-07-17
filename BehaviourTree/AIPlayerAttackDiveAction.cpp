@@ -2,11 +2,13 @@
 #include "AIPlayerAttackDiveAction.h"
 #include "../Player/AIPlayer.h"
 
+using enum NODESTATE;
+
 AIPlayerAttackDiveAction::AIPlayerAttackDiveAction(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)
 	, pAIPlayer_((AIPlayer*)_pGameObject)
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
 }
@@ -19,16 +21,16 @@ void AIPlayerAttackDiveAction::ChoiceUpdate()
 {
 	switch (nodeData_.myNodeState_)
 	{
-	case NODESTATE::READY:
+	case READY:
 		ReadyUpdate();
 		break;
-	case NODESTATE::RUNNING:
+	case RUNNING:
 		RunningUpdate();
 		break;
-	case NODESTATE::SUCCESS:
+	case SUCCESS:
 		SuccessUpdate();
 		break;
-	case NODESTATE::FAILURE:
+	case FAILURE:
 		FailureUpdate();
 		break;
 	}
@@ -41,15 +43,15 @@ void AIPlayerAttackDiveAction::ReadyUpdate()
 void AIPlayerAttackDiveAction::RunningUpdate()
 {
 	pAIPlayer_->PlayerAttackDiveActionFunc();
-	nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+	nodeData_.myNodeState_ = SUCCESS;
 }
 
 void AIPlayerAttackDiveAction::SuccessUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }
 
 void AIPlayerAttackDiveAction::FailureUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }

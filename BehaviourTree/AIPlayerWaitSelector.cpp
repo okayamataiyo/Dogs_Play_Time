@@ -70,7 +70,7 @@ void AIPlayerWaitSelector::RunningUpdate()
 	}
 	if (node->GetMyNodeState() == FAILURE)
 	{
-		node->SetMyNodeState(FAILURE);
+		node->SetMyNodeState(READY);
 		nodeData_.myNodeState_ = FAILURE;
 	}
 }

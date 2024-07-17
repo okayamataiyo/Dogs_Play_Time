@@ -87,7 +87,7 @@ void AIPlayer::Initialize()
     pStateManager_->AddState("JumpState", new AIPlayerJumpState(pStateManager_));
     pStateManager_->AddState("StunState", new AIPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
-    dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
+    dirData_.vecDirection_ = dir_;
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
     pImageManager_->SetMode((int)IMAGESTATE::NONE);
@@ -95,6 +95,7 @@ void AIPlayer::Initialize()
     pBoneImageManager_ = Instantiate<ImageManager>(this);
     pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
     pAIPlayerWaitSelector_ = new AIPlayerWaitSelector(nullptr, this);
+    diveData_.divePower_ = 0.4f;
 }
 
 void AIPlayer::Update()
@@ -301,7 +302,7 @@ void AIPlayer::PlayerAttackSeeActionFunc()
 
 void AIPlayer::PlayerAttackDiveActionFunc()
 {
-    PlayerDive();
+    diveData_.isDive_ = true;
 }
 
 void AIPlayer::PlayerWaitStateFunc()
@@ -434,6 +435,7 @@ void AIPlayer::PlayerFall()
 
 void AIPlayer::PlayerMove()
 {
+    dirData_.vecDirection_ = -dir_;
     PlayerOuterWall();
     PlayerBase::PlayerMove();
 }

@@ -2,6 +2,13 @@
 //インクルード
 #include "../Engine/GameObject.h"
 
+enum class GAMESTATE
+{
+	READY = 0,
+	PLAY,
+	GAMEOVER,
+};
+
 namespace
 {
 	enum class PLAYERSTATE
@@ -15,12 +22,6 @@ namespace
 class  PlayerBase : public GameObject
 {
 protected:
-	enum class GAMESTATE
-	{
-		READY = 0,
-		PLAY,
-		GAMEOVER,
-	};
 	//▼ゲーム演出に関するメンバ変数
 	struct GameData
 	{

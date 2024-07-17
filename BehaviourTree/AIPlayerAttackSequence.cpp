@@ -22,7 +22,7 @@ AIPlayerAttackSequence::AIPlayerAttackSequence(Node* _pParentNode, GameObject* _
 	pAIPlayerAttackDiveDecorator_ = new AIPlayerAttackDiveDecorator(this, nodeData_.pGameObject_);
 	nodes_[FIRST] = pAIPlayerAttackSeeAction_;
 	nodes_[SECONDS] = pAIPlayerAttackDecorator_;
-	//nodes_[THIRD] = pAIPlayerAttackDiveDecorator_;
+	nodes_[THIRD] = pAIPlayerAttackDiveDecorator_;
 }
 
 AIPlayerAttackSequence::~AIPlayerAttackSequence()
@@ -74,7 +74,7 @@ void AIPlayerAttackSequence::RunningUpdate()
 	}
 	if (node->GetMyNodeState() == FAILURE)
 	{
-		node->SetMyNodeState(FAILURE);
+		node->SetMyNodeState(READY);
 		nodeData_.myNodeState_ = FAILURE;
 	}
 }

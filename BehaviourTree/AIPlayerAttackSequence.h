@@ -12,7 +12,7 @@ enum class ATTACKSEQUENCEPRIORITY
 {
 	FIRST = 0,
 	SECONDS,
-	//THIRD,
+	THIRD,
 	MAX,
 };
 

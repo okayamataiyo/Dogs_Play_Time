@@ -24,9 +24,12 @@
 #include "CollectPlayer.h"
 #include "AIPlayer.h"
 
+using enum GAMESTATE;
+using enum PLAYSCENESTATE;
+
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
-    ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
+    ,number_{0}, gameState_{ READY }, attackOrCollect_{ 0 }
     , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
@@ -57,7 +60,7 @@ void AttackPlayer::Initialize()
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         gameData_.FPS_ = 300;
     }
@@ -68,11 +71,11 @@ void AttackPlayer::Initialize()
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);
     pFloor_ = (Floor*)FindObject(floorName);
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
