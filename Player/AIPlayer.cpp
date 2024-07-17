@@ -299,6 +299,11 @@ void AIPlayer::PlayerAttackSeeActionFunc()
     dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 }
 
+void AIPlayer::PlayerAttackDiveActionFunc()
+{
+    PlayerDive();
+}
+
 void AIPlayer::PlayerWaitStateFunc()
 {
     PlayerBase::PlayerWaitStateFunc();

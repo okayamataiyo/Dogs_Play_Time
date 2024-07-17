@@ -485,39 +485,7 @@ void AttackPlayer::PlayerCamera()
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
-    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
-    {
-        if (moveData_.camUpFlag_ == false)
-        {
-            moveData_.camUpFlag_ = true;
-            moveData_.CamPosYNum_ -= 1;
-        }
-    }
-    else
-    {
-        moveData_.camUpFlag_ = false;
-    }
-    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
-    {
-        if (moveData_.camDownFlag_ == false)
-        {
-            moveData_.camDownFlag_ = true;
-            moveData_.CamPosYNum_ += 1;
-        }
-    }
-    else
-    {
-        moveData_.camDownFlag_ = false;
-    }
-    if (moveData_.CamPosYNum_ <= 0)
-    {
-        moveData_.CamPosYNum_ = 0;
-    }
-    if (moveData_.CamPosYNum_ >= 4)
-    {
-        moveData_.CamPosYNum_ = 3;
-    }
-    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
+    padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
     const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
@@ -526,7 +494,6 @@ void AttackPlayer::PlayerCamera()
     const float degreesToRadians = 3.14f / 180.0f;
     padRotMove.x = padStickR.x;
     padRotMove.y = -padStickR.y;
-
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
     {
         if (moveData_.camZForwardFlag_ == false)

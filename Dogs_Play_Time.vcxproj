@@ -93,6 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <FxCompile>
       <EntryPointName>main</EntryPointName>
@@ -134,6 +135,8 @@
   <ItemGroup>
     <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveAction.cpp" />
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveDecorator.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp" />
     <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp" />
@@ -203,6 +206,8 @@
   <ItemGroup>
     <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h" />
     <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveAction.h" />
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveDecorator.h" />
     <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h" />
     <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h" />
     <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h" />

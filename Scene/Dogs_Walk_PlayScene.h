@@ -66,7 +66,7 @@ private:
     float length_;
     //▼サウンドに関するメンバ変数
     int hSound_[(int)SOUNDSTATE::MAX];
-    int random_value_;
+    int randomValue_;
     float soundVolume_;
     float soundVolumeHalf_;
     //▼骨に関するメンバ変数

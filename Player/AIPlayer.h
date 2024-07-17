@@ -133,6 +133,7 @@ public:
 
 	void PlayerAttackActionFunc();
 	void PlayerAttackSeeActionFunc();
+	void PlayerAttackDiveActionFunc();
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();

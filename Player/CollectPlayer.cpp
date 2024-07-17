@@ -474,40 +474,9 @@ void CollectPlayer::PlayerCamera()
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
-    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
-    {
-        if (moveData_.camUpFlag_ == false)
-        {
-            moveData_.camUpFlag_ = true;
-            moveData_.CamPosYNum_ -= 1;
-        }
-    }
-    else
-    {
-        moveData_.camUpFlag_ = false;
-    }
-    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
-    {
-        if (moveData_.camDownFlag_ == false)
-        {
-            moveData_.camDownFlag_ = true;
-            moveData_.CamPosYNum_ += 1;
-        }
-    }
-    else
-    {
-        moveData_.camDownFlag_ = false;
-    }
-    if (moveData_.CamPosYNum_ <= 0)
-    {
-        moveData_.CamPosYNum_ = 0;
-    }
-    if (moveData_.CamPosYNum_ >= 4)
-    {
-        moveData_.CamPosYNum_ = 3;
-    }
-    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
-    const float padSens = 25;
+    padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
+    const float padSensX = 25;
+    const float padSensY = 50;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
     const float degreesMin = 0.0f;
@@ -550,8 +519,8 @@ void CollectPlayer::PlayerCamera()
     }
     moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
     vecDir = vecFront;
-    dirData_.vecCam_.x += padRotMove.y / padSens;
-    dirData_.vecCam_.y += padRotMove.x / padSens;
+    dirData_.vecCam_.x += padRotMove.y / padSensY;
+    dirData_.vecCam_.y += padRotMove.x / padSensX;
 
     sigmaRot.y = dirData_.vecCam_.y;
     sigmaRot.x = -dirData_.vecCam_.x;
@@ -559,12 +528,12 @@ void CollectPlayer::PlayerCamera()
     if (sigmaRot.x > degreesMin * degreesToRadians)
     {
         sigmaRot.x = degreesMin;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensX;
     }
     if (sigmaRot.x < degreesMax * degreesToRadians)
     {
         sigmaRot.x = degreesMax * degreesToRadians;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensY;
     }
 
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);

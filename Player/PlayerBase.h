@@ -65,7 +65,7 @@ protected:
 		int CamPosYNum_;
 		bool camUpFlag_;
 		bool camDownFlag_;
-		const float CamPosZ_[4] = { -5.0f,10.0f,20.0f,30.0f };
+		const float CamPosZ_[4] = { -10.0f,-5.0f,20.0f,30.0f };
 		int CamPosZNum_;
 		float floLen_;
 		bool camZForwardFlag_;

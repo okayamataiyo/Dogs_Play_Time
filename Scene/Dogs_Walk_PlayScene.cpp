@@ -19,7 +19,7 @@ Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent, Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
 	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
 	, woodBoxCountMax_{5}, changeScore_{100}, hSound_{-1,-1,-1}
-	, random_value_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}
+	, randomValue_{0}, soundVolume_{0.05f,}, soundVolumeHalf_{soundVolume_ / 2}, length_{30}, boneCount_{0}
 	, collectPlayerPosition_{}, collectPlayerDirection_{},boneFrontPosition_{2.0f}, woodBoxCount_{0}
 	, attackPlayerPosition_{}, attackPlayerDirection_{},woodBoxFrontPosition_{10.0f},time_{1.0f}, isGameStop_{false}
 	,pSceneManager_{nullptr}, pAttackPlayer_{nullptr}, pCollectPlayer_{nullptr}, pItemObjectManager_{nullptr}, pStageObjectManager_{nullptr}
@@ -84,6 +84,9 @@ void Dogs_Walk_PlayScene::Initialize()
 	playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER] = XMFLOAT3(0, 0, 8);
 	playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
 	playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER] = XMFLOAT3(0, 0, 0);
+	pAttackPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER]);
+	pCollectPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER]);
+	pAIPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER]);
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 
@@ -93,7 +96,7 @@ void Dogs_Walk_PlayScene::Initialize()
 	std::uniform_int_distribution<> dis(1, 2);
 
 	//1‚©‚ç2‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€‚È’l‚Ìì¬
-	random_value_ = dis(gen);
+	randomValue_ = dis(gen);
 	pImageManager_ = Instantiate<ImageManager>(this);
 	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
 	pImageManager_->SetGaugeMode((int)GAUGESTATE::WALK);
@@ -106,7 +109,7 @@ void Dogs_Walk_PlayScene::Update()
 	if((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
 		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
-		Audio::Play(hSound_[random_value_],soundVolume_);
+		Audio::Play(hSound_[randomValue_],soundVolume_);
 	}
 	if((!isGameStop_ && pAttackPlayer_->GetScore() < changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() < changeScore_))
 	{
