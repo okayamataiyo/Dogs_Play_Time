@@ -7,6 +7,14 @@ namespace
 {
 	std::string gameImageName = "GameImage";
 }
+
+enum class PLAYERSYMBOLSTATE
+{
+	ONEP = 0,
+	TWOP,
+	PLAYERSYMBOLNUM,
+};
+
 enum class IMAGESTATE
 {
 	GAMEOVER = 0,
@@ -15,8 +23,7 @@ enum class IMAGESTATE
 	NONE,
 	TIMEGAUGE,
 	BONE,
-	ONEP,
-	TWOP,
+	PLAYERSYMBOL,
 };
 
 enum class GAUGESTATE
@@ -64,6 +71,7 @@ private:
 	int hFramePict_;
 	int hBonePict_[(int)BONESTATE::BONENUM];
 	int hYellowBonePict_[(int)BONESTATE::BONENUM];
+	int hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
 	float nowPw_;
 	const float maxPw_ = 5.0f;
 	const float minPw_ = 0.0f;
@@ -78,6 +86,8 @@ private:
 	Transform gaugeTransform_;
 	Transform gaugeFrameTransform_;
 	Transform boneTransform_[(int)BONESTATE::BONENUM];
+	Transform playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
+	Transform playerSymbolTransformPrev_;
 	IMAGESTATE imageState_;
 	GAUGESTATE gaugeState_;
 	int isMatchWinner_;
@@ -104,6 +114,10 @@ public:
 	void SetMode(int _mode);
 
 	void SetGaugeMode(int _mode);
+
+	void SetAttackOrCollect(int _attackOrCollect) { attackOrCollect_ = _attackOrCollect; }
+
+	void SetAttackOrCollectInverse(int _attackOrCollectInverse) { attackOrCollectInverse_ = _attackOrCollectInverse; }
 
 	void AddGaugeScale(float _animGauge);
 

@@ -35,6 +35,7 @@ private:
 	SolidText* pSolidText_;
 	ImageManager* pImageManager_;
 	ImageManager* pGameTitleImageManager_;
+	ImageManager* pPlayerSymbolImageManager_;
 	UIManager* pUIManager_;
 	UIManager* pDogsSelectUIManager_;
 	Button* buttonStart_;

@@ -19,7 +19,7 @@ DogSelectScene::DogSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, selectSceneName),attackOrCollect_{0},attackOrCollectInverse_{0},walkOrFight_{0}, solidTextRotate_{0.3f},padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}
 	, pSceneManager_{nullptr}, pStageObjectManager_{nullptr},pSky_{nullptr}, pActorAttackPlayer_{ nullptr }
-	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pGameTitleImageManager_{nullptr}, pUIManager_{nullptr}, pDogsSelectUIManager_{nullptr}
+	, pActorCollectPlayer_{ nullptr },pImageManager_{nullptr},pGameTitleImageManager_{nullptr}, pUIManager_{nullptr}, pDogsSelectUIManager_{nullptr},pPlayerSymbolImageManager_{nullptr}
 {
 
 }
@@ -57,26 +57,17 @@ void DogSelectScene::Initialize()
 	pUIManager_->SetMode((int)UISTATE::GAMEMANUAL);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
 	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECT);
+	pPlayerSymbolImageManager_ = Instantiate<ImageManager>(this);
+	pPlayerSymbolImageManager_->SetMode((int)IMAGESTATE::PLAYERSYMBOL);
+	pPlayerSymbolImageManager_->SecInit();
 }
 
 void DogSelectScene::Update()
 {
+	pPlayerSymbolImageManager_->SetAttackOrCollect(attackOrCollect_);
+	pPlayerSymbolImageManager_->SetAttackOrCollectInverse(attackOrCollectInverse_);
 	Camera::SetPosition(camPos_, attackOrCollect_);
 	Camera::SetPosition(camPos_, attackOrCollectInverse_);
-
-	const XMFLOAT3 bigScale = { 1.1f,1.1f,1.1f };
-	const XMFLOAT3 defaultScale = { 0.8f,0.8f,0.8f };
-
-	if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
-	{
-		pActorAttackPlayer_->SetScale(bigScale);
-		pActorCollectPlayer_->SetScale(defaultScale);
-	}
-	else
-	{
-		pActorAttackPlayer_->SetScale(defaultScale);
-		pActorCollectPlayer_->SetScale(bigScale);
-	}
 
 	const float deadZone = 0.3f;
 	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)   //‰E‚Ö‚ÌˆÚ“®

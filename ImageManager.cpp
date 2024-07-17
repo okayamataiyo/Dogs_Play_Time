@@ -11,10 +11,10 @@
 
 ImageManager::ImageManager(GameObject* _pParent)
 	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{}, hClickButtonPict_{}, hPlayerWinPict_{}
-	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{}
+	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{},hPlayerSymbolPict_{}
 	,imageState_{IMAGESTATE::GAMEOVER},gaugeState_{GAUGESTATE::WALK}, isMatchWinner_{}
-	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{}
-	, imageTransform_{}, buttonTransform_{},boneTransform_{}
+	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{},playerSymbolTransformPrev_{}
+	, imageTransform_{}, buttonTransform_{},boneTransform_{},playerSymbolTransform_{}
 	, pParent_{ _pParent },pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
 {
 }
@@ -48,6 +48,15 @@ void ImageManager::Update()
 			buttonTransform_.scale_ = { 0.3f,0.3f,0.3f };
 		}
 	}
+	if (imageState_ == IMAGESTATE::PLAYERSYMBOL)
+	{
+		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+		{
+			playerSymbolTransformPrev_ = playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::ONEP];
+			playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::ONEP] = playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::TWOP];
+			playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::TWOP] = playerSymbolTransformPrev_;
+		}
+	}
 }
 
 void ImageManager::BothViewDraw()
@@ -68,6 +77,13 @@ void ImageManager::BothViewDraw()
 	{
 		Image::SetTransform(hManualPict_, transform_);
 		Image::Draw(hManualPict_);
+	}
+	if (imageState_ == IMAGESTATE::PLAYERSYMBOL)
+	{
+		Image::SetTransform(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP], playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::ONEP]);
+		Image::Draw(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP]);
+		Image::SetTransform(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::TWOP], playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::TWOP]);
+		Image::Draw(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::TWOP]);
 	}
 }
 
@@ -334,11 +350,19 @@ void ImageManager::SecInit()
 			assert(hYellowBonePict_[i] >= 0);
 		}
 		break;
+	case IMAGESTATE::PLAYERSYMBOL:
+		hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP] = Image::Load(modelFolderName + "ONEP" + imageModifierName);
+		assert(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP] >= 0);
+		hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::TWOP] = Image::Load(modelFolderName + "TWOP" + imageModifierName);
+		assert(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::TWOP] >= 0);
+		playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::ONEP].position_ = XMFLOAT3(5.0f, 1.0f, 0.0f);
+		playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::TWOP].position_ = XMFLOAT3(-5.0f,1.0f, 0.0f);
+		break;
 	}
 
 	if (gaugeState_ == GAUGESTATE::WALK)
 	{
-		gaugeTransform_.position_ = { -0.98f,0.0f,0.0f };
+		gaugeTransform_.position_ = { -0.96f,0.0f,0.0f };
 		gaugeTransform_.scale_ = { 4.8f,9.5f,1.0f };
 		gaugeFrameTransform_.position_ = { -1.0f,0.0f,0.0f };
 		gaugeFrameTransform_.scale_ = { 5.0f,12.0f,1.0f };
