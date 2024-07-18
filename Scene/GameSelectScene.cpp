@@ -49,10 +49,10 @@ void GameSelectScene::Initialize()
 	XMFLOAT3 positionActorAttackPlayer = { 5.0f,0.0f,0.0f };
 	XMFLOAT3 positionActorCollectPlayer = { -5.0f,0.0f,0.0f };
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLEIMAGE);
 	pImageManager_->SecInit();
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
-	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECT);
+	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECTUI);
 }
 
 void GameSelectScene::Update()

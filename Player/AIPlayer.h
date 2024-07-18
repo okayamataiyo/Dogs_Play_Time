@@ -40,15 +40,6 @@ class AIPlayer : public PlayerBase
 {
 private:
 
-	enum class SOUNDSTATE
-	{
-		STUN = 0,
-		WALK,
-		JUMP,
-		RUN,
-		CollectBone,
-	};
-
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号
 	int hSound_[5];					//サウンド番号
@@ -90,6 +81,14 @@ private:
 	ParticleManager* pParticleManager_;
 	AIPlayerWaitSelector* pAIPlayerWaitSelector_;
 public:
+	enum class SOUNDSTATE
+	{
+		STUN = 0,
+		WALK,
+		JUMP,
+		RUN,
+		CollectBone,
+	};
 
 	/// <summary>
 	/// コンストラクタ関数

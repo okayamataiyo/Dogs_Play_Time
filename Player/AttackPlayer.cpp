@@ -28,7 +28,7 @@ using enum GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
 using enum IMAGESTATE;
-using enum SOUNDSTATE;
+using enum AIPlayer::SOUNDSTATE;
 
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}

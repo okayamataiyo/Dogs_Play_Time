@@ -30,7 +30,7 @@ class ImageManager;
 /// </summary>
 class Dogs_Fight_PlayScene : public GameObject
 {
-private:
+public:
 
     enum class SOUNDSTATE
     {
@@ -48,6 +48,7 @@ private:
         THIRD,
         FOUR,
     };
+private:
 
     int attackOrCollect_;
     int attackOrCollectInverse_;
@@ -91,6 +92,7 @@ private:
     ImageManager* pCollectImageManager_;
 
 public:
+
     /// <summary>
     /// コンストラクタ
     /// </summary>

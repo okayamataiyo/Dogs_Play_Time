@@ -19,15 +19,6 @@ class ImageManager;
 class ParticleManager;
 class UIManager;
 
-enum class SOUNDSTATE
-{
-	STUN = 0,
-	WALK,
-	JUMP,
-	RUN,
-	CollectBone,
-};
-
 namespace
 {
 	std::string soundAttackPlayerNames[] =
@@ -46,8 +37,16 @@ namespace
 /// </summary>
 class AttackPlayer : public PlayerBase
 {
+public:
+	enum class SOUNDSTATE
+	{
+		STUN = 0,
+		WALK,
+		JUMP,
+		RUN,
+		CollectBone,
+	};
 private:
-
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号
 	int hSound_[5];					//サウンド番号

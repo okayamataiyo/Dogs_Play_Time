@@ -14,6 +14,14 @@
 #include "../ImageManager.h"
 #include "Dogs_Fight_PlayScene.h"
 
+using enum IMAGESTATE;
+using enum STAGEOBJECTSTATE;
+using enum ITEMOBJECTSTATE;
+using enum PADIDSTATE;
+using enum PLAYERNUMSTATE;
+using enum GAUGESTATE;
+using enum Dogs_Fight_PlayScene::SOUNDSTATE;
+
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent,Dogs_Fight_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}
 	,stageBlockNum_{3},lengthRecedes_{5},degreesMin_{0.0f},degreesMax_{-88.0f},degreesToRadians_{3.14f / 180.0f},vecLengthRecedes_{1.0f},vecLengthApproach_{1.0f}
@@ -42,8 +50,8 @@ void Dogs_Fight_PlayScene::Initialize()
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pItemObjectManager_ = new ItemObjectManager(this);
 	pStageObjectManager_ = new StageObjectManager(this);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::STAGE);
+	pStageObjectManager_->CreateStageObjectOrigin(SKY);
+	pStageObjectManager_->CreateStageObjectOrigin(STAGE);
 
 	float stageBlockSummonsPosLimitMinX = 100.0f;
 	float stageBlockSummonsPosLimitMaxX = 100.0f;
@@ -52,7 +60,7 @@ void Dogs_Fight_PlayScene::Initialize()
 
 	for (int i = 0u; i < stageBlockNum_; i++)
 	{
-		pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
+		pStageObjectManager_->CreateStageObject(STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
 	}
 	floorPosition_[0].position_ = { 30.0f,0.8f,3.0f };
 	floorPosition_[1].position_ = { -10.0f,0.5f,50.0f };
@@ -65,27 +73,27 @@ void Dogs_Fight_PlayScene::Initialize()
 							  ,XMFLOAT3(10.0f,-20.0f,40.0f) };
 	XMFLOAT3 FrameBox = { XMFLOAT3(5.0f,5.0f,5.0f) };
 
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
+	pItemObjectManager_->CreateObject(FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
+	pItemObjectManager_->CreateObject(FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
 	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
 	camVec_[attackOrCollectInverse_] = XMFLOAT3(0, 5, -10);
 	pAIPlayer_ = Instantiate<AIPlayer>(this);
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX, DefaultData[0], DefaultData[1], FrameBox);
+	pItemObjectManager_->CreateObject(FRAMEBOX, DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pAttackPlayer_->SetAIPlayer(pAIPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
 	pCollectPlayer_->SetAIPlayer(pAIPlayer_);
 	pAIPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pAIPlayer_->SetAttackPlayer(pAttackPlayer_);
-	playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER] = XMFLOAT3(0,0, 8);
-	playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
-	playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER] = XMFLOAT3(0, 0, 0);
-	pAttackPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER]);
-	pCollectPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER]);
-	pAIPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER]);
+	playerFirstPos_[(int)ATTACKPLAYER] = XMFLOAT3(0,0, 8);
+	playerFirstPos_[(int)COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
+	playerFirstPos_[(int)AIPLAYER] = XMFLOAT3(0, 0, 0);
+	pAttackPlayer_->SetPosition(playerFirstPos_[(int)ATTACKPLAYER]);
+	pCollectPlayer_->SetPosition(playerFirstPos_[(int)COLLECTPLAYER]);
+	pAIPlayer_->SetPosition(playerFirstPos_[(int)AIPLAYER]);
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 
@@ -98,12 +106,12 @@ void Dogs_Fight_PlayScene::Initialize()
 	random_value_ = dis(gen);
 
 	pAttackImageManager_ = Instantiate<ImageManager>(this);
-	pAttackImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
-	pAttackImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTATTACK);
+	pAttackImageManager_->SetMode((int)TIMEGAUGEIMAGE);
+	pAttackImageManager_->SetGaugeMode((int)FIGHTATTACKGAUGE);
 	pAttackImageManager_->SecInit();
 	pCollectImageManager_ = Instantiate<ImageManager>(this);
-	pCollectImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
-	pCollectImageManager_->SetGaugeMode((int)GAUGESTATE::FIGHTCOLLECT);
+	pCollectImageManager_->SetMode((int)TIMEGAUGEIMAGE);
+	pCollectImageManager_->SetGaugeMode((int)FIGHTCOLLECTGAUGE);
 	pCollectImageManager_->SecInit();
 }
 
@@ -119,12 +127,12 @@ void Dogs_Fight_PlayScene::Update()
 	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
-		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
+		Audio::Stop(hSound_[(int)BGM]);
 		Audio::Play(hSound_[random_value_], soundVolume_);
 	}
 	if ((!isGameStop_ && pAttackPlayer_->GetScore() < changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() < changeScore_))
 	{
-		Audio::Play(hSound_[(int)SOUNDSTATE::BGM], soundVolumeHalf_);
+		Audio::Play(hSound_[(int)BGM], soundVolumeHalf_);
 	}
 	//–Ø” ‚ªŽ×–‚‘¤‚ÌŒ¢‚Ì‘O‚É‚­‚é‚½‚ß‚ÌŒvŽZ
 	attackPlayerPosition_ = pAttackPlayer_->GetPosition();
@@ -205,7 +213,7 @@ void Dogs_Fight_PlayScene::BoneSummons()
 void Dogs_Fight_PlayScene::SetGameStop()
 {
 	isGameStop_ = true;
-	Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
+	Audio::Stop(hSound_[(int)BGM]);
 	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM]);
 	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM2]);
 	Audio::Play(hSound_[(int)SOUNDSTATE::GAMESTOP], soundVolume_);

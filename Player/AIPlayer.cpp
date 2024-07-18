@@ -26,10 +26,14 @@
 #include "CollectPlayer.h"
 #include "AttackPlayer.h"
 
+using enum AIPlayer::SOUNDSTATE;
+using enum IMAGESTATE;
+using enum GAMESTATE;
+
 AIPlayer::AIPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, aIPlayerName)
     ,pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
-    , number_{ 0 }, gameState_{ GAMESTATE::READY },waitTime_{ 60 },waitTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
+    , number_{ 0 }, gameState_{ READY },waitTime_{ 60 },waitTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
     ,attackSeeTime_{60},attackSeeTimeWait_{60}, isAttack_{false},isAttackFinish_{false}, isAttackSee_{false}, isAttackSeeFinish_{false}
     , slowTime_{ 0 }, slowTimeWait_{ 1 }, dir_{}, random_value_{0}
     ,pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
@@ -90,10 +94,10 @@ void AIPlayer::Initialize()
     dirData_.vecDirection_ = dir_;
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
-    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SetMode((int)NONEIMAGE);
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
-    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SetMode((int)BONEIMAGE);
     pAIPlayerWaitSelector_ = new AIPlayerWaitSelector(nullptr, this);
     diveData_.divePower_ = 0.4f;
 }
@@ -228,12 +232,12 @@ void AIPlayer::UpdatePlay()
     }
     if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
     {
-        Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundData_.soundVolume_);
+        Audio::Play(hSound_[((int)WALK)], soundData_.soundVolume_);
     }
     if (!moveData_.isMove_ && !jumpData_.isJump_)
     {
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Stop(hSound_[((int)RUN)]);
     }
     IsMove();
     IsJump();

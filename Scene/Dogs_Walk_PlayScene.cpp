@@ -98,8 +98,8 @@ void Dogs_Walk_PlayScene::Initialize()
 	//1‚©‚ç2‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€‚È’l‚Ìì¬
 	randomValue_ = dis(gen);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGE);
-	pImageManager_->SetGaugeMode((int)GAUGESTATE::WALK);
+	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGEIMAGE);
+	pImageManager_->SetGaugeMode((int)GAUGESTATE::WALKGAUGE);
 	pImageManager_->SecInit();
 }
 

@@ -27,6 +27,8 @@
 #include "AttackPlayer.h"
 #include "AIPlayer.h"
 
+using enum IMAGESTATE;
+
 CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
     , number_{ 0 }, gameState_{GAMESTATE::READY},attackOrCollectInverse_{0}
@@ -95,10 +97,10 @@ void CollectPlayer::Initialize()
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
-    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SetMode((int)NONEIMAGE);
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
-    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SetMode((int)BONEIMAGE);
 }
 
 void CollectPlayer::Update()
@@ -284,7 +286,7 @@ void CollectPlayer::UpdatePlay()
 
 void CollectPlayer::UpdateGameOver()
 {
-    pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+    pImageManager_->SetMode((int)GAMETITLEIMAGE);
     pImageManager_->SecInit();
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {

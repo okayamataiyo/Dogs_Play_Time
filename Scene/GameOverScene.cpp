@@ -16,6 +16,13 @@
 #include "../ImageManager.h"
 #include "GameOverScene.h"
 
+using enum UISTATE;
+using enum STAGEOBJECTSTATE;
+using enum TEXTSTATE;
+using enum IMAGESTATE;
+using enum PADIDSTATE;
+using enum MOUSESTATE;
+
 GameOverScene::GameOverScene(GameObject* _pParent)
 	:GameObject(_pParent, gameOverSceneName), hSound_{ -1 }, soundVolume_{0.1f},inputWait_{ 0 }
 	, inputWaitTime_{ 60 },camPos_{0.0f,0.0f,0.0f},camTar_{0.0f,0.0f,0.0f}
@@ -34,13 +41,13 @@ void GameOverScene::Initialize()
 	assert(hSound_ >= initZeroInt);
 	//画像データのロード
 	pSolidText_ = Instantiate<SolidText>(this);
-	pSolidText_->SetMode((int)(TEXTSTATE::GAMEOVER));
+	pSolidText_->SetMode((int)(GAMEOVER));
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	XMFLOAT3 positionActorAttackPlayer = { 0.0f,0.0f,20.0f };
 	XMFLOAT3 positionActorCollectPlayer = { 0.0f,0.0f,25.0f };
 	pStageObjectManager_ = new StageObjectManager(this);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
-	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);
+	pStageObjectManager_->CreateStageObjectOrigin(SKY);
+	pStageObjectManager_->CreateStageObject(STAGE, positionStage);
 	pStage_ = (Stage*)pStageObjectManager_->GetStageObjectBase();
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	camPos_ = pSolidText_->GetPosition();
@@ -53,26 +60,26 @@ void GameOverScene::Initialize()
 	//pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	//pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pUIManager_ = Instantiate<UIManager>(this);
-	pUIManager_->SetMode((int)UISTATE::GAMEOVER);
+	pUIManager_->SetMode((int)GAMEOVERUI);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMEOVER);
+	pImageManager_->SetMode((int)GAMEOVERIMAGE);
 	pImageManager_->SecInit();
 	pButtonImage_ = Instantiate<ImageManager>(this);
-	pButtonImage_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pButtonImage_->SetMode((int)GAMETITLEIMAGE);
 	pButtonImage_->SecInit();
 }
 
 void GameOverScene::Update()
 {
 	Audio::Play(hSound_, soundVolume_);
-	Camera::SetPosition(camPos_, (int)PADIDSTATE::SECONDS);
-	Camera::SetTarget(camTar_, (int)PADIDSTATE::SECONDS);
-	Camera::SetPosition(camPos_, (int)PADIDSTATE::FIRST);
-	Camera::SetTarget(camTar_, (int)PADIDSTATE::FIRST);
+	Camera::SetPosition(camPos_, (int)SECONDS);
+	Camera::SetTarget(camTar_, (int)SECONDS);
+	Camera::SetPosition(camPos_, (int)FIRST);
+	Camera::SetTarget(camTar_, (int)FIRST);
 	++inputWait_;
 	if (inputWait_ >= inputWaitTime_)
 	{
-		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST))
+		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)FIRST))
 		{
 			pSceneManager_->ChangeScene(SCENE_ID_GAMETITLE);
 			inputWait_ = initZeroInt;

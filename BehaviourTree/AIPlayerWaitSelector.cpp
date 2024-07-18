@@ -53,6 +53,7 @@ void AIPlayerWaitSelector::RunningUpdate()
 	nodes_[SECONDS] = pAIPlayerWaitAction_;
 
 	auto& node = nodes_[priority_];
+	const int nextNode = 1;
 
 	if (node->GetMyNodeState() == READY)
 	{
@@ -66,7 +67,7 @@ void AIPlayerWaitSelector::RunningUpdate()
 	{
 		node->SetMyNodeState(READY);
 		nodeData_.myNodeState_ = SUCCESS;
-		priority_ = (WAITSELECTORPRIORITY)(((int)priority_ + 1) % (int)MAX);
+		priority_ = (WAITSELECTORPRIORITY)(((int)priority_ + nextNode) % (int)MAX);
 	}
 	if (node->GetMyNodeState() == FAILURE)
 	{

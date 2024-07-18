@@ -28,25 +28,25 @@ enum class IMAGESTATE
 
 enum class GAUGESTATE
 {
-	WALK = 0,
-	FIGHTATTACK,
-	FIGHTCOLLECT,
+	WALKGAUGE = 0,
+	FIGHTATTACKGAUGE,
+	FIGHTCOLLECTGAUGE,
 };
 enum class BONESTATE
 {
-	ONE,
-	TWO,
-	THREE,
-	FOUR,
-	FIVE,
-	SIX,
-	SEVEN,
-	EIGHT,
-	NINE,
-	TEN,
-	ELEVEN,
-	TWELVE,
-	BONENUM,
+	ONEBONE,
+	TWOBONE,
+	THREEBONE,
+	FOURBONE,
+	FIVEBONE,
+	SIXBONE,
+	SEVENBONE,
+	EIGHTBONE,
+	NINEBONE,
+	TENBONE,
+	ELEVENBONE,
+	TWELVEBONE,
+	MAXBONENUM,
 };
 
 class CollectPlayer;
@@ -69,8 +69,8 @@ private:
 	int hButtonPict_;
 	int hManualPict_;
 	int hFramePict_;
-	int hBonePict_[(int)BONESTATE::BONENUM];
-	int hYellowBonePict_[(int)BONESTATE::BONENUM];
+	int hBonePict_[(int)BONESTATE::MAXBONENUM];
+	int hYellowBonePict_[(int)BONESTATE::MAXBONENUM];
 	int hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
 	float nowPw_;
 	const float maxPw_ = 5.0f;
@@ -85,7 +85,7 @@ private:
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
 	Transform gaugeFrameTransform_;
-	Transform boneTransform_[(int)BONESTATE::BONENUM];
+	Transform boneTransform_[(int)BONESTATE::MAXBONENUM];
 	Transform playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
 	Transform playerSymbolTransformPrev_;
 	IMAGESTATE imageState_;

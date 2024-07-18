@@ -15,6 +15,14 @@
 #include "../UIManager.h"
 #include "DogSelectScene.h"
 
+using enum IMAGESTATE;
+using enum PADIDSTATE;
+using enum STAGEOBJECTSTATE;
+using enum UISTATE;
+using enum Direct3D::VIEWSTATE;
+using enum MOUSESTATE;
+using enum PLAYSCENESTATE;
+
 DogSelectScene::DogSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, selectSceneName),attackOrCollect_{0},attackOrCollectInverse_{0},walkOrFight_{0}, solidTextRotate_{0.3f},padIDNum_{0}
 	, skyPos_{0.0f,0.0f,0.0f}
@@ -33,10 +41,10 @@ void DogSelectScene::Initialize()
 	ShowCursor();
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
+	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
 	XMFLOAT3 positionStage = { 3.0f,38.0f,10.0f };
-	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);
+	pStageObjectManager_->CreateStageObject(STAGE, positionStage);
 	camPos_.y += 2;
 	camPos_.z += 15;
 	pActorAttackPlayer_ = Instantiate<ActorAttackPlayer>(this);
@@ -48,17 +56,17 @@ void DogSelectScene::Initialize()
 	pActorAttackPlayer_->SetPosition(positionActorAttackPlayer);
 	pActorCollectPlayer_->SetPosition(positionActorCollectPlayer);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::NONE);
+	pImageManager_->SetMode((int)NONEIMAGE);
 	pImageManager_->SecInit();
 	pGameTitleImageManager_ = Instantiate<ImageManager>(this);
-	pGameTitleImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pGameTitleImageManager_->SetMode((int)GAMETITLEIMAGE);
 	pGameTitleImageManager_->SecInit();
 	pUIManager_ = Instantiate<UIManager>(this);
-	pUIManager_->SetMode((int)UISTATE::GAMEMANUAL);
+	pUIManager_->SetMode((int)GAMEMANUALUI);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
-	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECT);
+	pDogsSelectUIManager_->SetMode((int)DOGSSELECTUI);
 	pPlayerSymbolImageManager_ = Instantiate<ImageManager>(this);
-	pPlayerSymbolImageManager_->SetMode((int)IMAGESTATE::PLAYERSYMBOL);
+	pPlayerSymbolImageManager_->SetMode((int)PLAYERSYMBOLIMAGE);
 	pPlayerSymbolImageManager_->SecInit();
 }
 
@@ -70,36 +78,36 @@ void DogSelectScene::Update()
 	Camera::SetPosition(camPos_, attackOrCollectInverse_);
 
 	const float deadZone = 0.3f;
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)   //右への移動
+	if (Input::GetPadStickL((int)FIRST).x < -deadZone || Input::GetPadStickL((int)SECONDS).x < -deadZone)   //右への移動
 	{
-		attackOrCollect_ = (int)PADIDSTATE::SECONDS;
+		attackOrCollect_ = (int)SECONDS;
 	}
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x > deadZone)   //右への移動
+	if (Input::GetPadStickL((int)FIRST).x > deadZone || Input::GetPadStickL((int)SECONDS).x > deadZone)   //右への移動
 	{
-		attackOrCollect_ = (int)PADIDSTATE::FIRST;
+		attackOrCollect_ = (int)FIRST;
 	}
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
 	{
-		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::LEFTVIEW)
+		if (Direct3D::GetIsChangeView() == (int)LEFTVIEW)
 		{
-			Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFT_BOTHVIEW);
+			Direct3D::SetIsChangeView((int)LEFT_BOTHVIEW);
 		}
-		if (Direct3D::GetIsChangeView() == (int)Direct3D::VIEWSTATE::RIGHTVIEW)
+		if (Direct3D::GetIsChangeView() == (int)RIGHTVIEW)
 		{
-			Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::RIGHT_BOTHVIEW);
+			Direct3D::SetIsChangeView((int)RIGHT_BOTHVIEW);
 		}
-		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+		if (attackOrCollect_ == (int)FIRST)
 		{
-			attackOrCollectInverse_ = (int)PADIDSTATE::SECONDS;
+			attackOrCollectInverse_ = (int)SECONDS;
 		}
 		else
 		{
-			attackOrCollectInverse_ = (int)PADIDSTATE::FIRST;
+			attackOrCollectInverse_ = (int)FIRST;
 		}
 		//▼INIファイルへの書き込み
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollect", std::to_string(attackOrCollect_).c_str(), "Setting/PlayerSetting.ini");
 		WritePrivateProfileString("PLAYERPADID", "AttackOrCollectInverse", std::to_string(attackOrCollectInverse_).c_str(), "Setting/PlayerSetting.ini");
-		if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+		if (walkOrFight_ == (int)DOGSWALK)
 		{
 			pSceneManager_->ChangeScene(SCENE_ID_DOGS_WALK_PLAY);
 		}
@@ -108,25 +116,25 @@ void DogSelectScene::Update()
 			pSceneManager_->ChangeScene(SCENE_ID_DOGS_FIGHT_PLAY);
 		}
 	}
-	if (Input::IsKeyDown(DIK_Q) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)PADIDSTATE::SECONDS))
+	if (Input::IsKeyDown(DIK_Q) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_A, (int)SECONDS))
 	{
 		pSceneManager_->ChangeScene(SCENE_ID_GAMESELECT);
 	}
 	if (Input::IsKeyDown(DIK_R))
 	{
-		Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::RIGHT_BOTHVIEW);
+		Direct3D::SetIsChangeView((int)RIGHT_BOTHVIEW);
 	}
 	if (Input::IsKeyDown(DIK_T))
 	{
-		Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::RIGHTVIEW);
+		Direct3D::SetIsChangeView((int)RIGHTVIEW);
 	}
 	if (Input::IsKeyDown(DIK_Y))
 	{
-		Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFT_BOTHVIEW);
+		Direct3D::SetIsChangeView((int)LEFT_BOTHVIEW);
 	}
 	if (Input::IsKeyDown(DIK_U))
 	{
-		Direct3D::SetIsChangeView((int)Direct3D::VIEWSTATE::LEFTVIEW);
+		Direct3D::SetIsChangeView((int)LEFTVIEW);
 	}
 	static bool isViewManual = false;
 	if (Input::IsPadButtonDown(XINPUT_GAMEPAD_X))
@@ -142,7 +150,7 @@ void DogSelectScene::Update()
 			isOncePrev = isOnce;
 			pImageManager_ = Instantiate<ImageManager>(this);
 		}
-		pImageManager_->SetMode((int)IMAGESTATE::GAMEMANUAL);
+		pImageManager_->SetMode((int)GAMEMANUALIMAGE);
 		pImageManager_->SecInit();
 	}
 	else
