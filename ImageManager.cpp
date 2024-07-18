@@ -8,11 +8,12 @@
 #include "Player/AttackPlayer.h"
 #include "ImageManager.h"
 
+using enum IMAGESTATE;
 
 ImageManager::ImageManager(GameObject* _pParent)
 	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{}, hClickButtonPict_{}, hPlayerWinPict_{}
 	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{},hPlayerSymbolPict_{}
-	,imageState_{IMAGESTATE::GAMEOVER},gaugeState_{GAUGESTATE::WALK}, isMatchWinner_{}
+	,imageState_{GAMEOVERIMAGE},gaugeState_{GAUGESTATE::WALK}, isMatchWinner_{}
 	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{},playerSymbolTransformPrev_{}
 	, imageTransform_{}, buttonTransform_{},boneTransform_{},playerSymbolTransform_{}
 	, pParent_{ _pParent },pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
@@ -37,7 +38,7 @@ void ImageManager::Initialize()
 
 void ImageManager::Update()
 {
-	if (imageState_ == IMAGESTATE::GAMETITLE)
+	if (imageState_ == GAMETITLEIMAGE)
 	{
 		if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST))
 		{
@@ -48,7 +49,7 @@ void ImageManager::Update()
 			buttonTransform_.scale_ = { 0.3f,0.3f,0.3f };
 		}
 	}
-	if (imageState_ == IMAGESTATE::PLAYERSYMBOL)
+	if (imageState_ == PLAYERSYMBOLIMAGE)
 	{
 		if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
 		{
@@ -61,24 +62,24 @@ void ImageManager::Update()
 
 void ImageManager::BothViewDraw()
 {
-	if(imageState_ == IMAGESTATE::GAMEOVER)
+	if(imageState_ == GAMEOVERIMAGE)
 	{
 		Image::SetTransform(hPlayerWinPict_, imageTransform_);
 		Image::Draw(hPlayerWinPict_);
 	}
-	if (imageState_ == IMAGESTATE::GAMETITLE)
+	if (imageState_ == GAMETITLEIMAGE)
 	{
 		Image::SetTransform(hButtonPict_, buttonTransform_);
 		Image::Draw(hButtonPict_);
 		Image::SetTransform(hClickButtonPict_, imageTransform_);
 		Image::Draw(hClickButtonPict_);
 	}
-	if (imageState_ == IMAGESTATE::GAMEMANUAL)
+	if (imageState_ == GAMEMANUALIMAGE)
 	{
 		Image::SetTransform(hManualPict_, transform_);
 		Image::Draw(hManualPict_);
 	}
-	if (imageState_ == IMAGESTATE::PLAYERSYMBOL)
+	if (imageState_ == PLAYERSYMBOLIMAGE)
 	{
 		Image::SetTransform(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP], playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::ONEP]);
 		Image::Draw(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP]);
@@ -89,7 +90,7 @@ void ImageManager::BothViewDraw()
 
 void ImageManager::LeftViewDraw()
 {
-	if (imageState_ == IMAGESTATE::BONE)
+	if (imageState_ == BONEIMAGE)
 	{ 
 		if (pParent_->GetObjectName() == collectPlayerName)
 		{
@@ -104,7 +105,7 @@ void ImageManager::LeftViewDraw()
 
 void ImageManager::RightViewDraw()
 {
-	if (imageState_ == IMAGESTATE::BONE)
+	if (imageState_ == BONEIMAGE)
 	{
 		if (pParent_->GetObjectName() == collectPlayerName)
 		{
@@ -121,13 +122,13 @@ void ImageManager::UPSubViewDraw()
 {
 	switch (imageState_)
 	{
-	case IMAGESTATE::GAMEOVER:
+	case GAMEOVERIMAGE:
 		break;
-	case IMAGESTATE::GAMETITLE:
+	case GAMETITLEIMAGE:
 		break;
-	case IMAGESTATE::GAMEMANUAL:
+	case GAMEMANUALIMAGE:
 		break;
-	case IMAGESTATE::TIMEGAUGE:
+	case TIMEGAUGEIMAGE:
 
 		Image::SetTransform(hFramePict_, gaugeFrameTransform_);
 		Image::Draw(hFramePict_);
@@ -285,7 +286,7 @@ void ImageManager::SecInit()
 {
 	switch (imageState_)
 	{
-	case IMAGESTATE::GAMEOVER:
+	case GAMEOVERIMAGE:
 		imageTransform_.position_ = { 0.0f,0.8f,0.0f };
 		if (attackPlayerScore_ < collectPlayerScore_)
 		{
@@ -320,18 +321,18 @@ void ImageManager::SecInit()
 		}
 		assert(hPlayerWinPict_ >= 0);
 		break;
-	case IMAGESTATE::GAMETITLE:
+	case GAMETITLEIMAGE:
 		hClickButtonPict_ = Image::Load(modelFolderName + "ClickButton" + imageModifierName);
 		assert(hClickButtonPict_ >= 0);
 		hButtonPict_ = Image::Load(modelFolderName + "BButton" + imageModifierName);
 		assert(hButtonPict_ >= 0);
 		imageTransform_.position_ = { 0.3f,-0.5f,0.0f };
 		break;
-	case IMAGESTATE::GAMEMANUAL:
+	case GAMEMANUALIMAGE:
 		hManualPict_ = Image::Load(modelFolderName + "Manual" + imageModifierName);
 		assert(hManualPict_ >= 0);
 		break;
-	case IMAGESTATE::TIMEGAUGE:
+	case TIMEGAUGEIMAGE:
 		hTimeGaugePict_ = Image::Load(modelFolderName + "TimeGauge" + imageModifierName);
 		assert(hTimeGaugePict_ >= 0);
 		imageWidth_ = Image::GetWidth(hTimeGaugePict_);
@@ -339,7 +340,7 @@ void ImageManager::SecInit()
 		hFramePict_ = Image::Load(modelFolderName + "TimeGaugeFlame" + imageModifierName);
 		assert(hFramePict_ >= 0);
 		break;
-	case IMAGESTATE::BONE:
+	case BONEIMAGE:
 		pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
 		pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);
 		for (int i = 0; i < (int)BONESTATE::BONENUM; ++i)
@@ -350,7 +351,7 @@ void ImageManager::SecInit()
 			assert(hYellowBonePict_[i] >= 0);
 		}
 		break;
-	case IMAGESTATE::PLAYERSYMBOL:
+	case PLAYERSYMBOLIMAGE:
 		hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP] = Image::Load(modelFolderName + "ONEP" + imageModifierName);
 		assert(hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::ONEP] >= 0);
 		hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::TWOP] = Image::Load(modelFolderName + "TWOP" + imageModifierName);
