@@ -87,7 +87,7 @@ public:
 		WALK,
 		JUMP,
 		RUN,
-		CollectBone,
+		COLLECTBONE,
 	};
 
 	/// <summary>

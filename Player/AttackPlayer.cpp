@@ -28,7 +28,9 @@ using enum GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
 using enum IMAGESTATE;
-using enum AIPlayer::SOUNDSTATE;
+using enum MOUSESTATE;
+using enum AttackPlayer::SOUNDSTATE;
+using enum Direct3D::VIEWSTATE;
 
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
@@ -240,7 +242,7 @@ void AttackPlayer::UpdatePlay()
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = GAMESTATE::PLAY;
+            gameState_ = PLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
@@ -277,8 +279,8 @@ void AttackPlayer::UpdatePlay()
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, gameData_.padID_) && !jumpData_.isJump_ && moveData_.isMove_)
     {
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundData_.soundVolumeHalf_);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Play(hSound_[((int)RUN)], soundData_.soundVolumeHalf_);
     }
 
     if (boneData_.isBoneTatch_)
@@ -294,7 +296,7 @@ void AttackPlayer::UpdatePlay()
         PlayerAddScore();
         pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         boneData_.isBoneTatch_ = false;
-        Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
+        Audio::Stop(hSound_[((int)COLLECTBONE)]);
         boneData_.killTime_ = boneData_.killTimeMax_;
     }
     IsMove();
@@ -308,15 +310,15 @@ void AttackPlayer::UpdateGameOver()
 {
     pImageManager_->SetMode((int)GAMETITLEIMAGE);
     pImageManager_->SecInit();
-    if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
+    if (gameData_.padID_ == (int)FIRST)
     {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));
+        Direct3D::SetIsChangeView(((int)LEFTVIEW));
 	}
-    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
+    if (gameData_.padID_ == (int)SECONDS)
     {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
+        Direct3D::SetIsChangeView(((int)RIGHTVIEW));
     }
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)SECONDS))
     {
         //Å•INIÉtÉ@ÉCÉãÇ÷ÇÃèëÇ´çûÇ›
         WritePrivateProfileString("PLAYERSCORE", "AttackPlayerScore", std::to_string(gameData_.score_).c_str(), "Setting/PlayerSetting.ini");
@@ -368,11 +370,11 @@ void AttackPlayer::PlayerOuterWall()
 void AttackPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         woodBoxs = pDogs_Fight_PlayScene_->GetWoodBoxs();
     }
@@ -389,11 +391,11 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+            if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
                 pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+            if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
                 pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
@@ -409,7 +411,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName)
     {
-        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)DOGSFIGHT)
         {
             pParticleManager_->CreateVFX(transform_.position_);
             //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
@@ -658,9 +660,9 @@ void AttackPlayer::PlayerMove()
     if (Input::IsPadButton(XINPUT_GAMEPAD_A, gameData_.padID_) && !jumpData_.isJump_)
     {
         PlayerJumpPower();
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)],soundData_.soundVolumeHalf_);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Stop(hSound_[((int)RUN)]);
+        Audio::Play(hSound_[((int)JUMP)],soundData_.soundVolumeHalf_);
     }
     PlayerOuterWall();
 }

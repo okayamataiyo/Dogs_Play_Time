@@ -44,7 +44,7 @@ public:
 		WALK,
 		JUMP,
 		RUN,
-		CollectBone,
+		COLLECTBONE,
 	};
 private:
 	//¥ƒnƒ“ƒhƒ‹ƒ‚ƒfƒ‹”Ô†
