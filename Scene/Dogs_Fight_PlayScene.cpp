@@ -154,7 +154,7 @@ void Dogs_Fight_PlayScene::Update()
 		{
 			XMFLOAT3 woodBoxRotate = {};
 			woodBoxRotate.y = pAttackPlayer_->GetAngle();
-			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::WOODBOX, attackPlayerPosition_, woodBoxRotate, XMFLOAT3(0.5f, 0.5f, 0.5f));
+			pItemObjectManager_->CreateObject(WOODBOX, attackPlayerPosition_, woodBoxRotate, XMFLOAT3(0.5f, 0.5f, 0.5f));
 			woodBoxCount_ += 1;
 		}
 	}
@@ -214,7 +214,7 @@ void Dogs_Fight_PlayScene::SetGameStop()
 {
 	isGameStop_ = true;
 	Audio::Stop(hSound_[(int)BGM]);
-	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM]);
-	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM2]);
-	Audio::Play(hSound_[(int)SOUNDSTATE::GAMESTOP], soundVolume_);
+	Audio::Stop(hSound_[(int)LASTBGM]);
+	Audio::Stop(hSound_[(int)LASTBGM2]);
+	Audio::Play(hSound_[(int)GAMESTOP], soundVolume_);
 }

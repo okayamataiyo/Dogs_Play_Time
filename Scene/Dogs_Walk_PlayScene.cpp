@@ -15,6 +15,13 @@
 #include "../ImageManager.h"
 #include "Dogs_Walk_PlayScene.h"
 
+using enum STAGEOBJECTSTATE;
+using enum ITEMOBJECTSTATE;
+using enum Dogs_Walk_PlayScene::SOUNDSTATE;
+using enum PLAYERNUMSTATE;
+using enum GAUGESTATE;
+using enum IMAGESTATE;
+
 Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent, Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}
 	, degreesMax_{-88.0f}, degreesToRadians_{3.14f / 180.0f}, vecLengthRecedes_{1.0f}, vecLengthApproach_{1.0f}
@@ -44,8 +51,8 @@ void Dogs_Walk_PlayScene::Initialize()
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pItemObjectManager_ = new ItemObjectManager(this);
 	pStageObjectManager_ = new StageObjectManager(this);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::STAGE);
+	pStageObjectManager_->CreateStageObjectOrigin(SKY);
+	pStageObjectManager_->CreateStageObjectOrigin(STAGE);
 
 	float stageBlockSummonsPosLimitMinX = 100.0f;
 	float stageBlockSummonsPosLimitMaxX = 100.0f;
@@ -54,7 +61,7 @@ void Dogs_Walk_PlayScene::Initialize()
 
 	for (int i = 0u; i < stageBlockNum_; i++)
 	{
-		pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
+		pStageObjectManager_->CreateStageObject(STAGEBLOCK, -stageBlockSummonsPosLimitMinX, stageBlockSummonsPosLimitMaxX, -stageBlockSummonsPosLimitMinZ, stageBlockSummonsPosLimitMaxZ);
 	}
 	floorPosition_[0].position_ = { 30.0f,0.8f,3.0f };
 	floorPosition_[1].position_ = { -70.0f,0.5f,50.0f };
@@ -67,26 +74,26 @@ void Dogs_Walk_PlayScene::Initialize()
 							  ,XMFLOAT3(10.0f,-20.0f,40.0f) };
 	XMFLOAT3 FrameBox = { XMFLOAT3(5.0f,5.0f,5.0f) };
 
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
+	pItemObjectManager_->CreateObject(FLOOR, floorPosition_[2].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
+	pItemObjectManager_->CreateObject(FLOOR, floorPosition_[1].position_, XMFLOAT3(0.0f, 90.0f, 0.0f), XMFLOAT3(10.0f, 1.0f, 10.0f));
 	pAttackPlayer_ = Instantiate<AttackPlayer>(this);
 	camVec_[attackOrCollect_] = XMFLOAT3(0, 5, -10);
 	pCollectPlayer_ = Instantiate<CollectPlayer>(this);
 	pAIPlayer_ = Instantiate<AIPlayer>(this);
 	camVec_[attackOrCollectInverse_] = XMFLOAT3(0, 5, -10);
-	pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::FRAMEBOX,DefaultData[0], DefaultData[1], FrameBox);
+	pItemObjectManager_->CreateObject(FRAMEBOX,DefaultData[0], DefaultData[1], FrameBox);
 	pAttackPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pAttackPlayer_->SetAIPlayer(pAIPlayer_);
 	pCollectPlayer_->SetAttackPlayer(pAttackPlayer_);
 	pCollectPlayer_->SetAIPlayer(pAIPlayer_);
 	pAIPlayer_->SetCollectPlayer(pCollectPlayer_);
 	pAIPlayer_->SetAttackPlayer(pAttackPlayer_);
-	playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER] = XMFLOAT3(0, 0, 8);
-	playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
-	playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER] = XMFLOAT3(0, 0, 0);
-	pAttackPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::ATTACKPLAYER]);
-	pCollectPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::COLLECTPLAYER]);
-	pAIPlayer_->SetPosition(playerFirstPos_[(int)PLAYERNUMSTATE::AIPLAYER]);
+	playerFirstPos_[(int)ATTACKPLAYER] = XMFLOAT3(0, 0, 8);
+	playerFirstPos_[(int)COLLECTPLAYER] = XMFLOAT3(0, 0, -8);
+	playerFirstPos_[(int)AIPLAYER] = XMFLOAT3(0, 0, 0);
+	pAttackPlayer_->SetPosition(playerFirstPos_[(int)ATTACKPLAYER]);
+	pCollectPlayer_->SetPosition(playerFirstPos_[(int)COLLECTPLAYER]);
+	pAIPlayer_->SetPosition(playerFirstPos_[(int)AIPLAYER]);
 	pAttackPlayer_->SetImageSecInit();
 	pCollectPlayer_->SetImageSecInit();
 
@@ -98,8 +105,8 @@ void Dogs_Walk_PlayScene::Initialize()
 	//1から2までのランダムな値の作成
 	randomValue_ = dis(gen);
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::TIMEGAUGEIMAGE);
-	pImageManager_->SetGaugeMode((int)GAUGESTATE::WALKGAUGE);
+	pImageManager_->SetMode((int)TIMEGAUGEIMAGE);
+	pImageManager_->SetGaugeMode((int)WALKGAUGE);
 	pImageManager_->SecInit();
 }
 
@@ -108,12 +115,12 @@ void Dogs_Walk_PlayScene::Update()
 	pImageManager_->AddGaugeScale(0.08f);
 	if((!isGameStop_ && pAttackPlayer_->GetScore() >= changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() >= changeScore_))
 	{
-		Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
+		Audio::Stop(hSound_[(int)BGM]);
 		Audio::Play(hSound_[randomValue_],soundVolume_);
 	}
 	if((!isGameStop_ && pAttackPlayer_->GetScore() < changeScore_) || (!isGameStop_ && pCollectPlayer_->GetScore() < changeScore_))
 	{
-		Audio::Play(hSound_[(int)SOUNDSTATE::BGM], soundVolumeHalf_);
+		Audio::Play(hSound_[(int)BGM], soundVolumeHalf_);
 	}
 	//木箱が邪魔側の犬の前にくるための計算
 	attackPlayerPosition_ = pAttackPlayer_->GetPosition();
@@ -143,7 +150,7 @@ void Dogs_Walk_PlayScene::Update()
 		{
 			XMFLOAT3 woodBoxRotate = {};
 			woodBoxRotate.y = pAttackPlayer_->GetAngle();
-			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::WOODBOX, attackPlayerPosition_, woodBoxRotate, XMFLOAT3(0.5f, 0.5f, 0.5f));
+			pItemObjectManager_->CreateObject(WOODBOX, attackPlayerPosition_, woodBoxRotate, XMFLOAT3(0.5f, 0.5f, 0.5f));
 			woodBoxCount_ += 1;
 		}
 	}
@@ -194,7 +201,7 @@ void Dogs_Walk_PlayScene::BoneSummons()
 	{
 		for (int i = 0u; i < boneCountMax; i++)
 		{
-			pItemObjectManager_->CreateObject(ITEMOBJECTSTATE::BONE, -boneSummonsPosLimitMinX, boneSummonsPosLimitMaxX, -boneSummonsPosLimitMinZ, boneSummonsPosLimitMaxZ);
+			pItemObjectManager_->CreateObject(BONE, -boneSummonsPosLimitMinX, boneSummonsPosLimitMaxX, -boneSummonsPosLimitMinZ, boneSummonsPosLimitMaxZ);
 			boneCount_ += addBoneCountAmount;
 		}
 	}
@@ -203,8 +210,8 @@ void Dogs_Walk_PlayScene::BoneSummons()
 void Dogs_Walk_PlayScene::SetGameStop()
 {
 	isGameStop_ = true;
-	Audio::Stop(hSound_[(int)SOUNDSTATE::BGM]);
-	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM]);
-	Audio::Stop(hSound_[(int)SOUNDSTATE::LASTBGM2]);
-	Audio::Play(hSound_[(int)SOUNDSTATE::GAMESTOP],soundVolume_);
+	Audio::Stop(hSound_[(int)BGM]);
+	Audio::Stop(hSound_[(int)LASTBGM]);
+	Audio::Stop(hSound_[(int)LASTBGM2]);
+	Audio::Play(hSound_[(int)GAMESTOP],soundVolume_);
 }
