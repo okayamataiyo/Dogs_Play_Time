@@ -27,6 +27,8 @@
 #include "AttackPlayer.h"
 #include "AIPlayer.h"
 
+using enum IMAGESTATE;
+
 CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
     , number_{ 0 }, gameState_{GAMESTATE::READY},attackOrCollectInverse_{0}
@@ -95,10 +97,10 @@ void CollectPlayer::Initialize()
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
-    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SetMode((int)NONEIMAGE);
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
-    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SetMode((int)BONEIMAGE);
 }
 
 void CollectPlayer::Update()
@@ -284,7 +286,7 @@ void CollectPlayer::UpdatePlay()
 
 void CollectPlayer::UpdateGameOver()
 {
-    pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+    pImageManager_->SetMode((int)GAMETITLEIMAGE);
     pImageManager_->SecInit();
     if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
     {
@@ -474,40 +476,9 @@ void CollectPlayer::PlayerCamera()
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
-    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
-    {
-        if (moveData_.camUpFlag_ == false)
-        {
-            moveData_.camUpFlag_ = true;
-            moveData_.CamPosYNum_ -= 1;
-        }
-    }
-    else
-    {
-        moveData_.camUpFlag_ = false;
-    }
-    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
-    {
-        if (moveData_.camDownFlag_ == false)
-        {
-            moveData_.camDownFlag_ = true;
-            moveData_.CamPosYNum_ += 1;
-        }
-    }
-    else
-    {
-        moveData_.camDownFlag_ = false;
-    }
-    if (moveData_.CamPosYNum_ <= 0)
-    {
-        moveData_.CamPosYNum_ = 0;
-    }
-    if (moveData_.CamPosYNum_ >= 4)
-    {
-        moveData_.CamPosYNum_ = 3;
-    }
-    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
-    const float padSens = 25;
+    padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
+    const float padSensX = 25;
+    const float padSensY = 50;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
     const float degreesMin = 0.0f;
@@ -550,8 +521,8 @@ void CollectPlayer::PlayerCamera()
     }
     moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
     vecDir = vecFront;
-    dirData_.vecCam_.x += padRotMove.y / padSens;
-    dirData_.vecCam_.y += padRotMove.x / padSens;
+    dirData_.vecCam_.x += padRotMove.y / padSensY;
+    dirData_.vecCam_.y += padRotMove.x / padSensX;
 
     sigmaRot.y = dirData_.vecCam_.y;
     sigmaRot.x = -dirData_.vecCam_.x;
@@ -559,12 +530,12 @@ void CollectPlayer::PlayerCamera()
     if (sigmaRot.x > degreesMin * degreesToRadians)
     {
         sigmaRot.x = degreesMin;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensX;
     }
     if (sigmaRot.x < degreesMax * degreesToRadians)
     {
         sigmaRot.x = degreesMax * degreesToRadians;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensY;
     }
 
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);

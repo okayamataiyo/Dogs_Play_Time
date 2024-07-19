@@ -18,9 +18,8 @@ public:
 	Node(Node* _pParentNode, GameObject* _pGameObject) {};
 	NODESTATE GetMyNodeState() { return nodeData_.myNodeState_; }
 	void SetMyNodeState(NODESTATE _nodeState) { nodeData_.myNodeState_ = _nodeState; }
-
-protected:
 	virtual void ChoiceUpdate() = 0;
+protected:
 	virtual void ReadyUpdate() = 0;
 	virtual void RunningUpdate() = 0;
 	virtual void SuccessUpdate() = 0;

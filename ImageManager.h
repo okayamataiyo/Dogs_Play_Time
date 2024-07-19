@@ -7,37 +7,46 @@ namespace
 {
 	std::string gameImageName = "GameImage";
 }
+
+enum class PLAYERSYMBOLSTATE
+{
+	ONEP = 0,
+	TWOP,
+	PLAYERSYMBOLNUM,
+};
+
 enum class IMAGESTATE
 {
-	GAMEOVER = 0,
-	GAMETITLE,
-	GAMEMANUAL,
-	NONE,
-	TIMEGAUGE,
-	BONE,
+	GAMEOVERIMAGE = 0,
+	GAMETITLEIMAGE,
+	GAMEMANUALIMAGE,
+	NONEIMAGE,
+	TIMEGAUGEIMAGE,
+	BONEIMAGE,
+	PLAYERSYMBOLIMAGE,
 };
 
 enum class GAUGESTATE
 {
-	WALK = 0,
-	FIGHTATTACK,
-	FIGHTCOLLECT,
+	WALKGAUGE = 0,
+	FIGHTATTACKGAUGE,
+	FIGHTCOLLECTGAUGE,
 };
 enum class BONESTATE
 {
-	ONE,
-	TWO,
-	THREE,
-	FOUR,
-	FIVE,
-	SIX,
-	SEVEN,
-	EIGHT,
-	NINE,
-	TEN,
-	ELEVEN,
-	TWELVE,
-	BONENUM,
+	ONEBONE,
+	TWOBONE,
+	THREEBONE,
+	FOURBONE,
+	FIVEBONE,
+	SIXBONE,
+	SEVENBONE,
+	EIGHTBONE,
+	NINEBONE,
+	TENBONE,
+	ELEVENBONE,
+	TWELVEBONE,
+	MAXBONENUM,
 };
 
 class CollectPlayer;
@@ -60,8 +69,9 @@ private:
 	int hButtonPict_;
 	int hManualPict_;
 	int hFramePict_;
-	int hBonePict_[(int)BONESTATE::BONENUM];
-	int hYellowBonePict_[(int)BONESTATE::BONENUM];
+	int hBonePict_[(int)BONESTATE::MAXBONENUM];
+	int hYellowBonePict_[(int)BONESTATE::MAXBONENUM];
+	int hPlayerSymbolPict_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
 	float nowPw_;
 	const float maxPw_ = 5.0f;
 	const float minPw_ = 0.0f;
@@ -75,7 +85,9 @@ private:
 	Transform buttonTransform_;
 	Transform gaugeTransform_;
 	Transform gaugeFrameTransform_;
-	Transform boneTransform_[(int)BONESTATE::BONENUM];
+	Transform boneTransform_[(int)BONESTATE::MAXBONENUM];
+	Transform playerSymbolTransform_[(int)PLAYERSYMBOLSTATE::PLAYERSYMBOLNUM];
+	Transform playerSymbolTransformPrev_;
 	IMAGESTATE imageState_;
 	GAUGESTATE gaugeState_;
 	int isMatchWinner_;
@@ -102,6 +114,10 @@ public:
 	void SetMode(int _mode);
 
 	void SetGaugeMode(int _mode);
+
+	void SetAttackOrCollect(int _attackOrCollect) { attackOrCollect_ = _attackOrCollect; }
+
+	void SetAttackOrCollectInverse(int _attackOrCollectInverse) { attackOrCollectInverse_ = _attackOrCollectInverse; }
 
 	void AddGaugeScale(float _animGauge);
 

@@ -246,6 +246,12 @@
     <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp">
       <Filter>BehaviourTree</Filter>
     </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveAction.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveDecorator.cpp">
+      <Filter>BehaviourTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -460,6 +466,12 @@
       <Filter>BehaviourTree</Filter>
     </ClInclude>
     <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveAction.h">
+      <Filter>BehaviourTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveDecorator.h">
       <Filter>BehaviourTree</Filter>
     </ClInclude>
   </ItemGroup>

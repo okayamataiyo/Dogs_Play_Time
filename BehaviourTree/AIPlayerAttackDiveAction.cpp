@@ -1,10 +1,10 @@
 //インクルード
-#include "AIPlayerAttackAction.h"
+#include "AIPlayerAttackDiveAction.h"
 #include "../Player/AIPlayer.h"
 
 using enum NODESTATE;
 
-AIPlayerAttackAction::AIPlayerAttackAction(Node* _pParentNode, GameObject* _pGameObject)
+AIPlayerAttackDiveAction::AIPlayerAttackDiveAction(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)
 	, pAIPlayer_((AIPlayer*)_pGameObject)
 {
@@ -13,11 +13,11 @@ AIPlayerAttackAction::AIPlayerAttackAction(Node* _pParentNode, GameObject* _pGam
 	nodeData_.pGameObject_ = _pGameObject;
 }
 
-AIPlayerAttackAction::~AIPlayerAttackAction()
+AIPlayerAttackDiveAction::~AIPlayerAttackDiveAction()
 {
 }
 
-void AIPlayerAttackAction::ChoiceUpdate()
+void AIPlayerAttackDiveAction::ChoiceUpdate()
 {
 	switch (nodeData_.myNodeState_)
 	{
@@ -36,25 +36,22 @@ void AIPlayerAttackAction::ChoiceUpdate()
 	}
 }
 
-void AIPlayerAttackAction::ReadyUpdate()
+void AIPlayerAttackDiveAction::ReadyUpdate()
 {
 }
 
-void AIPlayerAttackAction::RunningUpdate()
+void AIPlayerAttackDiveAction::RunningUpdate()
 {
-	pAIPlayer_->PlayerAttackActionFunc();
-	if (!pAIPlayer_->GetIsAttack())
-	{
-		nodeData_.myNodeState_ = SUCCESS;
-	}
+	pAIPlayer_->PlayerAttackDiveActionFunc();
+	nodeData_.myNodeState_ = SUCCESS;
 }
 
-void AIPlayerAttackAction::SuccessUpdate()
+void AIPlayerAttackDiveAction::SuccessUpdate()
 {
 	nodeData_.myNodeState_ = READY;
 }
 
-void AIPlayerAttackAction::FailureUpdate()
+void AIPlayerAttackDiveAction::FailureUpdate()
 {
 	nodeData_.myNodeState_ = READY;
 }

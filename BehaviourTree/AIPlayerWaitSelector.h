@@ -1,6 +1,14 @@
 #pragma once
 //インクルード
 #include "Node.h"
+#include <map>
+
+enum class WAITSELECTORPRIORITY
+{
+	FIRST = 0,
+	SECONDS,
+	MAX,
+};
 
 class GameObject;
 class AIPlayerWaitAction;
@@ -20,5 +28,7 @@ public:
 private:
 	AIPlayerWaitAction* pAIPlayerWaitAction_;
 	AIPlayerAttackSequence* pAIPlayerAttackSequence_;
+	WAITSELECTORPRIORITY priority_;
+	std::map<WAITSELECTORPRIORITY, Node*> nodes_;
 };
 

@@ -4,11 +4,14 @@
 #include "AIPlayerAttackSequence.h"
 #include "../Engine/Global.h"
 
+using enum NODESTATE;
+using enum WAITSELECTORPRIORITY;
+
 AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject)
 	:Node(_pParentNode,_pGameObject)
 	,pAIPlayerWaitAction_{nullptr},pAIPlayerAttackSequence_{nullptr}
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
 	pAIPlayerWaitAction_ = new AIPlayerWaitAction(this, nodeData_.pGameObject_);
@@ -25,16 +28,16 @@ void AIPlayerWaitSelector::ChoiceUpdate()
 {
 	switch (nodeData_.myNodeState_)
 	{
-	case NODESTATE::READY:
+	case READY:
 		ReadyUpdate();
 		break;
-	case NODESTATE::RUNNING:
+	case RUNNING:
 		RunningUpdate();
 		break;
-	case NODESTATE::SUCCESS:
+	case SUCCESS:
 		SuccessUpdate();
 		break;
-	case NODESTATE::FAILURE:
+	case FAILURE:
 		FailureUpdate();
 		break;
 	}
@@ -46,38 +49,39 @@ void AIPlayerWaitSelector::ReadyUpdate()
 
 void AIPlayerWaitSelector::RunningUpdate()
 {
-	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::READY)
+	nodes_[FIRST] = pAIPlayerAttackSequence_;
+	nodes_[SECONDS] = pAIPlayerWaitAction_;
+
+	auto& node = nodes_[priority_];
+	const int nextNode = 1;
+
+	if (node->GetMyNodeState() == READY)
 	{
-		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::RUNNING);
+		node->SetMyNodeState(RUNNING);
 	}
-	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::RUNNING)
+	if (node->GetMyNodeState() == RUNNING)
 	{
-		pAIPlayerAttackSequence_->ChoiceUpdate();
+		node->ChoiceUpdate();
 	}
-	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::SUCCESS)
+	if (node->GetMyNodeState() == SUCCESS)
 	{
-		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+		node->SetMyNodeState(READY);
+		nodeData_.myNodeState_ = SUCCESS;
+		priority_ = (WAITSELECTORPRIORITY)(((int)priority_ + nextNode) % (int)MAX);
 	}
-	if (pAIPlayerAttackSequence_->GetMyNodeState() == NODESTATE::FAILURE)
+	if (node->GetMyNodeState() == FAILURE)
 	{
-		pAIPlayerWaitAction_->ChoiceUpdate();
-		pAIPlayerAttackSequence_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::FAILURE;
-	}
-	if (pAIPlayerWaitAction_->GetMyNodeState() == NODESTATE::SUCCESS)
-	{
-		pAIPlayerWaitAction_->SetMyNodeState(NODESTATE::READY);
-		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+		node->SetMyNodeState(READY);
+		nodeData_.myNodeState_ = FAILURE;
 	}
 }
 
 void AIPlayerWaitSelector::SuccessUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }
 
 void AIPlayerWaitSelector::FailureUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }

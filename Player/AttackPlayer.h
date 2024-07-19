@@ -37,17 +37,16 @@ namespace
 /// </summary>
 class AttackPlayer : public PlayerBase
 {
-private:
-
+public:
 	enum class SOUNDSTATE
 	{
 		STUN = 0,
 		WALK,
 		JUMP,
 		RUN,
-		CollectBone,
+		COLLECTBONE,
 	};
-
+private:
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号
 	int hSound_[5];					//サウンド番号

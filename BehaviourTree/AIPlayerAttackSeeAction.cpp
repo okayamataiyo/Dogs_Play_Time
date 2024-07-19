@@ -2,11 +2,13 @@
 #include "AIPlayerAttackSeeAction.h"
 #include "../Player/AIPlayer.h"
 
+using enum NODESTATE;
+
 AIPlayerAttackSeeAction::AIPlayerAttackSeeAction(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)
 	, pAIPlayer_((AIPlayer*)_pGameObject)
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
 }
@@ -19,16 +21,16 @@ void AIPlayerAttackSeeAction::ChoiceUpdate()
 {
 	switch (nodeData_.myNodeState_)
 	{
-	case NODESTATE::READY:
+	case READY:
 		ReadyUpdate();
 		break;
-	case NODESTATE::RUNNING:
+	case RUNNING:
 		RunningUpdate();
 		break;
-	case NODESTATE::SUCCESS:
+	case SUCCESS:
 		SuccessUpdate();
 		break;
-	case NODESTATE::FAILURE:
+	case FAILURE:
 		FailureUpdate();
 		break;
 	}
@@ -46,16 +48,16 @@ void AIPlayerAttackSeeAction::RunningUpdate()
 	}
 	if (pAIPlayer_->GetIsAttackSeeFinish())
 	{
-		nodeData_.myNodeState_ = NODESTATE::SUCCESS;
+		nodeData_.myNodeState_ = SUCCESS;
 	}
 }
 
 void AIPlayerAttackSeeAction::SuccessUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }
 
 void AIPlayerAttackSeeAction::FailureUpdate()
 {
-	nodeData_.myNodeState_ = NODESTATE::READY;
+	nodeData_.myNodeState_ = READY;
 }

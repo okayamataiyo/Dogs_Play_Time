@@ -24,9 +24,17 @@
 #include "CollectPlayer.h"
 #include "AIPlayer.h"
 
+using enum GAMESTATE;
+using enum PLAYSCENESTATE;
+using enum PADIDSTATE;
+using enum IMAGESTATE;
+using enum MOUSESTATE;
+using enum AttackPlayer::SOUNDSTATE;
+using enum Direct3D::VIEWSTATE;
+
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
-    ,number_{0}, gameState_{ GAMESTATE::READY }, attackOrCollect_{ 0 }
+    ,number_{0}, gameState_{ READY }, attackOrCollect_{ 0 }
     , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
@@ -57,7 +65,7 @@ void AttackPlayer::Initialize()
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         gameData_.FPS_ = 300;
     }
@@ -68,11 +76,11 @@ void AttackPlayer::Initialize()
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);
     pFloor_ = (Floor*)FindObject(floorName);
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
@@ -83,21 +91,21 @@ void AttackPlayer::Initialize()
     pStateManager_->AddState("JumpState", new AttackPlayerJumpState(pStateManager_));
     pStateManager_->AddState("StunState", new AttackPlayerStunState(pStateManager_));
     pStateManager_->ChangeState("WaitState");
-    if (attackOrCollect_ == (int)PADIDSTATE::FIRST)
+    if (attackOrCollect_ == (int)FIRST)
     {
-        gameData_.padID_ = (int)PADIDSTATE::FIRST;
+        gameData_.padID_ = (int)FIRST;
     }
-    if (attackOrCollect_ == (int)PADIDSTATE::SECONDS)
+    if (attackOrCollect_ == (int)SECONDS)
     {
-        gameData_.padID_ = (int)PADIDSTATE::SECONDS;
+        gameData_.padID_ = (int)SECONDS;
     }
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     pParticleManager_ = Instantiate<ParticleManager>(this);
     pImageManager_ = Instantiate<ImageManager>(this);
-    pImageManager_->SetMode((int)IMAGESTATE::NONE);
+    pImageManager_->SetMode((int)NONEIMAGE);
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
-    pBoneImageManager_->SetMode((int)IMAGESTATE::BONE);
+    pBoneImageManager_->SetMode((int)BONEIMAGE);
 }
 
 void AttackPlayer::Update()
@@ -106,9 +114,9 @@ void AttackPlayer::Update()
     pStateManager_->Update();
     switch (gameState_)
     {
-    case GAMESTATE::READY:          UpdateReady();      break;
-    case GAMESTATE::PLAY:           UpdatePlay();       break;
-    case GAMESTATE::GAMEOVER:       UpdateGameOver();   break;
+    case READY:          UpdateReady();      break;
+    case PLAY:           UpdatePlay();       break;
+    case GAMEOVER:       UpdateGameOver();   break;
     }
 }
 
@@ -161,7 +169,7 @@ void AttackPlayer::UpdateReady()
     ++gameData_.timeCounter_;
     if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
-        gameState_ = GAMESTATE::PLAY;
+        gameState_ = PLAY;
         gameData_.timeCounter_ = initZeroInt;
     }
     jumpData_.positionY_ = transform_.position_.y;
@@ -176,15 +184,15 @@ void AttackPlayer::UpdatePlay()
     PlayerBase::UpdatePlay();
     if (Input::IsKeyDown(DIK_A))
     {
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+        if (gameData_.walkOrFight_ == (int)DOGSWALK)
         {
             pDogs_Walk_PlayScene_->SetGameStop();
         }
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
         {
             pDogs_Fight_PlayScene_->SetGameStop();
         }
-        gameState_ = GAMESTATE::GAMEOVER;
+        gameState_ = GAMEOVER;
     }
     //óéÇøÇΩéûÇÃèàóù
     if (transform_.position_.y <= -gameData_.fallLimit_)
@@ -209,14 +217,14 @@ void AttackPlayer::UpdatePlay()
         PlayerDive();
     }
     gameData_.scoreTimeCounter_++;
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
     		PlayerAddScore();
         }
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         if (gameData_.scoreTimeCounter_ % gameData_.FPS_ == gameData_.scoreTimeCounterWait_ && boneData_.isBoneTatch_ && gameData_.scoreTimeCounter_ != gameData_.scoreTimeCounterWait_)
         {
@@ -234,7 +242,7 @@ void AttackPlayer::UpdatePlay()
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = GAMESTATE::PLAY;
+            gameState_ = PLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
@@ -250,29 +258,29 @@ void AttackPlayer::UpdatePlay()
     }
     if (gameData_.score_ >= gameData_.scoreMax_)
     {
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+        if (gameData_.walkOrFight_ == (int)DOGSWALK)
         {
             pDogs_Walk_PlayScene_->SetGameStop();
         }
-        if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
         {
             pDogs_Fight_PlayScene_->SetGameStop();
         }
-        gameState_ = GAMESTATE::GAMEOVER;
+        gameState_ = GAMEOVER;
     }
     if (moveData_.isMove_ && !jumpData_.isJump_ && !moveData_.isRun_)
     {
-        Audio::Play(hSound_[((int)SOUNDSTATE::WALK)], soundData_.soundVolume_);
+        Audio::Play(hSound_[((int)WALK)], soundData_.soundVolume_);
     }
     if (!moveData_.isMove_ && !jumpData_.isJump_)
     {
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Stop(hSound_[((int)RUN)]);
     }
     if (Input::IsPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER, gameData_.padID_) && !jumpData_.isJump_ && moveData_.isMove_)
     {
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::RUN)], soundData_.soundVolumeHalf_);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Play(hSound_[((int)RUN)], soundData_.soundVolumeHalf_);
     }
 
     if (boneData_.isBoneTatch_)
@@ -288,7 +296,7 @@ void AttackPlayer::UpdatePlay()
         PlayerAddScore();
         pDogs_Fight_PlayScene_->AddBoneCount(boneData_.decBoneCount_);
         boneData_.isBoneTatch_ = false;
-        Audio::Stop(hSound_[((int)SOUNDSTATE::CollectBone)]);
+        Audio::Stop(hSound_[((int)COLLECTBONE)]);
         boneData_.killTime_ = boneData_.killTimeMax_;
     }
     IsMove();
@@ -300,17 +308,17 @@ void AttackPlayer::UpdatePlay()
 
 void AttackPlayer::UpdateGameOver()
 {
-    pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+    pImageManager_->SetMode((int)GAMETITLEIMAGE);
     pImageManager_->SecInit();
-    if (gameData_.padID_ == (int)PADIDSTATE::FIRST)
+    if (gameData_.padID_ == (int)FIRST)
     {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::LEFTVIEW));
+        Direct3D::SetIsChangeView(((int)LEFTVIEW));
 	}
-    if (gameData_.padID_ == (int)PADIDSTATE::SECONDS)
+    if (gameData_.padID_ == (int)SECONDS)
     {
-        Direct3D::SetIsChangeView(((int)Direct3D::VIEWSTATE::RIGHTVIEW));
+        Direct3D::SetIsChangeView(((int)RIGHTVIEW));
     }
-    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
+    if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)SECONDS))
     {
         //Å•INIÉtÉ@ÉCÉãÇ÷ÇÃèëÇ´çûÇ›
         WritePrivateProfileString("PLAYERSCORE", "AttackPlayerScore", std::to_string(gameData_.score_).c_str(), "Setting/PlayerSetting.ini");
@@ -362,11 +370,11 @@ void AttackPlayer::PlayerOuterWall()
 void AttackPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         woodBoxs = pDogs_Fight_PlayScene_->GetWoodBoxs();
     }
@@ -383,11 +391,11 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+            if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
                 pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+            if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
                 pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
@@ -403,7 +411,7 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
     }
     if (_pTarget->GetObjectName() == boneName)
     {
-        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+        if (boneData_.killTime_ == boneData_.killTimeMax_ && gameData_.walkOrFight_ == (int)DOGSFIGHT)
         {
             pParticleManager_->CreateVFX(transform_.position_);
             //Audio::Play(hSound_[((int)SOUNDSTATE::CollectBone)]);
@@ -485,39 +493,7 @@ void AttackPlayer::PlayerCamera()
     XMFLOAT3 mouseMove = Input::GetMouseMove();
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
-    if (Input::GetPadStickR(gameData_.padID_).y > deadZone)
-    {
-        if (moveData_.camUpFlag_ == false)
-        {
-            moveData_.camUpFlag_ = true;
-            moveData_.CamPosYNum_ -= 1;
-        }
-    }
-    else
-    {
-        moveData_.camUpFlag_ = false;
-    }
-    if (Input::GetPadStickR(gameData_.padID_).y < -deadZone)
-    {
-        if (moveData_.camDownFlag_ == false)
-        {
-            moveData_.camDownFlag_ = true;
-            moveData_.CamPosYNum_ += 1;
-        }
-    }
-    else
-    {
-        moveData_.camDownFlag_ = false;
-    }
-    if (moveData_.CamPosYNum_ <= 0)
-    {
-        moveData_.CamPosYNum_ = 0;
-    }
-    if (moveData_.CamPosYNum_ >= 4)
-    {
-        moveData_.CamPosYNum_ = 3;
-    }
-    dirData_.vecCam_.x = moveData_.CamPosY_[moveData_.CamPosYNum_];
+    padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
     const float padSens = 25;
     const float floLenRecedes = 1.0f;
     const float floLenApproach = 1.0f;
@@ -526,7 +502,6 @@ void AttackPlayer::PlayerCamera()
     const float degreesToRadians = 3.14f / 180.0f;
     padRotMove.x = padStickR.x;
     padRotMove.y = -padStickR.y;
-
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
     {
         if (moveData_.camZForwardFlag_ == false)
@@ -685,9 +660,9 @@ void AttackPlayer::PlayerMove()
     if (Input::IsPadButton(XINPUT_GAMEPAD_A, gameData_.padID_) && !jumpData_.isJump_)
     {
         PlayerJumpPower();
-        Audio::Stop(hSound_[((int)SOUNDSTATE::WALK)]);
-        Audio::Stop(hSound_[((int)SOUNDSTATE::RUN)]);
-        Audio::Play(hSound_[((int)SOUNDSTATE::JUMP)],soundData_.soundVolumeHalf_);
+        Audio::Stop(hSound_[((int)WALK)]);
+        Audio::Stop(hSound_[((int)RUN)]);
+        Audio::Play(hSound_[((int)JUMP)],soundData_.soundVolumeHalf_);
     }
     PlayerOuterWall();
 }

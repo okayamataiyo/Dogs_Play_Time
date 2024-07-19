@@ -38,7 +38,7 @@ void GameTitleScene::Initialize()
 	camTar_ = pSolidText_->GetPosition();
 	camTar_.y += 2;
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLE);
+	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLEIMAGE);
 	pImageManager_->SecInit();
 }
 
