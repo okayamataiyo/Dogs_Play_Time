@@ -61,13 +61,14 @@ void DogSelectScene::Initialize()
 	pGameTitleImageManager_ = Instantiate<ImageManager>(this);
 	pGameTitleImageManager_->SetMode((int)GAMETITLEIMAGE);
 	pGameTitleImageManager_->SecInit();
+	pPlayerSymbolImageManager_ = Instantiate<ImageManager>(this);
+	pPlayerSymbolImageManager_->SetMode((int)PLAYERSYMBOLIMAGE);
+	pPlayerSymbolImageManager_->SecInit();
 	pUIManager_ = Instantiate<UIManager>(this);
 	pUIManager_->SetMode((int)GAMEMANUALUI);
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
 	pDogsSelectUIManager_->SetMode((int)DOGSSELECTUI);
-	pPlayerSymbolImageManager_ = Instantiate<ImageManager>(this);
-	pPlayerSymbolImageManager_->SetMode((int)PLAYERSYMBOLIMAGE);
-	pPlayerSymbolImageManager_->SecInit();
+
 }
 
 void DogSelectScene::Update()
