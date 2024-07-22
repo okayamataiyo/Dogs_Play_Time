@@ -19,7 +19,7 @@ using enum PLAYSCENESTATE;
 ImageManager::ImageManager(GameObject* _pParent)
 	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{}, hClickButtonPict_{}, hPlayerWinPict_{}
 	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{},hPlayerSymbolPict_{}
-	,imageState_{GAMEOVERIMAGE},gaugeState_{WALKGAUGE}, isMatchWinner_{}
+	, imageState_{ GAMEOVERIMAGE }, gaugeState_{ WALKGAUGE }, isMatchWinner_{}, attackOrCollectPrev_{}
 	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{},playerSymbolTransformPrev_{}
 	, imageTransform_{}, buttonTransform_{},boneTransform_{},playerSymbolTransform_{}
 	, pParent_{ _pParent },pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
@@ -57,12 +57,19 @@ void ImageManager::Update()
 	}
 	if (imageState_ == PLAYERSYMBOLIMAGE)
 	{
-		if (attackOrCollect_ == (int)FIRST)
+		if (attackOrCollect_ == (int)FIRST && attackOrCollectPrev_ != attackOrCollect_)
 		{
-			/*playerSymbolTransformPrev_ = playerSymbolTransform_[(int)ONEP];
+			playerSymbolTransformPrev_ = playerSymbolTransform_[(int)ONEP];
 			playerSymbolTransform_[(int)ONEP] = playerSymbolTransform_[(int)TWOP];
-			playerSymbolTransform_[(int)TWOP] = playerSymbolTransformPrev_;*/
+			playerSymbolTransform_[(int)TWOP] = playerSymbolTransformPrev_;
 		}
+		if (attackOrCollect_ == (int)SECONDS && attackOrCollectPrev_ != attackOrCollect_)
+		{
+			playerSymbolTransformPrev_ = playerSymbolTransform_[(int)ONEP];
+			playerSymbolTransform_[(int)ONEP] = playerSymbolTransform_[(int)TWOP];
+			playerSymbolTransform_[(int)TWOP] = playerSymbolTransformPrev_;
+		}
+		attackOrCollectPrev_ = attackOrCollect_;
 	}
 }
 
@@ -364,8 +371,8 @@ void ImageManager::SecInit()
 		assert(hPlayerSymbolPict_[(int)ONEP] >= 0);
 		hPlayerSymbolPict_[(int)TWOP] = Image::Load(modelFolderName + "TWOP" + imageModifierName);
 		assert(hPlayerSymbolPict_[(int)TWOP] >= 0);
-		playerSymbolTransform_[(int)ONEP].position_ = XMFLOAT3(5.0f, 1.0f, 0.0f);
-		playerSymbolTransform_[(int)TWOP].position_ = XMFLOAT3(-5.0f,1.0f, 0.0f);
+		playerSymbolTransform_[(int)ONEP].position_ = XMFLOAT3(0.5f, 0.5f, 0.0f);
+		playerSymbolTransform_[(int)TWOP].position_ = XMFLOAT3(-0.5f,0.5f, 0.0f);
 		break;
 	}
 

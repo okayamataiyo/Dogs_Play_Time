@@ -62,6 +62,7 @@ private:
 	int collectPlayerScore_;
 	int attackOrCollectInverse_;
 	int attackOrCollect_;
+	int attackOrCollectPrev_;
 	int walkOrFight_;
 	int hModel_[4];
 	int hTimeGaugePict_;	//‰æ‘œ”Ô†
