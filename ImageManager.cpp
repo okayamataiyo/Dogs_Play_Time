@@ -8,18 +8,18 @@
 #include "Player/AttackPlayer.h"
 #include "ImageManager.h"
 
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
+using enum ImageManager::GAUGESTATE;
+using enum ImageManager::PLAYERSYMBOLSTATE;
+using enum ImageManager::BONESTATE;
 using enum PADIDSTATE;
-using enum GAUGESTATE;
 using enum MOUSESTATE;
-using enum PLAYERSYMBOLSTATE;
 using enum PLAYSCENESTATE;
-using enum BONESTATE;
 
 ImageManager::ImageManager(GameObject* _pParent)
 	:GameObject(_pParent, gameImageName), hModel_{}, hTimeGaugePict_{}, hClickButtonPict_{}, hPlayerWinPict_{}
 	, hManualPict_{}, hButtonPict_{},hBonePict_{},hYellowBonePict_{},hPlayerSymbolPict_{}
-	,imageState_{GAMEOVERIMAGE},gaugeState_{WALKGAUGE}, isMatchWinner_{}
+	, imageState_{ GAMEOVERIMAGE }, gaugeState_{ WALKGAUGE }, isMatchWinner_{}, attackOrCollectPrev_{}
 	, imageWidth_{}, imageHeight_{}, left_{}, width_{}, nowPw_{ 0.1f }, gaugeTransform_{},gaugeFrameTransform_{},playerSymbolTransformPrev_{}
 	, imageTransform_{}, buttonTransform_{},boneTransform_{},playerSymbolTransform_{}
 	, pParent_{ _pParent },pCollectPlayer_{nullptr},pAttackPlayer_{nullptr}
@@ -35,7 +35,7 @@ void ImageManager::Initialize()
 	attackOrCollect_ = GetPrivateProfileInt("PLAYERPADID", "AttackOrCollect", 0, "Setting/PlayerSetting.ini");
 	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
 	buttonTransform_.position_ = { -0.3f,-0.5f,0.0f };
-	for (int i = 0; i < (int)BONESTATE::MAXBONENUM; ++i)
+	for (int i = 0; i < (int)MAXBONENUM; ++i)
 	{
 		boneTransform_[i].position_ = {-0.9f + i * 0.15f,0.9f,0.0f};
 		boneTransform_[i].scale_ = {0.2f,0.2f,0.2f};
@@ -57,12 +57,19 @@ void ImageManager::Update()
 	}
 	if (imageState_ == PLAYERSYMBOLIMAGE)
 	{
-		if (attackOrCollect_ == (int)FIRST)
+		if (attackOrCollect_ == (int)FIRST && attackOrCollectPrev_ != attackOrCollect_)
 		{
 			playerSymbolTransformPrev_ = playerSymbolTransform_[(int)ONEP];
 			playerSymbolTransform_[(int)ONEP] = playerSymbolTransform_[(int)TWOP];
 			playerSymbolTransform_[(int)TWOP] = playerSymbolTransformPrev_;
 		}
+		if (attackOrCollect_ == (int)SECONDS && attackOrCollectPrev_ != attackOrCollect_)
+		{
+			playerSymbolTransformPrev_ = playerSymbolTransform_[(int)ONEP];
+			playerSymbolTransform_[(int)ONEP] = playerSymbolTransform_[(int)TWOP];
+			playerSymbolTransform_[(int)TWOP] = playerSymbolTransformPrev_;
+		}
+		attackOrCollectPrev_ = attackOrCollect_;
 	}
 }
 
@@ -87,10 +94,11 @@ void ImageManager::BothViewDraw()
 	}
 	if (imageState_ == PLAYERSYMBOLIMAGE)
 	{
-		Image::SetTransform(hPlayerSymbolPict_[(int)ONEP], playerSymbolTransform_[(int)ONEP]);
-		Image::Draw(hPlayerSymbolPict_[(int)ONEP]);
-		Image::SetTransform(hPlayerSymbolPict_[(int)TWOP], playerSymbolTransform_[(int)TWOP]);
-		Image::Draw(hPlayerSymbolPict_[(int)TWOP]);
+		for (int i = 0; i < (int)PLAYERSYMBOLNUM; i++)
+		{
+			Image::SetTransform(hPlayerSymbolPict_[i], playerSymbolTransform_[i]);
+			Image::Draw(hPlayerSymbolPict_[i]);
+		}
 	}
 }
 
@@ -358,12 +366,13 @@ void ImageManager::SecInit()
 		}
 		break;
 	case PLAYERSYMBOLIMAGE:
+
 		hPlayerSymbolPict_[(int)ONEP] = Image::Load(modelFolderName + "ONEP" + imageModifierName);
 		assert(hPlayerSymbolPict_[(int)ONEP] >= 0);
 		hPlayerSymbolPict_[(int)TWOP] = Image::Load(modelFolderName + "TWOP" + imageModifierName);
 		assert(hPlayerSymbolPict_[(int)TWOP] >= 0);
-		playerSymbolTransform_[(int)ONEP].position_ = XMFLOAT3(5.0f, 1.0f, 0.0f);
-		playerSymbolTransform_[(int)TWOP].position_ = XMFLOAT3(-5.0f,1.0f, 0.0f);
+		playerSymbolTransform_[(int)ONEP].position_ = XMFLOAT3(0.5f, 0.5f, 0.0f);
+		playerSymbolTransform_[(int)TWOP].position_ = XMFLOAT3(-0.5f,0.5f, 0.0f);
 		break;
 	}
 

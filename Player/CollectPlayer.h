@@ -39,8 +39,7 @@ namespace
 /// </summary>
 class CollectPlayer : public PlayerBase
 {
-private:
-
+public:
 	enum class SOUNDSTATE
 	{
 		STUN = 0,
@@ -49,6 +48,7 @@ private:
 		RUN,
 		CollectBone,
 	};
+private:
 
 	//▼ハンドルモデル番号
 	int hModel_;					//モデル番号

@@ -14,12 +14,12 @@
 #include "../ImageManager.h"
 #include "Dogs_Fight_PlayScene.h"
 
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum STAGEOBJECTSTATE;
 using enum ITEMOBJECTSTATE;
 using enum PADIDSTATE;
 using enum PLAYERNUMSTATE;
-using enum GAUGESTATE;
+using enum ImageManager::GAUGESTATE;
 using enum Dogs_Fight_PlayScene::SOUNDSTATE;
 
 Dogs_Fight_PlayScene::Dogs_Fight_PlayScene(GameObject* _pParent)

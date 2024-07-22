@@ -27,7 +27,7 @@
 #include "AttackPlayer.h"
 
 using enum AIPlayer::SOUNDSTATE;
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum GAMESTATE;
 
 AIPlayer::AIPlayer(GameObject* _pParent)

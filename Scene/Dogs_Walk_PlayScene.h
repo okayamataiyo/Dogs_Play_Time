@@ -31,8 +31,7 @@ class ImageManager;
 /// </summary>
 class Dogs_Walk_PlayScene : public GameObject
 {
-private:
-
+public:
     enum class SOUNDSTATE
     {
         BGM = 0,
@@ -49,6 +48,8 @@ private:
         THIRD,
         FOUR,
     };
+private:
+
     int attackOrCollect_;
     int attackOrCollectInverse_;
     int stageBlockNum_;             //ステージブロックの数
