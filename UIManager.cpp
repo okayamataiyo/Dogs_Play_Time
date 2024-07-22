@@ -3,7 +3,7 @@
 #include "UIManager.h"
 #include "Player/AttackPlayer.h"
 
-using enum UISTATE;
+using enum UIManager::UISTATE;
 using enum PADIDSTATE;
 using enum PLAYERSTATE;
 
@@ -95,7 +95,7 @@ void UIManager::LeftViewDraw()
 	int drawScoreNumberY[(int)PLAYERNUM] = {};
 	switch (UIState_)
 	{
-		case::UISTATE::DOGSWALKATTACKUI:
+		case::DOGSWALKATTACKUI:
 			drawScoreTextX[(int)FIRST] = { 30 };
 			drawScoreTextY[(int)FIRST] = { 30 };
 			drawScoreNumberX[(int)FIRST] = { 360 };
@@ -106,7 +106,7 @@ void UIManager::LeftViewDraw()
 				pText_->LeftViewDraw(drawScoreNumberX[(int)FIRST], drawScoreNumberY[(int)FIRST], attackPlayerScore_);
 			}
 			break;
-		case::UISTATE::DOGSWALKCOLLECTUI:
+		case::DOGSWALKCOLLECTUI:
 			drawScoreTextX[(int)SECONDS] = { 30 };
 			drawScoreTextY[(int)SECONDS] = { 30 };
 			drawScoreNumberX[(int)SECONDS] = { 360 };
@@ -128,7 +128,7 @@ void UIManager::RightViewDraw()
 	int drawScoreNumberY[(int)PLAYERNUM] = {};
 	switch (UIState_)
 	{
-	case::UISTATE::DOGSWALKATTACKUI:
+	case::DOGSWALKATTACKUI:
 		drawScoreTextX[(int)FIRST] = { 30 };
 		drawScoreTextY[(int)FIRST] = { 30 };
 		drawScoreNumberX[(int)FIRST] = { 360 };
@@ -139,7 +139,7 @@ void UIManager::RightViewDraw()
 			pText_->RightViewDraw(drawScoreNumberX[(int)FIRST], drawScoreNumberY[(int)FIRST], attackPlayerScore_);
 		}
 		break;
-	case::UISTATE::DOGSWALKCOLLECTUI:
+	case::DOGSWALKCOLLECTUI:
 		drawScoreTextX[(int)SECONDS] = { 30 };
 		drawScoreTextY[(int)SECONDS] = { 30 };
 		drawScoreNumberX[(int)SECONDS] = { 360 };

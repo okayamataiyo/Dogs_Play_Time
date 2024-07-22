@@ -15,10 +15,10 @@
 #include "../UIManager.h"
 #include "DogSelectScene.h"
 
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum PADIDSTATE;
 using enum STAGEOBJECTSTATE;
-using enum UISTATE;
+using enum UIManager::UISTATE;
 using enum Direct3D::VIEWSTATE;
 using enum MOUSESTATE;
 using enum PLAYSCENESTATE;

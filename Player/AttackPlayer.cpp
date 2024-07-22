@@ -27,7 +27,7 @@
 using enum GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum MOUSESTATE;
 using enum AttackPlayer::SOUNDSTATE;
 using enum Direct3D::VIEWSTATE;
