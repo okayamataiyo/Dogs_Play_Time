@@ -4,17 +4,17 @@
 
 class GameObject;
 
-enum class NODESTATE
-{
-	READY = 0,
-	RUNNING,
-	SUCCESS,
-	FAILURE,
-};
-
 class Node
 {
 public:
+	enum class NODESTATE
+	{
+		READY = 0,
+		RUNNING,
+		SUCCESS,
+		FAILURE,
+	};
+
 	Node(Node* _pParentNode, GameObject* _pGameObject) {};
 	NODESTATE GetMyNodeState() { return nodeData_.myNodeState_; }
 	void SetMyNodeState(NODESTATE _nodeState) { nodeData_.myNodeState_ = _nodeState; }

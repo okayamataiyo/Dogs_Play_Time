@@ -28,12 +28,14 @@
 
 using enum AIPlayer::SOUNDSTATE;
 using enum ImageManager::IMAGESTATE;
-using enum GAMESTATE;
+using enum PlayerBase::GAMESTATE;
+using enum PLAYSCENESTATE;
+using enum Node::NODESTATE;
 
 AIPlayer::AIPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, aIPlayerName)
     ,pParent_{_pParent}, hModel_{-1}, hSound_{-1,-1,-1,-1}, stageHModel_{-1}, floorHModel_{-1}
-    , number_{ 0 }, gameState_{ READY },waitTime_{ 60 },waitTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
+    , number_{ 0 }, gameState_{ GAMEREADY },waitTime_{ 60 },waitTimeWait_{60}, attackTime_{90}, attackTimeWait_{90}
     ,attackSeeTime_{60},attackSeeTimeWait_{60}, isAttack_{false},isAttackFinish_{false}, isAttackSee_{false}, isAttackSeeFinish_{false}
     , slowTime_{ 0 }, slowTimeWait_{ 1 }, dir_{}, random_value_{0}
     ,pDogs_Walk_PlayScene_{ nullptr }, pDogs_Fight_PlayScene_{ nullptr }, pCollectPlayer_{ nullptr }, pCollision_{ nullptr }
@@ -65,7 +67,7 @@ void AIPlayer::Initialize()
     assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         gameData_.FPS_ = 300;
     }
@@ -76,11 +78,11 @@ void AIPlayer::Initialize()
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pStage_ = (Stage*)FindObject(stageName);
     pFloor_ = (Floor*)FindObject(floorName);
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         pItemObjectManager_ = pDogs_Walk_PlayScene_->GetItemObjectManager();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
@@ -109,9 +111,9 @@ void AIPlayer::Update()
 
     switch (gameState_)
     {
-    case GAMESTATE::READY:          UpdateReady();      break;
-    case GAMESTATE::PLAY:           UpdatePlay();       break;
-    case GAMESTATE::GAMEOVER:       UpdateGameOver();   break;
+    case GAMEREADY:          UpdateReady();      break;
+    case GAMEPLAY:           UpdatePlay();       break;
+    case GAMEOVER:       UpdateGameOver();   break;
     }
 }
 
@@ -164,7 +166,7 @@ void AIPlayer::UpdateReady()
     ++gameData_.timeCounter_;
     if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
-        gameState_ = GAMESTATE::PLAY;
+        gameState_ = GAMEPLAY;
         gameData_.timeCounter_ = initZeroInt;
     }
     jumpData_.positionY_ = transform_.position_.y;
@@ -175,9 +177,9 @@ void AIPlayer::UpdatePlay()
     PlayerFall();
     PlayerRayCast();
     pAIPlayerWaitSelector_->ChoiceUpdate();
-    if (pAIPlayerWaitSelector_->GetMyNodeState() == NODESTATE::READY)
+    if (pAIPlayerWaitSelector_->GetMyNodeState() == READY)
     {
-        pAIPlayerWaitSelector_->SetMyNodeState(NODESTATE::RUNNING);
+        pAIPlayerWaitSelector_->SetMyNodeState(RUNNING);
     }
 
     --waitTime_;
@@ -216,7 +218,7 @@ void AIPlayer::UpdatePlay()
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = GAMESTATE::PLAY;
+            gameState_ = GAMEPLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
@@ -352,11 +354,11 @@ void AIPlayer::PlayerOuterWall()
 void AIPlayer::OnCollision(GameObject* _pTarget)
 {
     std::vector<int> woodBoxs = {};
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+    if (gameData_.walkOrFight_ == (int)DOGSWALK)
     {
         woodBoxs = pDogs_Walk_PlayScene_->GetWoodBoxs();
     }
-    if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+    if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
     {
         woodBoxs = pDogs_Fight_PlayScene_->GetWoodBoxs();
     }
@@ -373,11 +375,11 @@ void AIPlayer::OnCollision(GameObject* _pTarget)
         {
             PlayerJumpPower();
             pWoodBox_->SetWoodBoxBreak();
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+            if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
                 pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }
-            if (gameData_.walkOrFight_ == (int)PLAYSCENESTATE::DOGSFIGHT)
+            if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
                 pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
             }

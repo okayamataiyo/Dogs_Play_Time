@@ -10,8 +10,10 @@
 #include "AttackPlayer.h"
 #include "CollectPlayer.h"
 
+using enum PlayerBase::GAMESTATE;
+
 ActorAttackPlayer::ActorAttackPlayer(GameObject* _pParent)
-    :PlayerBase(_pParent, actorAttackPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMESTATE::READY}
+    :PlayerBase(_pParent, actorAttackPlayerName), hModel_{ -1 }, stageHModel_{ -1 },isSelect_{false}, gameState_{GAMEREADY}
     ,pDogs_Walk_PlayScene_{nullptr},pStage_{nullptr}
 {
 }

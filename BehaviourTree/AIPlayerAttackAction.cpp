@@ -2,7 +2,7 @@
 #include "AIPlayerAttackAction.h"
 #include "../Player/AIPlayer.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 
 AIPlayerAttackAction::AIPlayerAttackAction(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)
