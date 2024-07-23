@@ -28,7 +28,7 @@
 #include "AIPlayer.h"
 
 using enum ImageManager::IMAGESTATE;
-using enum GAMESTATE;
+using enum PlayerBase::GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
 using enum CollectPlayer::SOUNDSTATE;
@@ -37,7 +37,7 @@ using enum MOUSESTATE;
 
 CollectPlayer::CollectPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, collectPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1,-1 }, stageBlockHModel_{ -1 }, stageHModel_{ -1 }, floorHModel_{ -1 }
-    , number_{ 0 }, gameState_{READY},attackOrCollectInverse_{0}
+    , number_{ 0 }, gameState_{GAMEREADY},attackOrCollectInverse_{0}
     , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr }, pAttackPlayer_{ nullptr },pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pStageBlock_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{ nullptr },pItemObjectManager_{nullptr}, pStateManager_{nullptr}, pImageManager_{nullptr},pBoneImageManager_{nullptr}
@@ -115,8 +115,8 @@ void CollectPlayer::Update()
     pStateManager_->Update();
     switch (gameState_)
     {
-    case READY:          UpdateReady();      break;
-    case PLAY:           UpdatePlay();       break;
+    case GAMEREADY:          UpdateReady();      break;
+    case GAMEPLAY:           UpdatePlay();       break;
     case GAMEOVER:       UpdateGameOver();   break;
     }
 }
@@ -165,7 +165,7 @@ void CollectPlayer::UpdateReady()
     ++gameData_.timeCounter_;
     if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
-        gameState_ = PLAY;
+        gameState_ = GAMEPLAY;
         gameData_.timeCounter_ = initZeroInt;
     }
     jumpData_.positionY_ = transform_.position_.y;
@@ -225,7 +225,7 @@ void CollectPlayer::UpdatePlay()
         {
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = PLAY;
+            gameState_ = GAMEPLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }

@@ -4,7 +4,7 @@
 #include "../Player/AIPlayer.h"
 #include "../Engine/Global.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 
 AIPlayerAttackDecorator::AIPlayerAttackDecorator(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)

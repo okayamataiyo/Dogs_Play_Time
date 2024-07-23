@@ -1,6 +1,6 @@
 #include "AIPlayerWaitAction.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 
 AIPlayerWaitAction::AIPlayerWaitAction(Node* _pParentNode,GameObject* _pGameObject)
 	:Node(_pParentNode,_pGameObject)

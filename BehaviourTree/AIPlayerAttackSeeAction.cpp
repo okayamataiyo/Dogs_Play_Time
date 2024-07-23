@@ -2,7 +2,7 @@
 #include "AIPlayerAttackSeeAction.h"
 #include "../Player/AIPlayer.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 
 AIPlayerAttackSeeAction::AIPlayerAttackSeeAction(Node* _pParentNode, GameObject* _pGameObject)
 	:Node(_pParentNode, _pGameObject)

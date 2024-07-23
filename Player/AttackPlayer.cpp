@@ -24,7 +24,7 @@
 #include "CollectPlayer.h"
 #include "AIPlayer.h"
 
-using enum GAMESTATE;
+using enum PlayerBase::GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
 using enum ImageManager::IMAGESTATE;
@@ -34,7 +34,7 @@ using enum Direct3D::VIEWSTATE;
 
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
-    ,number_{0}, gameState_{ READY }, attackOrCollect_{ 0 }
+    ,number_{0}, gameState_{ GAMEREADY }, attackOrCollect_{ 0 }
     , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
@@ -114,8 +114,8 @@ void AttackPlayer::Update()
     pStateManager_->Update();
     switch (gameState_)
     {
-    case READY:          UpdateReady();      break;
-    case PLAY:           UpdatePlay();       break;
+    case GAMEREADY:          UpdateReady();      break;
+    case GAMEPLAY:           UpdatePlay();       break;
     case GAMEOVER:       UpdateGameOver();   break;
     }
 }
@@ -169,7 +169,7 @@ void AttackPlayer::UpdateReady()
     ++gameData_.timeCounter_;
     if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
-        gameState_ = PLAY;
+        gameState_ = GAMEPLAY;
         gameData_.timeCounter_ = initZeroInt;
     }
     jumpData_.positionY_ = transform_.position_.y;
@@ -242,7 +242,7 @@ void AttackPlayer::UpdatePlay()
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = PLAY;
+            gameState_ = GAMEPLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
