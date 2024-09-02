@@ -71,8 +71,10 @@ void AIPlayer::Initialize()
     {
         gameData_.FPS_ = 300;
     }
+    //▼コリジョンを設定
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
+    //▼ポインタ変数に実体を設定
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
@@ -106,7 +108,7 @@ void AIPlayer::Initialize()
 
 void AIPlayer::Update()
 {
-    //ステートマネージャーの更新
+    //▼ステートマネージャーの更新
     pStateManager_->Update();
 
     switch (gameState_)
@@ -188,12 +190,11 @@ void AIPlayer::UpdatePlay()
         isAttackSee_ = true;
     }
 
-    //落ちた時の処理
+    //▼落ちた時の処理
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
-        int revivalTime = 60;
         PlayerRevival();
-        PlayerStun(revivalTime);
+        PlayerStun(revivalTime_);
 
         SetKillTime(boneData_.killTimeWait_);
     }
@@ -463,7 +464,6 @@ void AIPlayer::PlayerDive()
 
 void AIPlayer::PlayerDivePower()
 {
-    //とびつきの処理
     PlayerBase::PlayerDivePower();
 }
 
@@ -530,13 +530,13 @@ void AIPlayer::PlayerRayCast()
     XMStoreFloat3(&stageDataDown.dir, vecDown);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataDown); //レイを発射
     wallData_.rayStageDistDown_ = stageDataDown.dist;
-    //プレイヤーが浮いていないとき
+    //▼プレイヤーが浮いていないとき
     if (wallData_.rayStageDistDown_ + jumpData_.positionY_ <= moveData_.isFling_)
     {
-        //ジャンプしてない＆すり抜け床の上にいない
+        //▼ジャンプしてない＆すり抜け床の上にいない
         if (!jumpData_.isJump_ && !floorData_.isOnFloor_)
         {
-            //地面に張り付き
+            //▼地面に張り付き
             diveData_.isDived_ = false;
             jumpData_.positionY_ = -wallData_.rayStageDistDown_ + jumpData_.playerInitPosY_;
             jumpData_.positionTempY_ = jumpData_.positionY_;

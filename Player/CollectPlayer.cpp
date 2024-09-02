@@ -1,4 +1,5 @@
 //インクルード
+#include <numbers>
 #include "../Engine/Input.h"
 #include "../Engine/Model.h"
 #include "../Engine/Direct3D.h"
@@ -190,7 +191,7 @@ void CollectPlayer::UpdatePlay()
         }
         gameState_ = GAMEOVER;
     }
-    //落ちた時の処理
+    //▼落ちた時の処理
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
         int revivalTime = 60;
@@ -386,7 +387,7 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
             }
         }
     }
-    //WoodBoxという名前を持つ全てのオブジェクトを参照
+    //▼WoodBoxという名前を持つ全てのオブジェクトを参照
     if (_pTarget->GetObjectName().find(woodBoxName) != std::string::npos)
     {
         if (woodBoxData_.angleDegrees_ > woodBoxData_.angleDegreesMax_)
@@ -584,7 +585,7 @@ void CollectPlayer::PlayerMove()
     PlayerBase::PlayerMove();
     const float walkSpeed = 0.4f;
     const float runSpeed = 0.6f;
-    // プレイヤーの移動処理
+    //▼ プレイヤーの移動処理
     if (!moveData_.isRun_)
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
@@ -593,18 +594,17 @@ void CollectPlayer::PlayerMove()
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
-    //向き変更
+    //▼向き変更
     XMFLOAT3 m;
     XMStoreFloat3(&m, dirData_.vecMove_);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
     dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 
-    float pi = 3.14f;					//円周率
-    float halfPi = pi / 2;				//円周率の半分
+
 
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
-    const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
+    const XMMATRIX rotmat = XMMatrixRotationY(std::u);
     dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
