@@ -27,29 +27,32 @@
       <UniqueIdentifier>{47a6a3f5-8cfd-436b-8d58-beccd108f3f3}</UniqueIdentifier>
       <Extensions>hlsl</Extensions>
     </Filter>
-    <Filter Include="Player">
-      <UniqueIdentifier>{ffd4a030-6260-40c2-ae0b-22cdf5a0cb84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{85b8fbd8-eb1c-4f95-808d-97da4e7650fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="StageObject">
-      <UniqueIdentifier>{6578c92d-fd63-4d1c-b692-c75d954a1052}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ItemObject">
-      <UniqueIdentifier>{3a361a01-e460-4f71-8a7a-d1886fbd2748}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\ResourceManager\Csv">
       <UniqueIdentifier>{4d4d97db-0bc7-4491-83c1-c39bd4b58bb0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\ResourceManager\Json">
       <UniqueIdentifier>{15f1cc6c-94c4-4ffc-9ee4-38cef84b852b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="State">
-      <UniqueIdentifier>{99395ec2-5ef2-4efd-b9a5-1ebca1506df9}</UniqueIdentifier>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{8be8ae78-28b1-4769-a9d0-eeb208a9f866}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BehaviourTree">
-      <UniqueIdentifier>{fb085fe0-7545-4ceb-927f-35e3080c25a2}</UniqueIdentifier>
+    <Filter Include="Scripts\BehaviourTree">
+      <UniqueIdentifier>{3e08cd65-06d7-4391-a51c-bc150eea4e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Player">
+      <UniqueIdentifier>{4ea893b4-9b35-4d25-9a6f-347f9a89b0ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\ItemObject">
+      <UniqueIdentifier>{b706ad59-ecd4-443f-a164-e05609137634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Scene">
+      <UniqueIdentifier>{40ab37ab-447e-47fe-86a7-181b218fed1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\State">
+      <UniqueIdentifier>{80100f2a-541f-4d97-ae50-3f116ffae62d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\StageObject">
+      <UniqueIdentifier>{9a462cc2-729e-4089-a49a-c863b0570d9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,120 +140,120 @@
     <ClCompile Include="Engine\ImGui\imgui_widgets.cpp">
       <Filter>Engine\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="Player\AttackPlayer.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Player\CollectPlayer.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\GameOverScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\GameTitleScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\DogSelectScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="StageObject\Sky.cpp">
-      <Filter>StageObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StageObject\SolidText.cpp">
-      <Filter>StageObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StageObject\Stage.cpp">
-      <Filter>StageObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StageObject\StageBlock.cpp">
-      <Filter>StageObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StageObject\StageObjectManager.cpp">
-      <Filter>StageObject</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemObject\Bone.cpp">
-      <Filter>ItemObject</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemObject\Floor.cpp">
-      <Filter>ItemObject</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemObject\FrameBox.cpp">
-      <Filter>ItemObject</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemObject\ItemObjectManager.cpp">
-      <Filter>ItemObject</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemObject\WoodBox.cpp">
-      <Filter>ItemObject</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Csv\CsvReader.cpp">
       <Filter>Engine\ResourceManager\Csv</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Json\JsonReader.cpp">
       <Filter>Engine\ResourceManager\Json</Filter>
     </ClCompile>
-    <ClCompile Include="ItemObject\BoneSuck.cpp">
-      <Filter>ItemObject</Filter>
+    <ClCompile Include="Scripts\Button.cpp" />
+    <ClCompile Include="Scripts\ImageManager.cpp" />
+    <ClCompile Include="Scripts\ParticleManager.cpp" />
+    <ClCompile Include="Scripts\UIManager.cpp" />
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackAction.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="Player\ActorAttackPlayer.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackDecorator.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="Player\ActorCollectPlayer.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackDiveAction.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="Player\PlayerBase.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackDiveDecorator.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="State\StateManager.cpp">
-      <Filter>State</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackSeeAction.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="State\AttackPlayerState.cpp">
-      <Filter>State</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackSequence.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="State\CollectPlayerState.cpp">
-      <Filter>State</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerWaitAction.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\GameSelectScene.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="Scripts\BehaviourTree\AIPlayerWaitSelector.cpp">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Dogs_Fight_PlayScene.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="Scripts\Player\ActorAttackPlayer.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Dogs_Walk_PlayScene.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="Scripts\Player\ActorCollectPlayer.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="UIManager.cpp" />
-    <ClCompile Include="ImageManager.cpp" />
-    <ClCompile Include="ParticleManager.cpp" />
-    <ClCompile Include="Player\AIPlayer.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="Scripts\Player\AIPlayer.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="State\AIPlayerState.cpp">
-      <Filter>State</Filter>
+    <ClCompile Include="Scripts\Player\AttackPlayer.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerWaitSelector.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\Player\CollectPlayer.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackAction.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\Player\PlayerBase.cpp">
+      <Filter>Scripts\Player</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackDecorator.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\Bone.cpp">
+      <Filter>Scripts\ItemObject</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerWaitAction.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\BoneSuck.cpp">
+      <Filter>Scripts\ItemObject</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackSequence.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\Floor.cpp">
+      <Filter>Scripts\ItemObject</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackSeeAction.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\FrameBox.cpp">
+      <Filter>Scripts\ItemObject</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveAction.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\ItemObjectManager.cpp">
+      <Filter>Scripts\ItemObject</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviourTree\AIPlayerAttackDiveDecorator.cpp">
-      <Filter>BehaviourTree</Filter>
+    <ClCompile Include="Scripts\ItemObject\WoodBox.cpp">
+      <Filter>Scripts\ItemObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\Dogs_Fight_PlayScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\Dogs_Walk_PlayScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\DogSelectScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\GameOverScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\GameSelectScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Scene\GameTitleScene.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\State\AIPlayerState.cpp">
+      <Filter>Scripts\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\State\AttackPlayerState.cpp">
+      <Filter>Scripts\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\State\CollectPlayerState.cpp">
+      <Filter>Scripts\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\State\StateManager.cpp">
+      <Filter>Scripts\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\StageObject\Sky.cpp">
+      <Filter>Scripts\StageObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\StageObject\SolidText.cpp">
+      <Filter>Scripts\StageObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\StageObject\Stage.cpp">
+      <Filter>Scripts\StageObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\StageObject\StageBlock.cpp">
+      <Filter>Scripts\StageObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\StageObject\StageObjectManager.cpp">
+      <Filter>Scripts\StageObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,61 +347,6 @@
     <ClInclude Include="Engine\SceneManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="Player\PlayerBase.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\AttackPlayer.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\CollectPlayer.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameOverScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameTitleScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\DogSelectScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\Sky.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\SolidText.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\Stage.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\StageBlock.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\StageObjectBase.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StageObject\StageObjectManager.h">
-      <Filter>StageObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\Bone.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\Floor.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\FrameBox.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\ItemObjectBase.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\ItemObjectManager.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemObject\WoodBox.h">
-      <Filter>ItemObject</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Json\json.hpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClInclude>
@@ -408,71 +356,126 @@
     <ClInclude Include="Engine\Json\JsonReader.h">
       <Filter>Engine\ResourceManager\Json</Filter>
     </ClInclude>
-    <ClInclude Include="ItemObject\BoneSuck.h">
-      <Filter>ItemObject</Filter>
+    <ClInclude Include="Scripts\Button.h" />
+    <ClInclude Include="Scripts\ImageManager.h" />
+    <ClInclude Include="Scripts\ParticleManager.h" />
+    <ClInclude Include="Scripts\UIManager.h" />
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackAction.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="Player\ActorAttackPlayer.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackDecorator.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="Player\ActorCollectPlayer.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackDiveAction.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="State\StateBase.h">
-      <Filter>State</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackDiveDecorator.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="State\StateManager.h">
-      <Filter>State</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackSeeAction.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="State\AttackPlayerState.h">
-      <Filter>State</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackSequence.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="State\CollectPlayerState.h">
-      <Filter>State</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerWaitAction.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\GameSelectScene.h">
-      <Filter>Scene</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\AIPlayerWaitSelector.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Dogs_Fight_PlayScene.h">
-      <Filter>Scene</Filter>
+    <ClInclude Include="Scripts\BehaviourTree\Node.h">
+      <Filter>Scripts\BehaviourTree</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Dogs_Walk_PlayScene.h">
-      <Filter>Scene</Filter>
+    <ClInclude Include="Scripts\Player\ActorAttackPlayer.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="UIManager.h" />
-    <ClInclude Include="ImageManager.h" />
-    <ClInclude Include="ParticleManager.h" />
-    <ClInclude Include="Player\AIPlayer.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="Scripts\Player\ActorCollectPlayer.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="State\AIPlayerState.h">
-      <Filter>State</Filter>
+    <ClInclude Include="Scripts\Player\AIPlayer.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerWaitSelector.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\Player\AttackPlayer.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\Node.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\Player\CollectPlayer.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackAction.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\Player\PlayerBase.h">
+      <Filter>Scripts\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackDecorator.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\Bone.h">
+      <Filter>Scripts\ItemObject</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerWaitAction.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\BoneSuck.h">
+      <Filter>Scripts\ItemObject</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackSequence.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\Floor.h">
+      <Filter>Scripts\ItemObject</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackSeeAction.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\FrameBox.h">
+      <Filter>Scripts\ItemObject</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveAction.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\ItemObjectBase.h">
+      <Filter>Scripts\ItemObject</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourTree\AIPlayerAttackDiveDecorator.h">
-      <Filter>BehaviourTree</Filter>
+    <ClInclude Include="Scripts\ItemObject\ItemObjectManager.h">
+      <Filter>Scripts\ItemObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ItemObject\WoodBox.h">
+      <Filter>Scripts\ItemObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\Dogs_Fight_PlayScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\Dogs_Walk_PlayScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\DogSelectScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\GameOverScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\GameSelectScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Scene\GameTitleScene.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\State\AIPlayerState.h">
+      <Filter>Scripts\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\State\AttackPlayerState.h">
+      <Filter>Scripts\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\State\CollectPlayerState.h">
+      <Filter>Scripts\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\State\StateBase.h">
+      <Filter>Scripts\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\State\StateManager.h">
+      <Filter>Scripts\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\Sky.h">
+      <Filter>Scripts\StageObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\SolidText.h">
+      <Filter>Scripts\StageObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\Stage.h">
+      <Filter>Scripts\StageObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\StageBlock.h">
+      <Filter>Scripts\StageObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\StageObjectBase.h">
+      <Filter>Scripts\StageObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\StageObject\StageObjectManager.h">
+      <Filter>Scripts\StageObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
