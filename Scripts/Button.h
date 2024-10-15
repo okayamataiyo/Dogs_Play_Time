@@ -25,7 +25,7 @@ public:
 	void RightViewDraw() override;
 	void UPSubViewDraw() override;
 	void Release() override;
-	void SetPosition(int _x, int _y);						//ボタン表示位置
+	void SetPosition(float _x, float _y);						//ボタン表示位置
 	void Push(bool _pushed) { this->pushed_ = _pushed; }	//ボタンを押したか、押してないか
 	bool MouseInArea(XMFLOAT3 _mousePos);					//マウスがボタン内に入っているか
 	bool IsMoving() { return(currentTime_ < totalTime_); }	//動いているならtrue

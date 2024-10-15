@@ -557,20 +557,20 @@ namespace Direct3D
 	{
 		// ビューポートの設定
 		//レンダリング結果を表示する範囲
-		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT];
-		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Height = screenHeight_;
-		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftX = vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のx座標
-		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftY = vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Width = (float)(screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::LEFTVIEWPORT]);
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].Height = (float)screenHeight_;
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftX = (float)vPTopLeftX_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のx座標
+		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].TopLeftY = (float)vPTopLeftY_[(int)VIEWPORTSTATE::LEFTVIEWPORT];			 //画面左上のy座標
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
 		vp[(int)VIEWPORTSTATE::LEFTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
-		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width = screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];
-		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Height = screenHeight_;
-		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftX = screenWidth_ + vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];	 //画面左上のx座標
-		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftY = vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];			 //画面左上のy座標
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Width = (float)(screenWidthHaif_ + vPWidth_[(int)VIEWPORTSTATE::RIGHTVIEWPORT]);
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].Height = (float)screenHeight_;
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftX = (float)screenWidth_ + vPTopLeftX_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];	 //画面左上のx座標
+		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].TopLeftY = (float)vPTopLeftY_[(int)VIEWPORTSTATE::RIGHTVIEWPORT];			 //画面左上のy座標
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値
 		vp[(int)VIEWPORTSTATE::RIGHTVIEWPORT].MaxDepth = 1.0f;		 //深度値の最大値
-		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Width = screenWidth_;
-		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Height = vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT];
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Width = (float)screenWidth_;
+		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].Height = (float)vPTopLeftY_[(int)VIEWPORTSTATE::UPSUBVIEWPORT];
 		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].TopLeftX = 0;	 //画面左上のx座標
 		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].TopLeftY = 0;			 //画面左上のy座標
 		vp[(int)VIEWPORTSTATE::UPSUBVIEWPORT].MinDepth = 0.0f;		 //深度値の最小値

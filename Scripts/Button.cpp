@@ -53,7 +53,7 @@ void Button::Release()
 {
 }
 
-void Button::SetPosition(int _x, int _y)
+void Button::SetPosition(float _x, float _y)
 {
 	transform_.position_.x = (float)(_x - Direct3D::screenWidth_ / 2) / Direct3D::screenWidth_;
 	transform_.position_.y = -(float)(_y - Direct3D::screenHeight_ / 2) / (Direct3D::screenHeight_ / 2);
