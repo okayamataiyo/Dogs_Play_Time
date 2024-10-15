@@ -58,8 +58,8 @@ private:
 	int floorHModel_;				//‚·‚è”²‚¯°
 	int number_;
 	int attackOrCollectInverse_;
-	const double& pi_ = std::numbers::pi;					//‰~ü—¦
-	const float&& halfPi_ = pi_ / 2;				//‰~ü—¦‚Ì”¼•ª
+	const float pi_ = 3.14f;					//‰~ü—¦
+	const float halfPi_ = pi_ / 2;				//‰~ü—¦‚Ì”¼•ª
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;

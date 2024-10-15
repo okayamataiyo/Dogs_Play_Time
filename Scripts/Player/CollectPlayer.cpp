@@ -1,5 +1,4 @@
 //インクルード
-<<<<<<< HEAD:Scripts/Player/CollectPlayer.cpp
 #include "../../Engine/Input.h"
 #include "../../Engine/Model.h"
 #include "../../Engine/Direct3D.h"
@@ -10,19 +9,6 @@
 #include "../../Engine/Global.h"
 #include "../../Engine/SceneManager.h"
 #include "../../Engine/Json/JsonReader.h"
-=======
-#include <numbers>
-#include "../Engine/Input.h"
-#include "../Engine/Model.h"
-#include "../Engine/Direct3D.h"
-#include "../Engine/ImGui/imgui.h"
-#include "../Engine/Text.h"
-#include "../Engine/Audio.h"
-#include "../Engine/VFX.h"
-#include "../Engine/Global.h"
-#include "../Engine/SceneManager.h"
-#include "../Engine/Json/JsonReader.h"
->>>>>>> 7485385f9c24383e49fe3e78f78278203791bfb3:Player/CollectPlayer.cpp
 #include "../ItemObject/Floor.h"
 #include "../ItemObject/WoodBox.h"
 #include "../ItemObject/Bone.h"
@@ -617,7 +603,7 @@ void CollectPlayer::PlayerMove()
 
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
-    const XMMATRIX rotmat = XMMatrixRotationY(std::u);
+    const XMMATRIX rotmat = XMMatrixRotationY(halfPi_);
     dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
