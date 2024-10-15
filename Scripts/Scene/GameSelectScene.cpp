@@ -15,6 +15,13 @@
 #include "../UIManager.h"
 #include "GameSelectScene.h"
 
+using enum ImageManager::IMAGESTATE;
+using enum TEXTSTATE;
+using enum STAGEOBJECTSTATE;
+using enum UIManager::UISTATE;
+using enum PLAYSCENESTATE;
+using enum PADIDSTATE;
+
 GameSelectScene::GameSelectScene(GameObject* _pParent)
 	:GameObject(_pParent, gameSelectSceneName), hPict_{ -1 }, attackOrCollect_{ 0 }, attackOrCollectInverse_{ 0 },walkOrFight_{0}, padIDNum_{0}
 	, skyPos_{ 0.0f,0.0f,0.0f }, skyPosFly_{ 10000.0f,0.0f,10000.0f }
@@ -31,28 +38,28 @@ void GameSelectScene::Initialize()
 	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
 	ShowCursor();
 	pDogsWalkText_ = Instantiate<SolidText>(this);
-	pDogsWalkText_->SetMode((int)TEXTSTATE::DOGS_WALK);
+	pDogsWalkText_->SetMode((int)DOGS_WALK);
 	pDogsWalkText_->SetRotateY(0.0f);
 	pDogsWalkText_->SetPosition(XMFLOAT3(5.0f, 0.0f, 0.0f));
 	pDogsFightText_ = Instantiate<SolidText>(this);
-	pDogsFightText_->SetMode((int)TEXTSTATE::DOGS_FIGHT);
+	pDogsFightText_->SetMode((int)DOGS_FIGHT);
 	pDogsFightText_->SetRotateY(0.0f);
 	pDogsFightText_->SetPosition(XMFLOAT3(-5.0f, 0.0f, 0.0f));
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pStageObjectManager_ = new StageObjectManager(this);
-	pStageObjectManager_->CreateStageObjectOrigin(STAGEOBJECTSTATE::SKY);
+	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
 	XMFLOAT3 positionStage = { 5.0f,38.0f,10.0f };
-	pStageObjectManager_->CreateStageObject(STAGEOBJECTSTATE::STAGE, positionStage);
+	pStageObjectManager_->CreateStageObject(STAGE, positionStage);
 	camPos_.y += 2;
 	camPos_.z += 15;
 	XMFLOAT3 positionActorAttackPlayer = { 5.0f,0.0f,0.0f };
 	XMFLOAT3 positionActorCollectPlayer = { -5.0f,0.0f,0.0f };
 	pImageManager_ = Instantiate<ImageManager>(this);
-	pImageManager_->SetMode((int)IMAGESTATE::GAMETITLEIMAGE);
+	pImageManager_->SetMode((int)GAMETITLEIMAGE);
 	pImageManager_->SecInit();
 	pDogsSelectUIManager_ = Instantiate<UIManager>(this);
-	pDogsSelectUIManager_->SetMode((int)UISTATE::DOGSSELECTUI);
+	pDogsSelectUIManager_->SetMode((int)DOGSSELECTUI);
 }
 
 void GameSelectScene::Update()
@@ -63,7 +70,7 @@ void GameSelectScene::Update()
 	const XMFLOAT3 bigScale = { 0.6f,0.6f,0.6f };
 	const XMFLOAT3 defaultScale = { 0.5f,0.5f,0.5f };
 
-	if (walkOrFight_ == (int)PLAYSCENESTATE::DOGSWALK)
+	if (walkOrFight_ == (int)DOGSWALK)
 	{
 		pDogsWalkText_->SetScale(bigScale);
 		pDogsFightText_->SetScale(defaultScale);
@@ -75,15 +82,15 @@ void GameSelectScene::Update()
 	}
 
 	const float deadZone = 0.3f;
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x < -deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x < -deadZone)
+	if (Input::GetPadStickL((int)FIRST).x < -deadZone || Input::GetPadStickL((int)SECONDS).x < -deadZone)
 	{
-		walkOrFight_ = (int)PLAYSCENESTATE::DOGSWALK;
+		walkOrFight_ = (int)DOGSWALK;
 	}
-	if (Input::GetPadStickL((int)PADIDSTATE::FIRST).x > deadZone || Input::GetPadStickL((int)PADIDSTATE::SECONDS).x > deadZone)
+	if (Input::GetPadStickL((int)FIRST).x > deadZone || Input::GetPadStickL((int)SECONDS).x > deadZone)
 	{
-		walkOrFight_ = (int)PLAYSCENESTATE::DOGSFIGHT;
+		walkOrFight_ = (int)DOGSFIGHT;
 	}
-	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)PADIDSTATE::SECONDS))
+	if (Input::IsKeyDown(DIK_E) || Input::IsMouseButtonDown((int)MOUSESTATE::LEFTCLICK) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)FIRST) || Input::IsPadButtonDown(XINPUT_GAMEPAD_B, (int)SECONDS))
 	{
 		//INIÉtÉ@ÉCÉãÇ÷ÇÃèëÇ´çûÇ›
 		WritePrivateProfileString("PLAYSCENEID", "WalkOrFight", std::to_string(walkOrFight_).c_str(), "Setting/PlaySceneSetting.ini");

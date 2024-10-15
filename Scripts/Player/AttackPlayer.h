@@ -58,6 +58,13 @@ private:
 	int slowTimeWait_;
 	const int slowTimeNum_ = 2;
 	const int defaultTimeNum_ = 1;
+	const int revivalTime_ = 60;
+	const float deadZone_ = 0.3f;		//コントローラーのデットゾーン
+	const float plusDir_ = 1.0f;
+	const float minusDir_ = -1.0f;
+	const float pi_ = 3.14f;					//円周率
+	const float halfPi_ = pi_ / 2;				//円周率の半分
+	const XMMATRIX rotmat_ = XMMatrixRotationY(halfPi_);
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;
@@ -99,11 +106,16 @@ public:
 	/// </summary>
 	void Update() override;
 
+	/// <summary>
+	/// スローモーションに使用しようとした(未完成)
+	/// </summary>
 	void UpdateSlow();
 
-	/// <summary>
-	/// 描画関数
-	/// </summary>
+	//▼描画関数
+	//左右画面
+	//左画面
+	//右画面
+	//上画面
 	void BothViewDraw() override;
 	void LeftViewDraw() override;
 	void RightViewDraw() override;
@@ -114,10 +126,15 @@ public:
 	/// </summary>
 	void Release() override;
 
+	//▼更新関数
+	//準備状態
+	//プレイ状態
+	//ゲームオーバー状態
 	void UpdateReady();
 	void UpdatePlay();
 	void UpdateGameOver();
 
+	//▼プレイヤーの行動を制御する関数
 	void PlayerWaitStateFunc();
 	void PlayerWalkStateFunc();
 	void PlayerRunStateFunc();
@@ -130,35 +147,59 @@ public:
 	/// <param name="_pTarget">当たった相手</param>
 	void OnCollision(GameObject* _pTarget) override;
 
+	/// <summary>
+	/// スコア追加関数
+	/// </summary>
 	void PlayerAddScore() override;
 
+	/// <summary>
+	/// カメラを制御する関数
+	/// </summary>
 	void PlayerCamera() override;
 
+	/// <summary>
+	/// 落下した際の処理を制御する関数
+	/// </summary>
 	void PlayerFall() override;
 
 	/// <summary>
-	/// プレイヤーの移動関数
+	/// プレイヤーの移動を制御する関数
 	/// </summary>
 	void PlayerMove() override;
 
+	/// <summary>
+	/// プレイヤーのジャンプを制御する関数
+	/// </summary>
 	void PlayerJump() override;
 
 	/// <summary>
-	/// プレイヤーのジャンプ関数
+	/// プレイヤーのジャンプの力を加える関数
 	/// </summary>
 	void PlayerJumpPower() override;
 
+	/// <summary>
+	/// プレイヤーの飛びつきを制御する関数
+	/// </summary>
 	void PlayerDive() override;
 
+	/// <summary>
+	/// プレイヤーの飛びつきの力を加える関数
+	/// </summary>
 	void PlayerDivePower() override;
 
+	/// <summary>
+	/// プレイヤーのノックバックを制御する関数
+	/// </summary>
 	void PlayerKnockback() override;
 
 	/// <summary>
-	/// プレイヤーのレイ関数
+	/// プレイヤーのレイキャストを制御する関数
 	/// </summary>
 	void PlayerRayCast() override;
 
+	/// <summary>
+	/// プレイヤーの復活を制御する関数
+	/// </summary>
 	void PlayerRevival() override;
 
 	/// <summary>
@@ -167,50 +208,37 @@ public:
 	/// <param name="_timeLimit">_timeLimit秒まで、動かせない</param>
 	void PlayerStun(int _timeLimit = 60) override;
 
+	/// <summary>
+	/// プレイヤーに対する透明な壁を制御する関数
+	/// </summary>
 	void PlayerOuterWall() override;
 
+	//▼フラグを制御する関数
 	void IsMove() override;
-
 	void IsJump() override;
-
 	void IsRun() override;
-
 	void IsStun() override;
-
 	void IsDive() override;
 
+	//▼セッター
 	void SetVecPos(XMVECTOR _vecMove) override { XMStoreFloat3(&transform_.position_, _vecMove); }
-
 	void SetKnockback(XMVECTOR _vecKnockbackDirection, float _knockbackSpeed = 0.5f) override;
-
 	void SetCollectPlayer(CollectPlayer* _pCollectPlayer) { pCollectPlayer_ = _pCollectPlayer; }
-
 	void SetAIPlayer(AIPlayer* _pAIPlayer) { pAIPlayer_ = _pAIPlayer; }
-
 	void SetKillTime(int _killTime) { boneData_.killTime_ = _killTime; }
-
 	void SetImageSecInit();
 
+	//▼ゲッター
 	bool GetIsMove() override { return moveData_.isMove_; }
-
 	bool GetIsJump() override { return jumpData_.isJump_; }
-
 	bool GetIsRun() override { return moveData_.isRun_; }
-
 	bool GetIsStun() override { return stunData_.isStun_; }
-
 	bool GetIsDive() override { return diveData_.isDive_; }
-
 	bool GetIsBoneTatch() { return boneData_.isBoneTatch_; }
-
 	XMVECTOR GetVecPos() override { return XMLoadFloat3(&transform_.position_); }
-
 	int GetPadID()override { return gameData_.padID_; }
-
 	int GetModelHandle() override { return hModel_; }
-
 	float GetAngle() { return dirData_.angle_; }
-
 	int GetScore() { return gameData_.score_; }
 };
 

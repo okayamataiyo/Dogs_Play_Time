@@ -4,7 +4,7 @@
 #include "AIPlayerAttackSequence.h"
 #include "../../Engine/Global.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 using enum WAITSELECTORPRIORITY;
 
 AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGameObject)

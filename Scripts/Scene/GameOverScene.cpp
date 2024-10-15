@@ -16,10 +16,10 @@
 #include "../ImageManager.h"
 #include "GameOverScene.h"
 
-using enum UISTATE;
+using enum UIManager::UISTATE;
 using enum STAGEOBJECTSTATE;
 using enum TEXTSTATE;
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum PADIDSTATE;
 using enum MOUSESTATE;
 

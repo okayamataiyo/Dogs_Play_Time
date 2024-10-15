@@ -24,17 +24,17 @@
 #include "CollectPlayer.h"
 #include "AIPlayer.h"
 
-using enum GAMESTATE;
+using enum PlayerBase::GAMESTATE;
 using enum PLAYSCENESTATE;
 using enum PADIDSTATE;
-using enum IMAGESTATE;
+using enum ImageManager::IMAGESTATE;
 using enum MOUSESTATE;
 using enum AttackPlayer::SOUNDSTATE;
 using enum Direct3D::VIEWSTATE;
 
 AttackPlayer::AttackPlayer(GameObject* _pParent)
     :PlayerBase(_pParent, attackPlayerName), hModel_{ -1 }, hSound_{ -1,-1,-1,-1 }, stageHModel_{-1}, floorHModel_{-1}
-    ,number_{0}, gameState_{ READY }, attackOrCollect_{ 0 }
+    ,number_{0}, gameState_{ GAMEREADY }, attackOrCollect_{ 0 }
     , pParent_{ _pParent }, pDogs_Walk_PlayScene_{ nullptr },pDogs_Fight_PlayScene_{nullptr}, pCollectPlayer_{nullptr},pAIPlayer_{nullptr}, pCollision_{nullptr}
     , pWoodBox_{ nullptr },pBoneSuck_{nullptr}, pStage_{nullptr}, pFloor_{nullptr}
     , pSceneManager_{nullptr}, pItemObjectManager_{nullptr}, pStateManager_{nullptr},pImageManager_{nullptr}
@@ -69,8 +69,10 @@ void AttackPlayer::Initialize()
     {
         gameData_.FPS_ = 300;
     }
+    //▼コリジョンを設定
     pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
     AddCollider(pCollision_);
+    //▼ポインタ変数に実体を設定
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
@@ -110,12 +112,12 @@ void AttackPlayer::Initialize()
 
 void AttackPlayer::Update()
 {
-    //ステートマネージャーの更新
+    //▼ステートマネージャーの更新
     pStateManager_->Update();
     switch (gameState_)
     {
-    case READY:          UpdateReady();      break;
-    case PLAY:           UpdatePlay();       break;
+    case GAMEREADY:          UpdateReady();      break;
+    case GAMEPLAY:           UpdatePlay();       break;
     case GAMEOVER:       UpdateGameOver();   break;
     }
 }
@@ -169,7 +171,7 @@ void AttackPlayer::UpdateReady()
     ++gameData_.timeCounter_;
     if (gameData_.timeCounter_ >= gameData_.timeLimit_)
     {
-        gameState_ = PLAY;
+        gameState_ = GAMEPLAY;
         gameData_.timeCounter_ = initZeroInt;
     }
     jumpData_.positionY_ = transform_.position_.y;
@@ -194,12 +196,11 @@ void AttackPlayer::UpdatePlay()
         }
         gameState_ = GAMEOVER;
     }
-    //落ちた時の処理
+    //▼落ちた時の処理
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
-        int revivalTime = 60;
         PlayerRevival();
-        PlayerStun(revivalTime);
+        PlayerStun(revivalTime_);
         if (pBoneSuck_ != nullptr)
         {
             pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
@@ -242,7 +243,7 @@ void AttackPlayer::UpdatePlay()
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
-            gameState_ = PLAY;
+            gameState_ = GAMEPLAY;
             stunData_.stunTimeCounter_ = initZeroInt;
         }
     }
@@ -593,7 +594,7 @@ void AttackPlayer::PlayerMove()
     PlayerBase::PlayerMove();
     const float walkSpeed = 0.4f;
     const float runSpeed = 0.6f;
-    // プレイヤーの移動処理
+    //▼プレイヤーの移動処理
     if (!moveData_.isRun_)
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
@@ -602,46 +603,41 @@ void AttackPlayer::PlayerMove()
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
-    //向き変更
+    //▼向き変更
     XMFLOAT3 m;
     XMStoreFloat3(&m, dirData_.vecMove_);
     transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
     dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
 
-    float pi = 3.14f;					//円周率
-    float halfPi = pi / 2;				//円周率の半分
-
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
-    const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
+
     dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
-    const float deadZone = 0.3f;		//コントローラーのデットゾーン
-    const float plusDir = 1.0f;
-    const float minusDir = -1.0f;
+
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
-    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
-    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
+    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat_);
+    if (Input::GetPadStickL(gameData_.padID_).y > deadZone_)   //前への移動
     {
-        ApplyMovement(plusDir, plusDir);
+        ApplyMovement(plusDir_, plusDir_);
     }
-    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
+    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone_)  //後ろへの移動
     {
-        ApplyMovement(minusDir, minusDir);
+        ApplyMovement(minusDir_, minusDir_);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
+    if (Input::GetPadStickL(gameData_.padID_).x > deadZone_)   //右への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(plusDir, plusDir);
+        ApplyMovement(plusDir_, plusDir_);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
+    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone_)  //左への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(minusDir, minusDir);
+        ApplyMovement(minusDir_, minusDir_);
     }
 
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
@@ -684,7 +680,6 @@ void AttackPlayer::PlayerDive()
 
 void AttackPlayer::PlayerDivePower()
 {
-    //とびつきの処理
     PlayerBase::PlayerDivePower();
 }
 
@@ -751,13 +746,13 @@ void AttackPlayer::PlayerRayCast()
     XMStoreFloat3(&stageDataDown.dir, vecDown);   //レイの方向
     Model::RayCast(stageHModel_, &stageDataDown); //レイを発射
     wallData_.rayStageDistDown_ = stageDataDown.dist;
-    //プレイヤーが浮いていないとき
+    //▼プレイヤーが浮いていないとき
     if (wallData_.rayStageDistDown_ + jumpData_.positionY_ <= moveData_.isFling_)
     {
-        //ジャンプしてない＆すり抜け床の上にいない
+        //▼ジャンプしてない＆すり抜け床の上にいない
         if (!jumpData_.isJump_ && !floorData_.isOnFloor_)
         {
-            //地面に張り付き
+            //▼地面に張り付き
             diveData_.isDived_ = false;
             jumpData_.positionY_ = -wallData_.rayStageDistDown_ + jumpData_.playerInitPosY_;
             jumpData_.positionTempY_ = jumpData_.positionY_;

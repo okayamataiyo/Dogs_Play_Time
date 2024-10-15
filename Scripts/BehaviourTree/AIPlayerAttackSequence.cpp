@@ -6,7 +6,7 @@
 #include "../Player/AIPlayer.h"
 #include "../../Engine/Global.h"
 
-using enum NODESTATE;
+using enum Node::NODESTATE;
 using enum ATTACKSEQUENCEPRIORITY;
 
 AIPlayerAttackSequence::AIPlayerAttackSequence(Node* _pParentNode, GameObject* _pGameObject)

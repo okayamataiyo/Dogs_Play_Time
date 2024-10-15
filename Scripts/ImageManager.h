@@ -8,52 +8,53 @@ namespace
 	std::string gameImageName = "GameImage";
 }
 
-enum class PLAYERSYMBOLSTATE
-{
-	ONEP = 0,
-	TWOP,
-	PLAYERSYMBOLNUM,
-};
-
-enum class IMAGESTATE
-{
-	GAMEOVERIMAGE = 0,
-	GAMETITLEIMAGE,
-	GAMEMANUALIMAGE,
-	NONEIMAGE,
-	TIMEGAUGEIMAGE,
-	BONEIMAGE,
-	PLAYERSYMBOLIMAGE,
-};
-
-enum class GAUGESTATE
-{
-	WALKGAUGE = 0,
-	FIGHTATTACKGAUGE,
-	FIGHTCOLLECTGAUGE,
-};
-enum class BONESTATE
-{
-	ONEBONE,
-	TWOBONE,
-	THREEBONE,
-	FOURBONE,
-	FIVEBONE,
-	SIXBONE,
-	SEVENBONE,
-	EIGHTBONE,
-	NINEBONE,
-	TENBONE,
-	ELEVENBONE,
-	TWELVEBONE,
-	MAXBONENUM,
-};
-
 class CollectPlayer;
 class AttackPlayer;
 
 class ImageManager : public GameObject
 {
+public:
+	enum class PLAYERSYMBOLSTATE
+	{
+		ONEP = 0,
+		TWOP,
+		PLAYERSYMBOLNUM,
+	};
+
+	enum class IMAGESTATE
+	{
+		GAMEOVERIMAGE = 0,
+		GAMETITLEIMAGE,
+		GAMEMANUALIMAGE,
+		NONEIMAGE,
+		TIMEGAUGEIMAGE,
+		BONEIMAGE,
+		PLAYERSYMBOLIMAGE,
+	};
+
+	enum class GAUGESTATE
+	{
+		WALKGAUGE = 0,
+		FIGHTATTACKGAUGE,
+		FIGHTCOLLECTGAUGE,
+	};
+	enum class BONESTATE
+	{
+		ONEBONE,
+		TWOBONE,
+		THREEBONE,
+		FOURBONE,
+		FIVEBONE,
+		SIXBONE,
+		SEVENBONE,
+		EIGHTBONE,
+		NINEBONE,
+		TENBONE,
+		ELEVENBONE,
+		TWELVEBONE,
+		MAXBONENUM,
+	};
+
 private:
 	const int walkBoneNum_ = 12;
 	const int fightBoneNum_ = 1;
@@ -61,6 +62,7 @@ private:
 	int collectPlayerScore_;
 	int attackOrCollectInverse_;
 	int attackOrCollect_;
+	int attackOrCollectPrev_;
 	int walkOrFight_;
 	int hModel_[4];
 	int hTimeGaugePict_;	//âÊëúî‘çÜ

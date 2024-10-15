@@ -19,8 +19,8 @@ using enum STAGEOBJECTSTATE;
 using enum ITEMOBJECTSTATE;
 using enum Dogs_Walk_PlayScene::SOUNDSTATE;
 using enum PLAYERNUMSTATE;
-using enum GAUGESTATE;
-using enum IMAGESTATE;
+using enum ImageManager::GAUGESTATE;
+using enum ImageManager::IMAGESTATE;
 
 Dogs_Walk_PlayScene::Dogs_Walk_PlayScene(GameObject* _pParent)
 	:GameObject(_pParent, Dogs_Walk_PlaySceneName),attackOrCollect_{0},attackOrCollectInverse_{0}, stageBlockNum_{3}, lengthRecedes_{5}, degreesMin_{0.0f}

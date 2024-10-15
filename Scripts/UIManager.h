@@ -10,19 +10,19 @@ namespace
 	std::string UIName = "UI";
 }
 
-enum class UISTATE
-{
-	GAMEOVERUI = 0,
-	GAMETITLEUI,
-	GAMEMANUALUI,
-	DOGSSELECTUI,
-	DOGSWALKATTACKUI,
-	DOGSWALKCOLLECTUI,
-	DOGSFIGHTUI,
-};
-
 class UIManager : public GameObject
 {
+public:
+	enum class UISTATE
+	{
+		GAMEOVERUI = 0,
+		GAMETITLEUI,
+		GAMEMANUALUI,
+		DOGSSELECTUI,
+		DOGSWALKATTACKUI,
+		DOGSWALKCOLLECTUI,
+		DOGSFIGHTUI,
+	};
 private:
 	int attackOrCollectInverse_;
 	int attackPlayerScore_;
