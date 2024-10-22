@@ -118,7 +118,7 @@ void AttackPlayer::Update()
     {
     case GAMEREADY:          UpdateReady();      break;
     case GAMEPLAY:           UpdatePlay();       break;
-    case GAMEOVER:       UpdateGameOver();   break;
+    case GAMEOVER:           UpdateGameOver();   break;
     }
 }
 
@@ -200,7 +200,7 @@ void AttackPlayer::UpdatePlay()
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
         PlayerRevival();
-        PlayerStun(revivalTime_);
+        PlayerStun(revivalTime);
         if (pBoneSuck_ != nullptr)
         {
             pBoneSuck_->SetKillTime(boneData_.killTimeWait_);
@@ -235,11 +235,9 @@ void AttackPlayer::UpdatePlay()
     transform_.position_.y = jumpData_.positionY_;
     if (stunData_.isStun_)
     {
-        slowTimeWait_ = slowTimeNum_;
         stunData_.stunTimeCounter_++;
         if (stunData_.stunTimeCounter_ >= stunData_.stunLimit_)
         {
-            slowTimeWait_ = slowTimeNum_;
             slowTime_ = 0;
             stunData_.isStun_ = false;
             stunData_.isKnockBack_ = false;
@@ -394,11 +392,11 @@ void AttackPlayer::OnCollision(GameObject* _pTarget)
             pWoodBox_->SetWoodBoxBreak();
             if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
-                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
             if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
-                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
         }
     }
@@ -495,12 +493,7 @@ void AttackPlayer::PlayerCamera()
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
     padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
-    const float padSens = 25;
-    const float floLenRecedes = 1.0f;
-    const float floLenApproach = 1.0f;
-    const float degreesMin = 0.0f;
-    const float degreesMax = -88.0f;
-    const float degreesToRadians = 3.14f / 180.0f;
+
     padRotMove.x = padStickR.x;
     padRotMove.y = -padStickR.y;
     if (Input::IsPadButton(XINPUT_GAMEPAD_DPAD_UP, gameData_.padID_))
@@ -535,10 +528,10 @@ void AttackPlayer::PlayerCamera()
     {
         moveData_.CamPosZNum_ = 3;
     }
-    moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
+    moveData_.floLen_ = CamPosZ_[moveData_.CamPosZNum_];
     vecDir = vecFront;
-    dirData_.vecCam_.x += padRotMove.y / padSens;
-    dirData_.vecCam_.y += padRotMove.x / padSens;
+    dirData_.vecCam_.x += padRotMove.y / padSensY;
+    dirData_.vecCam_.y += padRotMove.x / padSensX;
 
     sigmaRot.y = dirData_.vecCam_.y;
     sigmaRot.x = -dirData_.vecCam_.x;
@@ -546,12 +539,12 @@ void AttackPlayer::PlayerCamera()
     if (sigmaRot.x > degreesMin * degreesToRadians)
     {
         sigmaRot.x = degreesMin;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensX;
     }
     if (sigmaRot.x < degreesMax * degreesToRadians)
     {
         sigmaRot.x = degreesMax * degreesToRadians;
-        dirData_.vecCam_.x -= padRotMove.y / padSens;
+        dirData_.vecCam_.x -= padRotMove.y / padSensY;
     }
 
     mat2Rot.x = XMMatrixRotationX(sigmaRot.x);
@@ -592,8 +585,7 @@ void AttackPlayer::PlayerMove()
 {
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     PlayerBase::PlayerMove();
-    const float walkSpeed = 0.4f;
-    const float runSpeed = 0.6f;
+
     //▼プレイヤーの移動処理
     if (!moveData_.isRun_)
     {
@@ -618,26 +610,26 @@ void AttackPlayer::PlayerMove()
 
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
-    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat_);
-    if (Input::GetPadStickL(gameData_.padID_).y > deadZone_)   //前への移動
+    XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
+    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
     {
-        ApplyMovement(plusDir_, plusDir_);
+        ApplyMovement(plusDir, plusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone_)  //後ろへの移動
+    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
     {
-        ApplyMovement(minusDir_, minusDir_);
+        ApplyMovement(minusDir, minusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x > deadZone_)   //右への移動
+    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(plusDir_, plusDir_);
+        ApplyMovement(plusDir, plusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone_)  //左への移動
+    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
     {
         moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
         moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
-        ApplyMovement(minusDir_, minusDir_);
+        ApplyMovement(minusDir, minusDir);
     }
 
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))

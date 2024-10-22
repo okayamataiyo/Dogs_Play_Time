@@ -21,7 +21,7 @@ class UIManager;
 
 namespace
 {
-	std::string soundAttackPlayerNames[] =
+	const std::string soundAttackPlayerNames[] =
 	{
 		"Stun",
 		"Walk",
@@ -29,7 +29,7 @@ namespace
 		"Run",
 	};
 
-	std::string attackPlayerName = "AttackPlayer";
+	const std::string attackPlayerName = "AttackPlayer";
 }
 
 /// <summary>
@@ -56,15 +56,6 @@ private:
 	int attackOrCollect_;
 	int slowTime_;
 	int slowTimeWait_;
-	const int slowTimeNum_ = 2;
-	const int defaultTimeNum_ = 1;
-	const int revivalTime_ = 60;
-	const float deadZone_ = 0.3f;		//コントローラーのデットゾーン
-	const float plusDir_ = 1.0f;
-	const float minusDir_ = -1.0f;
-	const float pi_ = 3.14f;					//円周率
-	const float halfPi_ = pi_ / 2;				//円周率の半分
-	const XMMATRIX rotmat_ = XMMatrixRotationY(halfPi_);
 
 	GAMESTATE gameState_;
 	GameObject* pParent_;

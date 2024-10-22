@@ -378,11 +378,11 @@ void AIPlayer::OnCollision(GameObject* _pTarget)
             pWoodBox_->SetWoodBoxBreak();
             if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
-                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
             if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
-                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
         }
     }

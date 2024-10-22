@@ -10,6 +10,30 @@ namespace
 		ATTACKPLAYER,
 		PLAYERNUM
 	};
+	const float CamPosY_[4] = { 0.1f,0.3f,0.8f,1.4f };
+	const float CamPosZ_[4] = { -10.0f,-5.0f,20.0f,30.0f };
+	const float outerWallPosFront = 99.0f;		//前の外壁の位置
+	const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
+	const float outerWallPosLeft = 99.0f;		//左の外壁の位置
+	const float outerWallPosRight = -99.0f;		//右の外壁の位置
+	const int revivalTime = 60;
+	const int woodBoxDeath_ = 1;	//木箱が無くなった時に木箱カウントを減らす変数
+	const float padSensX = 25;
+	const float padSensY = 50;
+	const float floLenRecedes = 1.0f;
+	const float floLenApproach = 1.0f;
+	const float degreesMin = 0.0f;
+	const float degreesMax = -88.0f;
+	const float degreesToRadians = 3.14f / 180.0f;
+
+	const float walkSpeed = 0.4f;
+	const float runSpeed = 0.6f;
+	const float deadZone = 0.3f;		//コントローラーのデットゾーン
+	const float plusDir = 1.0f;
+	const float minusDir = -1.0f;
+	const float pi = 3.14f;					//円周率
+	const float halfPi = pi / 2;				//円周率の半分
+	const XMMATRIX rotmat = XMMatrixRotationY(halfPi);
 }
 
 class  PlayerBase : public GameObject
@@ -62,11 +86,10 @@ protected:
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
-		const float CamPosY_[4] = { 0.1f,0.3f,0.8f,1.4f };
 		int CamPosYNum_;
 		bool camUpFlag_;
 		bool camDownFlag_;
-		const float CamPosZ_[4] = { -10.0f,-5.0f,20.0f,30.0f };
+
 		int CamPosZNum_;
 		float floLen_;
 		bool camZForwardFlag_;
@@ -138,7 +161,6 @@ protected:
 	//▼木箱に関するメンバ変数
 	struct WoodBoxData
 	{
-		const int woodBoxDeath_ = 1;	//木箱が無くなった時に木箱カウントを減らす変数
 		std::string woodBoxNumber_;
 		float dotProduct_;
 		float angleDegrees_;

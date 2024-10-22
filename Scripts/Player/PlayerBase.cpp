@@ -196,11 +196,6 @@ void PlayerBase::PlayerStun(int _timeLimit)
 
 void PlayerBase::PlayerOuterWall()
 {
-    const float outerWallPosFront = 99.0f;		//前の外壁の位置
-    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
-    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
-    const float outerWallPosRight = -99.0f;		//右の外壁の位置
-
     if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
     {
         transform_.position_.z = moveData_.positionPrev_.z;

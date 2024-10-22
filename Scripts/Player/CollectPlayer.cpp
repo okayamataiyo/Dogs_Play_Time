@@ -193,7 +193,6 @@ void CollectPlayer::UpdatePlay()
     //▼落ちた時の処理
     if (transform_.position_.y <= -gameData_.fallLimit_)
     {
-        int revivalTime = 60;
         PlayerRevival();
         PlayerStun(revivalTime);
         if (pBoneSuck_ != nullptr)
@@ -378,11 +377,11 @@ void CollectPlayer::OnCollision(GameObject* _pTarget)
             pWoodBox_->SetWoodBoxBreak();
             if (gameData_.walkOrFight_ == (int)DOGSWALK)
             {
-                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Walk_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
             if (gameData_.walkOrFight_ == (int)DOGSFIGHT)
             {
-                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxData_.woodBoxDeath_);
+                pDogs_Fight_PlayScene_->AddWoodBoxCount(-woodBoxDeath_);
             }
         }
     }
@@ -483,13 +482,7 @@ void CollectPlayer::PlayerCamera()
     XMFLOAT3 padStickR = {};
     padStickR.x = Input::GetPadStickR(gameData_.padID_).x;
     padStickR.y = Input::GetPadStickR(gameData_.padID_).y;
-    const float padSensX = 25;
-    const float padSensY = 50;
-    const float floLenRecedes = 1.0f;
-    const float floLenApproach = 1.0f;
-    const float degreesMin = 0.0f;
-    const float degreesMax = -88.0f;
-    const float degreesToRadians = 3.14f / 180.0f;
+
     padRotMove.x = padStickR.x;
     padRotMove.y = -padStickR.y;
 
@@ -525,7 +518,7 @@ void CollectPlayer::PlayerCamera()
     {
         moveData_.CamPosZNum_ = 3;
     }
-    moveData_.floLen_ = moveData_.CamPosZ_[moveData_.CamPosZNum_];
+    moveData_.floLen_ = CamPosZ_[moveData_.CamPosZNum_];
     vecDir = vecFront;
     dirData_.vecCam_.x += padRotMove.y / padSensY;
     dirData_.vecCam_.y += padRotMove.x / padSensX;
@@ -582,8 +575,7 @@ void CollectPlayer::PlayerMove()
 {
     dirData_.vecDirection_ = XMLoadFloat3(&transform_.position_) - Camera::VecGetPosition(gameData_.padID_);
     PlayerBase::PlayerMove();
-    const float walkSpeed = 0.4f;
-    const float runSpeed = 0.6f;
+
     //▼ プレイヤーの移動処理
     if (!moveData_.isRun_)
     {
@@ -603,13 +595,11 @@ void CollectPlayer::PlayerMove()
 
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
-    const XMMATRIX rotmat = XMMatrixRotationY(halfPi_);
+
     dirData_.vecDirection_ = XMVectorSetY(dirData_.vecDirection_, 0);
     dirData_.vecDirection_ = XMVector3Normalize(dirData_.vecDirection_);
 
-    const float deadZone = 0.3f;		//コントローラーのデットゾーン
-    const float plusDir = 1.0f;
-    const float minusDir = -1.0f;
+
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
@@ -634,19 +624,9 @@ void CollectPlayer::PlayerMove()
         ApplyMovement(minusDir, minusDir);
     }
 
-    const float outerWallPosFront = 99.0f;		//前の外壁の位置
-    const float outerWallPosBack = -99.0f;		//後ろの外壁の位置
-    const float outerWallPosLeft = 99.0f;		//左の外壁の位置
-    const float outerWallPosRight = -99.0f;		//右の外壁の位置
 
-    if (transform_.position_.z <= outerWallPosBack || transform_.position_.z >= outerWallPosFront)
-    {
-        transform_.position_.z = moveData_.positionPrev_.z;
-    }
-    if (transform_.position_.x <= outerWallPosRight || transform_.position_.x >= outerWallPosLeft)
-    {
-        transform_.position_.x = moveData_.positionPrev_.x;
-    }
+
+
     if (!(Input::IsPadButton(XINPUT_GAMEPAD_LEFT_SHOULDER, gameData_.padID_)))
     {
         XMVECTOR vecCam = {};

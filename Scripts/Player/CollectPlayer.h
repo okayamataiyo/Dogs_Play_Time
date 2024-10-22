@@ -22,7 +22,7 @@ class UIManager;
 
 namespace
 {
-	std::string soundCollectPlayerNames[] =
+	const std::string soundCollectPlayerNames[] =
 	{
 		"Stun",
 		"Walk",
@@ -31,7 +31,9 @@ namespace
 		"CollectBone",
 	};
 
-	std::string collectPlayerName = "CollectPlayer";
+	const std::string collectPlayerName = "CollectPlayer";
+
+
 }
 
 /// <summary>
