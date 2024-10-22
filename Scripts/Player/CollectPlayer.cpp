@@ -577,6 +577,8 @@ void CollectPlayer::PlayerMove()
     PlayerBase::PlayerMove();
 
     //▼ プレイヤーの移動処理
+    moveData_.moveInput_ = Input::GetPadStickL(gameData_.padID_);
+
     if (!moveData_.isRun_)
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
@@ -603,24 +605,24 @@ void CollectPlayer::PlayerMove()
     moveData_.padMoveSpeed_.x *= XMVectorGetX(dirData_.vecDirection_);
     moveData_.padMoveSpeed_.z *= XMVectorGetZ(dirData_.vecDirection_);
     XMVECTOR tempvec = XMVector3Transform(dirData_.vecDirection_, rotmat);
-    if (Input::GetPadStickL(gameData_.padID_).y > deadZone)   //前への移動
+    if (moveData_.moveInput_.y > deadZone)   //前への移動
     {
         ApplyMovement(plusDir, plusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).y < -deadZone)  //後ろへの移動
+    if (moveData_.moveInput_.y < -deadZone)  //後ろへの移動
     {
         ApplyMovement(minusDir, minusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x > deadZone)   //右への移動
+    if (moveData_.moveInput_.x > deadZone)   //右への移動
     {
-        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        moveData_.padMoveSpeed_.x = walkSpeed * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = walkSpeed * XMVectorGetZ(tempvec);
         ApplyMovement(plusDir, plusDir);
     }
-    if (Input::GetPadStickL(gameData_.padID_).x < -deadZone)  //左への移動
+    if (moveData_.moveInput_.x < -deadZone)  //左への移動
     {
-        moveData_.padMoveSpeed_.x = 0.3f * XMVectorGetX(tempvec);
-        moveData_.padMoveSpeed_.z = 0.3f * XMVectorGetZ(tempvec);
+        moveData_.padMoveSpeed_.x = walkSpeed * XMVectorGetX(tempvec);
+        moveData_.padMoveSpeed_.z = walkSpeed * XMVectorGetZ(tempvec);
         ApplyMovement(minusDir, minusDir);
     }
 
