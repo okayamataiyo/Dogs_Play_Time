@@ -84,7 +84,9 @@ protected:
 		XMFLOAT3 positionPrev_;		//1フレーム前の位置座標
 		XMFLOAT3 padMoveSpeed_;
 		XMFLOAT3 moveInput_;
+		XMFLOAT3 moveSpeed_;
 		XMVECTOR moveVec_;
+		XMFLOAT3 moveDir_;
 		bool isRun_;				//ダッシュしているかどうか
 		bool isMove_;
 		float isFling_;				//地面から離れているか
@@ -99,7 +101,8 @@ protected:
 
 		MoveData()
 			:CamPositionVec_{}, positionPrev_{ 0.0f,0.0f,0.0f }, padMoveSpeed_{ 0.3f,0.0f,0.3f }, isRun_{ false }, isMove_{ false }, isFling_{ 1.0f }
-			,CamPosYNum_{0},CamPosZNum_{0},floLen_{0.0f},camDownFlag_{},camUpFlag_{},camZBackFlag_{},camZForwardFlag_{},moveInput_{0,0,0},moveVec_{0,0,0,0}
+			,CamPosYNum_{0},CamPosZNum_{0},floLen_{0.0f},camDownFlag_{},camUpFlag_{},camZBackFlag_{},camZForwardFlag_{},moveInput_{0,0,0}
+			,moveSpeed_{0.0f,0.0f,0.0f}, moveVec_{0.0f,0.0f,0.0f,0.0f},moveDir_{0.0f,0.0f,0.0f}
 		{
 
 		}

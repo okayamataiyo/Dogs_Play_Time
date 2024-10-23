@@ -589,26 +589,19 @@ void AttackPlayer::PlayerMove()
     //▼プレイヤーの移動処理
     moveData_.moveInput_ = Input::GetPadStickL(gameData_.padID_);
     moveData_.moveVec_ = XMVectorSet(moveData_.moveInput_.x,0,moveData_.moveInput_.y,0);    //パッドの入力をベクトルに
-
-    //▼入力ベクトルの大きさを正規化して斜め移動の速度を調整
-    if (XMVector3LengthSq(moveData_.moveVec_) > 0)
-    {
-        moveData_.moveVec_ = XMVector3Normalize(moveData_.moveVec_);
-    }
-
-    if (!moveData_.isRun_)
-    {
-        moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
-    }
-    else
+    //▼移動速度を適用
+    if (moveData_.isRun_)
     {
         moveData_.padMoveSpeed_ = XMFLOAT3(runSpeed, 0.0f, runSpeed);
     }
+    else
+    {
+        moveData_.padMoveSpeed_ = XMFLOAT3(walkSpeed, 0.0f, walkSpeed);
+    }
     //▼向き変更
-    XMFLOAT3 m;
-    XMStoreFloat3(&m, dirData_.vecMove_);
-    transform_.rotate_.y = XMConvertToDegrees(atan2(m.x, m.z));
-    dirData_.angle_ = XMConvertToDegrees(atan2(m.x, m.z));
+    XMStoreFloat3(&moveData_.moveDir_, dirData_.vecMove_);
+    transform_.rotate_.y = XMConvertToDegrees(atan2(moveData_.moveDir_.x, moveData_.moveDir_.z));
+    dirData_.angle_ = XMConvertToDegrees(atan2(moveData_.moveDir_.x, moveData_.moveDir_.z));
 
     //XMConvertToRadians = degree角をradian角に(ただ)変換する
     //XMMatrixRotationY = Y座標を中心に回転させる行列を作る関数
@@ -631,7 +624,7 @@ void AttackPlayer::PlayerMove()
     if (moveData_.moveInput_.x > deadZone)   //右への移動
     {
         moveData_.padMoveSpeed_.x = walkSpeed * XMVectorGetX(tempvec);
-        moveData_.padMoveSpeed_.z = walkSpeed * XMVectorGetZ(tempvec);
+        moveData_.padMoveSpeed_.z = walkSpeed* XMVectorGetZ(tempvec);
         ApplyMovement(plusDir, plusDir);
     }
     if (moveData_.moveInput_.x < -deadZone)  //左への移動
