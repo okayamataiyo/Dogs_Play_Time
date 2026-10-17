@@ -50,7 +50,6 @@ void SceneManager::Update()
 		case SCENE_ID_GAMETITLE: Instantiate<GameTitleScene>(this); break;
 
 		}
-		Audio::Initialize();
 		currentSceneID_ = nextSceneID_;
 	}
 }

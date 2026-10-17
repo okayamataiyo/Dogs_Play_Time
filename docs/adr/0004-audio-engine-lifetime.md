@@ -1,7 +1,7 @@
 # ADR-0004: Audioエンジンとシーン音声データの寿命を分ける
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: Done
 
 ## 背景
 `Engine/Main.cpp`は起動時に`Audio::Initialize()`を呼ぶ。さらに`Engine/SceneManager.cpp`はシーン切替時に`Audio::Release()`の後で再度`Audio::Initialize()`を呼ぶ。`Engine/Audio.cpp`の`Release()`はシーン音声データを解放するが、XAudio2エンジンとマスターボイスの解放はアプリ終了時の`AllRelease()`で行われる。

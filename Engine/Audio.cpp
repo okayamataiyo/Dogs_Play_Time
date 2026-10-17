@@ -11,6 +11,9 @@ namespace Audio
 	//マスターボイス
 	IXAudio2MasteringVoice* pMasteringVoice = nullptr;
 
+	//COMを初期化したか（終了時のCoUninitializeと対にするため）
+	bool isComInitialized = false;
+
 	//ファイル毎に必要な情報
 	struct AudioData
 	{
@@ -30,13 +33,45 @@ namespace Audio
 }
 
 //初期化
-void Audio::Initialize()
+//アプリケーションの起動時に一度だけ呼ぶ（シーン切替のたびには呼ばない）
+//すでに初期化済みの場合は何もしない
+//戻値：成功ならS_OK、失敗なら失敗したAPIのHRESULT（作りかけのものは解放済み）
+HRESULT Audio::Initialize()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+	if (pXAudio != nullptr)
+	{
+		return S_OK;
+	}
 
-	XAudio2Create(&pXAudio);
-	pXAudio->CreateMasteringVoice(&pMasteringVoice);
+	//COMを初期化する
+	//S_OK/S_FALSEのときだけ、終了時にCoUninitializeで対にする
+	//RPC_E_CHANGED_MODEは、すでに別の方式で初期化されているのでそのまま使い、解放はしない
+	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE)
+	{
+		return hr;
+	}
+	isComInitialized = SUCCEEDED(hr);
 
+	//XAudio本体を作る
+	hr = XAudio2Create(&pXAudio);
+	if (FAILED(hr))
+	{
+		pXAudio = nullptr;
+		AllRelease();
+		return hr;
+	}
+
+	//マスターボイスを作る
+	hr = pXAudio->CreateMasteringVoice(&pMasteringVoice);
+	if (FAILED(hr))
+	{
+		pMasteringVoice = nullptr;
+		AllRelease();
+		return hr;
+	}
+
+	return S_OK;
 }
 
 //サウンドファイル(.wav）をロード
@@ -177,6 +212,7 @@ void Audio::Stop(int ID)
 }
 
 //シーンごとの解放
+//ロードしたサウンドだけを解放する（XAudio本体とCOMは解放しない）
 void Audio::Release()
 {
 	for (int i = 0; i < audioDatas.size(); i++)
@@ -185,18 +221,36 @@ void Audio::Release()
 		{
 			audioDatas[i].pSourceVoice[j]->DestroyVoice();
 		}
+		SAFE_DELETE_ARRAY(audioDatas[i].pSourceVoice);
 		SAFE_DELETE_ARRAY(audioDatas[i].buf.pAudioData);
 	}
 	audioDatas.clear();
 }
 
 //本体の解放
+//アプリケーションの終了時に一度だけ呼ぶ
+//初期化に失敗した作りかけの状態でも安全に呼べる
 void Audio::AllRelease()
 {
-	CoUninitialize();
+	//ロード済みのサウンドを先に解放する（ソースボイスはマスターボイスより先に破棄する）
+	Release();
+
 	if (pMasteringVoice)
 	{
 		pMasteringVoice->DestroyVoice();
+		pMasteringVoice = nullptr;
 	}
-	pXAudio->Release();
+
+	if (pXAudio)
+	{
+		pXAudio->Release();
+		pXAudio = nullptr;
+	}
+
+	//COMは最後に解放する（初期化に成功した場合のみ）
+	if (isComInitialized)
+	{
+		CoUninitialize();
+		isComInitialized = false;
+	}
 }
