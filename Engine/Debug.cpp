@@ -169,3 +169,33 @@ void Debug::ShowFatal()
 
 	MessageBox(nullptr, text.c_str(), "Dogs Play Time - エラー", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
+
+//HRESULTを記録用の文字列にする
+std::string Debug::HResult(long hr)
+{
+	char code[32];
+	sprintf_s(code, "HRESULT=0x%08X", (unsigned int)hr);
+	std::string text = code;
+
+	//Windowsのエラーコード由来のHRESULT（0x8007xxxx）は、下位16bitがエラーコード
+	DWORD errorCode = ((unsigned long)hr & 0xFFFF0000UL) == 0x80070000UL ? ((unsigned long)hr & 0xFFFFUL) : (DWORD)hr;
+
+	//Windowsが説明文を持っているものは、それも添える
+	char* pMessage = nullptr;
+	DWORD length = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&pMessage, 0, nullptr);
+	if (length > 0 && pMessage != nullptr)
+	{
+		std::string description(pMessage, length);
+
+		//末尾の改行や空白を取り除く
+		while (!description.empty() && (description.back() == '\r' || description.back() == '\n' || description.back() == ' '))
+		{
+			description.pop_back();
+		}
+		text += " (" + description + ")";
+	}
+	if (pMessage != nullptr)	LocalFree(pMessage);
+
+	return text;
+}

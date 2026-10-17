@@ -24,7 +24,8 @@ namespace Input
 {
 	//初期化
 	//引数：hWnd	ウィンドウハンドル
-	void Initialize(HWND hWnd);
+	//戻値：成功ならS_OK、失敗ならHRESULT（原因は致命的なエラーとして記録済み。作りかけのものはRelease()で解放できる）
+	HRESULT Initialize(HWND hWnd);
 
 	//更新
 	void Update();

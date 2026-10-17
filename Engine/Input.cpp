@@ -1,5 +1,6 @@
 #include "Input.h"
 #include "Global.h"
+#include "Debug.h"
 
 namespace Input
 {
@@ -26,26 +27,59 @@ namespace Input
 	XINPUT_STATE prevControllerState_[MAX_PAD_NUM];
 
 	//初期化
-	void Initialize(HWND hWnd)
+	HRESULT Initialize(HWND hWnd)
 	{
 		//ウィンドウハンドル
 		hWnd_ = hWnd;
 
 		//DirectInput本体
-		DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION,
+		HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION,
 			IID_IDirectInput8, (VOID**)&pDInput_, nullptr);
+		if (FAILED(hr))
+		{
+			Debug::Fatal("DirectInputを初期化できません。" + Debug::HResult(hr));
+			return hr;
+		}
 
 		//キーボード
-		pDInput_->CreateDevice(GUID_SysKeyboard, &pKeyDevice_, nullptr);
-		pKeyDevice_->SetDataFormat(&c_dfDIKeyboard);
-		pKeyDevice_->SetCooperativeLevel(NULL, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+		hr = pDInput_->CreateDevice(GUID_SysKeyboard, &pKeyDevice_, nullptr);
+		if (SUCCEEDED(hr))
+		{
+			hr = pKeyDevice_->SetDataFormat(&c_dfDIKeyboard);
+		}
+		if (FAILED(hr))
+		{
+			Debug::Fatal("キーボードを初期化できません。" + Debug::HResult(hr));
+			return hr;
+		}
+
+		//協調レベルは従来から結果を見ていなかった設定なので、失敗しても従来どおり続行して警告に残す
+		hr = pKeyDevice_->SetCooperativeLevel(NULL, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+		if (FAILED(hr))
+		{
+			Debug::Warning("キーボードの協調レベルを設定できません。" + Debug::HResult(hr));
+		}
 
 		//マウス
-		pDInput_->CreateDevice(GUID_SysMouse, &pMouseDevice_, nullptr);
-		pMouseDevice_->SetDataFormat(&c_dfDIMouse);
-		pMouseDevice_->SetCooperativeLevel(hWnd_, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
-	}
+		hr = pDInput_->CreateDevice(GUID_SysMouse, &pMouseDevice_, nullptr);
+		if (SUCCEEDED(hr))
+		{
+			hr = pMouseDevice_->SetDataFormat(&c_dfDIMouse);
+		}
+		if (FAILED(hr))
+		{
+			Debug::Fatal("マウスを初期化できません。" + Debug::HResult(hr));
+			return hr;
+		}
 
+		hr = pMouseDevice_->SetCooperativeLevel(hWnd_, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+		if (FAILED(hr))
+		{
+			Debug::Warning("マウスの協調レベルを設定できません。" + Debug::HResult(hr));
+		}
+
+		return S_OK;
+	}
 
 	//更新
 	void Update()

@@ -31,4 +31,9 @@ namespace Debug
 
 	//記録した致命的なエラーをダイアログで表示する（記録がなければ何もしない）
 	void ShowFatal();
+
+	//HRESULTを記録用の文字列にする（例：HRESULT=0x80070003 (指定されたパスが見つかりません。)）
+	//Windowsが説明文を持っているものは、それも添える
+	//引数：hr	HRESULT（long型で受け取る）
+	std::string HResult(long hr);
 };

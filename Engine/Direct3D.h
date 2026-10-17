@@ -109,10 +109,12 @@ namespace Direct3D
 	//引数：hWnd			ウィンドウハンドル
 	//引数：screenWidth		スクリーンの幅
 	//引数：screenHeight	スクリーンの高さ
+	//戻値：成功ならS_OK、失敗ならHRESULT（原因は致命的なエラーとして記録済み。作りかけのものはRelease()で解放できる）
 	HRESULT Initialize(HWND hWnd, int screenWidth, int screenHeight);
 
 	//シェーダー関連で必要なセット準備
-	void InitShaderBundle();
+	//戻値：成功ならS_OK、失敗ならHRESULT（原因は致命的なエラーとして記録済み）
+	HRESULT InitShaderBundle();
 
 	//今から描画するShaderBundleを設定
 	//引数：type	SHADER_3D, SHADER_2D, SHADER_UNLITのどれか

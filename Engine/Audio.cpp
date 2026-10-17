@@ -2,6 +2,7 @@
 #include <vector>
 #include "Audio.h"
 #include "Global.h"
+#include "Debug.h"
 
 namespace Audio
 {
@@ -11,8 +12,6 @@ namespace Audio
 	//マスターボイス
 	IXAudio2MasteringVoice* pMasteringVoice = nullptr;
 
-	//COMを初期化したか（終了時のCoUninitializeと対にするため）
-	bool isComInitialized = false;
 
 	//ファイル毎に必要な情報
 	struct AudioData
@@ -34,8 +33,9 @@ namespace Audio
 
 //初期化
 //アプリケーションの起動時に一度だけ呼ぶ（シーン切替のたびには呼ばない）
+//COM（CoInitializeEx）は、呼ぶ前にMainが初期化しておくこと
 //すでに初期化済みの場合は何もしない
-//戻値：成功ならS_OK、失敗なら失敗したAPIのHRESULT（作りかけのものは解放済み）
+//戻値：成功ならS_OK、失敗なら失敗したAPIのHRESULT（原因は致命的なエラーとして記録済みで、作りかけのものは解放済み）
 HRESULT Audio::Initialize()
 {
 	if (pXAudio != nullptr)
@@ -43,22 +43,13 @@ HRESULT Audio::Initialize()
 		return S_OK;
 	}
 
-	//COMを初期化する
-	//S_OK/S_FALSEのときだけ、終了時にCoUninitializeで対にする
-	//RPC_E_CHANGED_MODEは、すでに別の方式で初期化されているのでそのまま使い、解放はしない
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE)
-	{
-		return hr;
-	}
-	isComInitialized = SUCCEEDED(hr);
-
 	//XAudio本体を作る
-	hr = XAudio2Create(&pXAudio);
+	HRESULT hr = XAudio2Create(&pXAudio);
 	if (FAILED(hr))
 	{
 		pXAudio = nullptr;
 		AllRelease();
+		Debug::Fatal("XAudio2を初期化できません。" + Debug::HResult(hr));
 		return hr;
 	}
 
@@ -68,12 +59,12 @@ HRESULT Audio::Initialize()
 	{
 		pMasteringVoice = nullptr;
 		AllRelease();
+		Debug::Fatal("オーディオの出力先（マスターボイス）を作成できません。" + Debug::HResult(hr));
 		return hr;
 	}
 
 	return S_OK;
 }
-
 //サウンドファイル(.wav）をロード
 int Audio::Load(std::string fileName, bool isLoop, int svNum)
 {
@@ -247,10 +238,4 @@ void Audio::AllRelease()
 		pXAudio = nullptr;
 	}
 
-	//COMは最後に解放する（初期化に成功した場合のみ）
-	if (isComInitialized)
-	{
-		CoUninitialize();
-		isComInitialized = false;
-	}
 }

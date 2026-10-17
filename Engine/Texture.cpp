@@ -22,7 +22,7 @@ HRESULT Texture::Load(std::string fileName)
 
 
 	// テクスチャを読み込む
-	CoInitialize(NULL);
+
 	IWICImagingFactory *pFactory = NULL;
 	IWICBitmapDecoder *pDecoder = NULL;
 	IWICBitmapFrameDecode* pFrame = NULL;
