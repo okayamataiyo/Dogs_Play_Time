@@ -1,6 +1,7 @@
 #include "BillBoard.h"
 #include "Camera.h"
 #include "Global.h"
+#include "Debug.h"
 
 BillBoard::BillBoard():
 	pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr), pTexture_(nullptr)
@@ -79,7 +80,12 @@ HRESULT BillBoard::Load(std::string fileName)
 
 	//テクスチャ
 	pTexture_ = new Texture;
-	pTexture_->Load(fileName.c_str());
+	if (FAILED(pTexture_->Load(fileName.c_str())))
+	{
+		//読み込めないときは、このビルボードは表示しない
+		Debug::Warning("ビルボードの画像を読み込めません。表示しません: " + fileName + " (" + pTexture_->GetErrorMessage() + ")");
+		SAFE_DELETE(pTexture_);
+	}
 
 	return S_OK;
 }
@@ -88,6 +94,9 @@ HRESULT BillBoard::Load(std::string fileName)
 //描画
 void BillBoard::Draw(XMMATRIX matWorld, XMFLOAT4 color)
 {
+	//画像が読み込めなかったビルボードは表示しない
+	if (pTexture_ == nullptr)	return;
+
 	//コンスタントバッファに渡す情報
 	CONSTANT_BUFFER cb;
 	cb.matWVP = XMMatrixTranspose(matWorld * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());

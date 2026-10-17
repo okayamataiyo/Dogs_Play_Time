@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Direct3D.h"
 #include "Camera.h"
+#include "Debug.h"
 
 //コンストラクタ
 FbxParts::FbxParts():
@@ -209,7 +210,12 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &
 
 
 		pMaterial_[i].pTexture = new Texture;
-		pMaterial_[i].pTexture->Load(name);
+		if (FAILED(pMaterial_[i].pTexture->Load(name)))
+		{
+			//読み込めないときはテクスチャ無しとして扱う（マテリアルの色だけで無地に表示される）
+			Debug::Warning(std::string("テクスチャを読み込めません。無地で表示します: ") + name + " (" + pMaterial_[i].pTexture->GetErrorMessage() + ")");
+			SAFE_DELETE(pMaterial_[i].pTexture);
+		}
 
 
 	}

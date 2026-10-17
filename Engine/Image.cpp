@@ -1,11 +1,18 @@
 #include "Global.h"
 #include "Image.h"
+#include "Debug.h"
 
 //3D画像を管理する
 namespace Image
 {
 	//ロード済みの画像データ一覧
 	std::vector<ImageData*>	_datas;
+
+	//指定した番号の画像が使えるか（範囲内で、解放されていない）
+	static bool IsValid(int handle)
+	{
+		return handle >= 0 && handle < (int)_datas.size() && _datas[handle] != nullptr;
+	}
 
 	//初期化
 	void Initialize()
@@ -38,9 +45,23 @@ namespace Image
 			if (FAILED(pData->pSprite->Load(fileName)))
 			{
 				//開けなかった
+				std::string message = "画像を読み込めません。代替の画像を表示します: " + fileName;
+				if (!pData->pSprite->GetErrorMessage().empty())
+				{
+					message += " (" + pData->pSprite->GetErrorMessage() + ")";
+				}
+				Debug::Warning(message);
 				SAFE_DELETE(pData->pSprite);
-				SAFE_DELETE(pData);
-				return -1;
+
+				//代替の画像（目立つマゼンタの矩形）に差し替える
+				pData->pSprite = new Sprite;
+				if (FAILED(pData->pSprite->LoadPlaceholder()))
+				{
+					Debug::Warning("代替の画像も作成できません: " + pData->pSprite->GetErrorMessage());
+					SAFE_DELETE(pData->pSprite);
+					SAFE_DELETE(pData);
+					return -1;
+				}
 			}
 
 			//無事開けた
@@ -54,6 +75,10 @@ namespace Image
 			if (_datas[i] == nullptr)
 			{
 				_datas[i] = pData;
+
+				//切り抜き範囲をリセット
+				ResetRect(i);
+
 				return i;
 			}
 		}
@@ -88,7 +113,7 @@ namespace Image
 	//任意の画像を開放
 	void Release(int handle)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -130,7 +155,7 @@ namespace Image
 	//切り抜き範囲の設定
 	void SetRect(int handle, int x, int y, int width, int height)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -145,7 +170,7 @@ namespace Image
 	//切り抜き範囲をリセット（画像全体を表示する）
 	void ResetRect(int handle)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -162,7 +187,7 @@ namespace Image
 	//アルファ値設定
 	void SetAlpha(int handle, int alpha)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -173,7 +198,7 @@ namespace Image
 	//ワールド行列を設定
 	void SetTransform(int handle, Transform& transform)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -185,7 +210,7 @@ namespace Image
 	//ワールド行列の取得
 	XMMATRIX GetMatrix(int handle)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return XMMatrixIdentity();
 		}
@@ -193,14 +218,20 @@ namespace Image
 	}
 	XMFLOAT3 GetSize(int _handle)
 	{
+		if (!IsValid(_handle))	return XMFLOAT3(0, 0, 0);
+
 		return _datas[_handle]->pSprite->GetTextureSize();
 	}
 	int GetWidth(int _handle)
 	{
+		if (!IsValid(_handle))	return 0;
+
 		return _datas[_handle]->pSprite->GetTextureSize().x;
 	}
 	int GetHeight(int _handle)
 	{
+		if (!IsValid(_handle))	return 0;
+
 		return _datas[_handle]->pSprite->GetTextureSize().y;
 	}
 }

@@ -51,6 +51,9 @@ protected:
 	//シェーダー（Simple2D.hlsl）のグローバル変数に値を渡すためのもの
 	ID3D11Buffer *pConstantBuffer_;
 
+	//読み込めなかったときの理由
+	std::string errorMessage_;
+
 
 	//////////////////////////private関数（Load関数から呼ばれる）/////////////////////////////
 	void InitVertex();			//頂点バッファ準備
@@ -66,6 +69,14 @@ public:
 	//引数：fileName	画像ファイル名
 	//戻値：成功/失敗
 	HRESULT Load(std::string fileName);
+
+	//代替の画像を準備する（画像が読み込めなかったときに使う、目立つマゼンタの矩形）
+	//戻値：成功/失敗
+	HRESULT LoadPlaceholder();
+
+	//読み込めなかったときの理由を取得
+	//戻値：理由（Load / LoadPlaceholderが失敗したときだけ入っている）
+	std::string GetErrorMessage() { return errorMessage_; }
 
 	//描画
 	//引数：matrix	変換行列（ワールド行列）

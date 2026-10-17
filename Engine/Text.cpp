@@ -15,7 +15,6 @@ Text::~Text()
 HRESULT Text::Initialize()
 {
 	hPict_ = Image::Load(fileName_);
-	assert(hPict_ >= 0);
 
 	if (hPict_ < 0)
 		return E_FAIL;

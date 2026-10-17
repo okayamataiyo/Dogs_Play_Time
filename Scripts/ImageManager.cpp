@@ -333,26 +333,20 @@ void ImageManager::SecInit()
 		{
 			hPlayerWinPict_ = Image::Load(modelFolderName + "Player2Win" + imageModifierName);
 		}
-		assert(hPlayerWinPict_ >= 0);
 		break;
 	case GAMETITLEIMAGE:
 		hClickButtonPict_ = Image::Load(modelFolderName + "ClickButton" + imageModifierName);
-		assert(hClickButtonPict_ >= 0);
 		hButtonPict_ = Image::Load(modelFolderName + "BButton" + imageModifierName);
-		assert(hButtonPict_ >= 0);
 		imageTransform_.position_ = { 0.3f,-0.5f,0.0f };
 		break;
 	case GAMEMANUALIMAGE:
 		hManualPict_ = Image::Load(modelFolderName + "Manual" + imageModifierName);
-		assert(hManualPict_ >= 0);
 		break;
 	case TIMEGAUGEIMAGE:
 		hTimeGaugePict_ = Image::Load(modelFolderName + "TimeGauge" + imageModifierName);
-		assert(hTimeGaugePict_ >= 0);
 		imageWidth_ = Image::GetWidth(hTimeGaugePict_);
 		imageHeight_ = Image::GetHeight(hTimeGaugePict_);
 		hFramePict_ = Image::Load(modelFolderName + "TimeGaugeFlame" + imageModifierName);
-		assert(hFramePict_ >= 0);
 		break;
 	case BONEIMAGE:
 		pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
@@ -360,17 +354,13 @@ void ImageManager::SecInit()
 		for (int i = 0; i < (int)MAXBONENUM; ++i)
 		{
 			hBonePict_[i] = Image::Load(modelFolderName + "Bone" + imageModifierName);
-			assert(hBonePict_[i] >= 0);
 			hYellowBonePict_[i] = Image::Load(modelFolderName + "YellowBone" + imageModifierName);
-			assert(hYellowBonePict_[i] >= 0);
 		}
 		break;
 	case PLAYERSYMBOLIMAGE:
 
 		hPlayerSymbolPict_[(int)ONEP] = Image::Load(modelFolderName + "ONEP" + imageModifierName);
-		assert(hPlayerSymbolPict_[(int)ONEP] >= 0);
 		hPlayerSymbolPict_[(int)TWOP] = Image::Load(modelFolderName + "TWOP" + imageModifierName);
-		assert(hPlayerSymbolPict_[(int)TWOP] >= 0);
 		playerSymbolTransform_[(int)ONEP].position_ = XMFLOAT3(0.5f, 0.5f, 0.0f);
 		playerSymbolTransform_[(int)TWOP].position_ = XMFLOAT3(-0.5f,0.5f, 0.0f);
 		break;

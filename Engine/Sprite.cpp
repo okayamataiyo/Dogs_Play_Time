@@ -4,7 +4,7 @@
 
 //コンストラクタ
 Sprite::Sprite():
-	pTexture_(nullptr)
+	pTexture_(nullptr), pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr)
 {
 }
 
@@ -14,6 +14,8 @@ Sprite::~Sprite()
 
 	SAFE_RELEASE(pVertexBuffer_);
 	SAFE_RELEASE(pIndexBuffer_);
+	SAFE_RELEASE(pConstantBuffer_);
+	SAFE_DELETE(pTexture_);
 }
 
 //準備
@@ -23,6 +25,7 @@ HRESULT Sprite::Load(std::string fileName)
 	pTexture_ = new Texture();
 	if(FAILED(pTexture_->Load(fileName)))
 	{
+		errorMessage_ = pTexture_->GetErrorMessage();
 		return E_FAIL;
 	}
 
@@ -31,7 +34,30 @@ HRESULT Sprite::Load(std::string fileName)
 
 	//インデックス情報準備
 	InitIndex();
-	
+
+	//コンスタントバッファ準備
+	InitConstantBuffer();
+
+	return S_OK;
+}
+
+//代替の画像を準備（画像が読み込めなかったときに使う）
+HRESULT Sprite::LoadPlaceholder()
+{
+	//テクスチャ準備（目立つマゼンタの矩形）
+	pTexture_ = new Texture();
+	if (FAILED(pTexture_->CreateSolid(128, 128, 255, 0, 255, 255)))
+	{
+		errorMessage_ = pTexture_->GetErrorMessage();
+		return E_FAIL;
+	}
+
+	//頂点情報準備
+	InitVertex();
+
+	//インデックス情報準備
+	InitIndex();
+
 	//コンスタントバッファ準備
 	InitConstantBuffer();
 
