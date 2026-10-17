@@ -1,7 +1,7 @@
 # ADR-0007: リソース失敗を必須/任意に分けて安全に扱う
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: In progress
 
 ## 背景
 Audio、WIC、Direct3Dなどの初期化・読み込み処理に、ファイル操作やAPI呼び出しの失敗を十分に検査しない経路がある。例えば`Engine/Audio.cpp`はファイル読込結果を検証せずWAVチャンクを検索し、`Engine/Direct3D.cpp`はシェーダーコンパイル結果を確認せず後続処理へ進む箇所がある。
