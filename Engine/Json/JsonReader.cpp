@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "JsonReader.h"
+#include "../Debug.h"
 
 namespace JsonReader
 {
@@ -10,29 +11,40 @@ namespace JsonReader
     nlohmann::json data_;
 
     // JSONファイルの読み込み
-    void Load(const std::string& _fileName)
+    bool Load(const std::string& _fileName)
     {
 
         std::ifstream ifs(_fileName);
         if (!ifs.is_open())
         {
-            assert(false);
-            return;
+            Debug::Warning("JSONファイルを開けません: " + _fileName);
+            return false;
         }
 
+        // JSONとして読めない（書き方が間違っている）ときは例外が投げられるので、受け止めて失敗にする
         nlohmann::json j;
-        ifs >> j;
+        try
+        {
+            ifs >> j;
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            Debug::Warning("JSONファイルを読み込めません: " + _fileName + " (" + e.what() + ")");
+            return false;
+        }
+
         if (j.empty())
         {
-            assert(false);
-            return;
+            Debug::Warning("JSONファイルの中身が空です: " + _fileName);
+            return false;
         }
 
         data_ = j;
+        return true;
     }
 
     //▼JSONファイルへの書き込み
-    void Save(const std::string& _fileName, const nlohmann::json& _jsonData)
+    bool Save(const std::string& _fileName, const nlohmann::json& _jsonData)
     {
         // ファイルを書き込みモードで開く
         std::ofstream ofs(_fileName);
@@ -40,12 +52,13 @@ namespace JsonReader
         // ファイルが正しく開けなかった場合のエラーハンドリング
         if (!ofs.is_open())
         {
-            std::cerr << "Failed to open file: " << _fileName << std::endl;
-            return;
+            Debug::Warning("JSONファイルを書き込めません: " + _fileName);
+            return false;
         }
 
         // JSONデータをファイルに書き込む
         ofs << _jsonData.dump() << std::endl;
+        return !ofs.fail();
     }
 
     const nlohmann::json& GetSection(const std::string& _key)

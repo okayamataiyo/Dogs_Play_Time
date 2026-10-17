@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include "CsvReader.h"
+#include "../Debug.h"
 
 
 //コンストラクタ
@@ -31,25 +32,38 @@ bool CsvReader::Load(std::string fileName)
 	//開けなかった
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		std::string message = "「" + fileName + "」が開けません。\n開いている場合は閉じてください。";
-		MessageBox(NULL, message.c_str(), "BaseProjDx9エラー", MB_OK);
-
+		Debug::Warning("CSVファイルを開けません。開いている場合は閉じてください: " + fileName + " " + Debug::HResult(HRESULT_FROM_WIN32(GetLastError())));
 		return false;
 	}
 
 	//ファイルのサイズ（文字数）を調べる
 	DWORD fileSize = GetFileSize(hFile, NULL);
+	if (fileSize == INVALID_FILE_SIZE)
+	{
+		Debug::Warning("CSVファイルの大きさを調べられません: " + fileName);
+		CloseHandle(hFile);
+		return false;
+	}
 
-	//すべての文字を入れられる配列を用意
+	//すべての文字を入れられる配列を用意（最後に「\0」を付けるので、1文字多く確保する）
 	char* temp;
-	temp = new char[fileSize];
+	temp = new char[fileSize + 1];
 
 	//ファイルの中身を配列に読み込む
 	DWORD dwBytes = 0;
-	ReadFile(hFile, temp, fileSize, &dwBytes, NULL);
+	BOOL isRead = ReadFile(hFile, temp, fileSize, &dwBytes, NULL);
 
 	//開いたファイルを閉じる
 	CloseHandle(hFile);
+
+	//読み込めなかった
+	if (!isRead || dwBytes != fileSize)
+	{
+		Debug::Warning("CSVファイルを読み込めません: " + fileName);
+		delete[] temp;
+		return false;
+	}
+	temp[fileSize] = '\0';
 
 	//1行のデータを入れる配列
 	std::vector<std::string>	line;
@@ -91,8 +105,8 @@ bool CsvReader::Load(std::string fileName)
 //「,」か「改行」までの文字列を取得
 void CsvReader::GetToComma(std::string *result, std::string data, DWORD* index)
 {
-	//「,」まで一文字ずつresultに入れる
-	while (data[*index] != ',' && data[*index] != '\n'&& data[*index] != '\r')
+	//「,」まで一文字ずつresultに入れる（文字列の終わりを超えて読まない）
+	while (*index < data.size() && data[*index] != ',' && data[*index] != '\n'&& data[*index] != '\r')
 	{
 		*result += data[*index];
 		(*index)++;
@@ -121,6 +135,9 @@ int CsvReader::GetValue(DWORD x, DWORD y)
 //ファイルの列数を取得
 size_t CsvReader::GetWidth()
 {
+	//読み込めていない（データが空の）ときは0
+	if (data_.empty())	return 0;
+
 	return data_[0].size();
 }
 
