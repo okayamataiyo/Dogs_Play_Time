@@ -14,6 +14,6 @@ XAudio2エンジンとCOM初期化はアプリケーション寿命とし、起�
 - シーン切替時にエンジンやCOMを再初期化しない。
 - 部分初期化に失敗した場合の解放順序を明確にする。
 
-## 残課題
-- `Engine/Texture.cpp`の`Texture::Load`は読み込みのたびに`CoInitialize(NULL)`を呼んでいる。COM初期化は`Audio::Initialize()`が起動時に一度だけ行う方針のまま、この呼び出しの整理はADR-0007で扱う。
-- `Audio::Initialize()`が失敗したときの挙動（音声なしで続行するか、起動を中止するか）と、`Engine/Main.cpp`での戻り値の扱いは、ADR-0007で決める。本ADRの範囲は、失敗時に作りかけのものを正しい順序で解放し、失敗を戻り値（HRESULT）で返すところまでとする。
+## 後続の対応
+- COM初期化は、ADR-0007で`Main`に移した。`Audio::Initialize()`はCOMを初期化せず、`Engine/Texture.cpp`の`Texture::Load`が毎回呼んでいた`CoInitialize(NULL)`もなくした。アプリケーション寿命で一度だけ初期化・解放するという本ADRの決定は変わらない。
+- `Audio::Initialize()`が失敗したときは、ADR-0007の決定どおり、音声エンジンを必須として扱い、原因を示して起動を中止する。
