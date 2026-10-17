@@ -34,7 +34,6 @@ void WoodBox::Initialize()
     //サウンドデータのロード
     std::string soundName = soundFolderName + soundWoodBoxName + soundModifierName;
     hSound_ = Audio::Load(soundName);
-    assert(hSound_ >= initZeroInt);
     //モデルデータのロード
     std::string modelName = modelFolderName + woodBoxName + modelModifierName;
     hModel_ = Model::Load(modelName);

@@ -57,7 +57,6 @@ void AttackPlayer::Initialize()
     {
         soundName = soundFolderName + soundAttackPlayerNames[i] + soundModifierName;
         hSound_[i] = Audio::Load(soundName);
-        assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
     std::string modelName = modelFolderName + attackPlayerName + modelModifierName;

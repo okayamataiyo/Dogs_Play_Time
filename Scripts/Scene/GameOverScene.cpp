@@ -38,7 +38,6 @@ void GameOverScene::Initialize()
 	//サウンドデータのロード
 	std::string soundName = soundFolderName + soundGameOverSceneNmae + soundModifierName;
 	hSound_ = Audio::Load(soundName);
-	assert(hSound_ >= initZeroInt);
 	//画像データのロード
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)(GAMEOVER));

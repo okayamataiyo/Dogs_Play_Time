@@ -60,7 +60,6 @@ void CollectPlayer::Initialize()
     {
         soundName = soundFolderName + soundCollectPlayerNames[i] + soundModifierName;
         hSound_[i] = Audio::Load(soundName);
-        assert(hSound_[i] >= 0);
     }
     //▼モデルデータのロード
     std::string modelName = modelFolderName + collectPlayerName + modelModifierName;

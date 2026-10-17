@@ -31,7 +31,6 @@ void GameTitleScene::Initialize()
 	//サウンドデータのロード
 	std::string soundName = soundFolderName + soundGameTitleSceneName + soundModifierName;
 	hSound_ = Audio::Load(soundName);
-	assert(hSound_ >= 0);
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)GAMETITLE);
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };

@@ -29,6 +29,12 @@ namespace Audio
 		std::string fileName;
 	};
 	std::vector<AudioData>	audioDatas;
+
+	//指定した番号のサウンドが使えるか（Loadで読み込めたもの）
+	static bool IsValid(int ID)
+	{
+		return ID >= 0 && ID < (int)audioDatas.size();
+	}
 }
 
 //初期化
@@ -65,6 +71,7 @@ HRESULT Audio::Initialize()
 
 	return S_OK;
 }
+
 //サウンドファイル(.wav）をロード
 int Audio::Load(std::string fileName, bool isLoop, int svNum)
 {
@@ -77,75 +84,113 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	//	}
 	//}
 
-	//チャンク構造体
-	struct Chunk
+	//読み込めなかったときは、警告を記録して-1を返す
+	auto fail = [&](const std::string& reason) -> int
 	{
-		char	id[5] =""; 			// ID
-		unsigned int	size = 0;	// サイズ
+		Debug::Warning("音声を読み込めません。鳴らさずに続行します: " + fileName + " (" + reason + ")");
+		return -1;
 	};
 
-	//ファイルを開く
-	HANDLE hFile;
-	hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (pXAudio == nullptr)	return fail("オーディオが初期化されていません");
+	if (svNum < 1)			return fail("同時に鳴らす最大数が不正です");
 
-	DWORD dwBytes = 0;
-
-	Chunk riffChunk = { 0 };
-	ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL);
-	ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL);
-
-	char wave[4] = "";
-	ReadFile(hFile, &wave, 4, &dwBytes, NULL);
-
-	Chunk formatChunk = { 0 };
-	while (formatChunk.id[0] != 'f') {
-		ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL);
-	}
-	ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL);
-
-
-	//フォーマットを読み取る
-	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
-	WAVEFORMATEX fmt;
-	ReadFile(hFile, &fmt.wFormatTag, 2, &dwBytes, NULL);		//形式
-	ReadFile(hFile, &fmt.nChannels, 2, &dwBytes, NULL);			//チャンネル（モノラル/ステレオ）
-	ReadFile(hFile, &fmt.nSamplesPerSec, 4, &dwBytes, NULL);	//サンプリング数
-	ReadFile(hFile, &fmt.nAvgBytesPerSec, 4, &dwBytes, NULL);	//1秒あたりのバイト数
-	ReadFile(hFile, &fmt.nBlockAlign, 2, &dwBytes, NULL);		//ブロック配置
-	ReadFile(hFile, &fmt.wBitsPerSample, 2, &dwBytes, NULL);	//サンプル当たりのビット数
-
-
-
-	//波形データの読み込み
-	Chunk data = { 0 };
-	while (true)
+	//ファイルを開く（どの出口でも閉じる）
+	struct FileCloser
 	{
-		//次のデータのIDを調べる
-		ReadFile(hFile, &data.id, 4, &dwBytes, NULL);
+		HANDLE handle;
+		~FileCloser() { if (handle != INVALID_HANDLE_VALUE)	CloseHandle(handle); }
+	};
+	HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		return fail("ファイルを開けません " + Debug::HResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+	FileCloser closer = { hFile };
 
-		//「data」だったらループを抜けて次に進む
-		if (strcmp(data.id, "data") == 0)
-			break;
+	DWORD fileSize = GetFileSize(hFile, NULL);
+	if (fileSize == INVALID_FILE_SIZE)	return fail("ファイルの大きさを調べられません");
 
-		//それ以外の情報ならサイズ調べて読み込む→使わない
+	//指定したバイト数を読み込む（足りなければfalse）
+	auto readExact = [&](void* pDest, DWORD bytes) -> bool
+	{
+		DWORD readBytes = 0;
+		return ReadFile(hFile, pDest, bytes, &readBytes, NULL) && readBytes == bytes;
+	};
+
+	//ファイルの残りのバイト数
+	auto remainBytes = [&]() -> DWORD
+	{
+		DWORD position = SetFilePointer(hFile, 0, NULL, FILE_CURRENT);
+		return position <= fileSize ? fileSize - position : 0;
+	};
+
+	//RIFFヘッダ
+	char riffId[4];
+	DWORD riffSize;
+	char waveId[4];
+	if (!readExact(riffId, 4) || !readExact(&riffSize, 4) || !readExact(waveId, 4) ||
+		memcmp(riffId, "RIFF", 4) != 0 || memcmp(waveId, "WAVE", 4) != 0)
+	{
+		return fail("WAVEファイルではありません");
+	}
+
+	//チャンクを順番にたどって、fmt（フォーマット）とdata（波形データ）を探す
+	//それ以外のチャンクは読み飛ばす
+	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
+	WAVEFORMATEXTENSIBLE fmt = {};
+	bool isFormatFound = false;
+	char* pBuffer = nullptr;
+	DWORD dataSize = 0;
+	while (pBuffer == nullptr)
+	{
+		//次のチャンクのIDとサイズ
+		char chunkId[4];
+		DWORD chunkSize;
+		if (!readExact(chunkId, 4) || !readExact(&chunkSize, 4))
+		{
+			break;	//ファイルの終わり
+		}
+
+		//チャンクの中身がファイルの残りに収まっているか
+		if (chunkSize > remainBytes())
+		{
+			return fail("ファイルが途中で切れています");
+		}
+
+		//フォーマット
+		if (memcmp(chunkId, "fmt ", 4) == 0)
+		{
+			if (chunkSize < 16)	return fail("fmtチャンクが不正です");
+
+			//先頭の必要な分だけ読み、残りは読み飛ばす
+			DWORD readSize = chunkSize < sizeof(fmt) ? chunkSize : (DWORD)sizeof(fmt);
+			if (!readExact(&fmt, readSize))	return fail("fmtチャンクを読み込めません");
+			isFormatFound = true;
+			SetFilePointer(hFile, (LONG)(chunkSize - readSize + (chunkSize & 1)), NULL, FILE_CURRENT);
+		}
+
+		//波形データ
+		else if (memcmp(chunkId, "data", 4) == 0)
+		{
+			if (!isFormatFound)	return fail("fmtチャンクがdataチャンクより前にありません");
+
+			pBuffer = new char[chunkSize];
+			if (!readExact(pBuffer, chunkSize))
+			{
+				delete[] pBuffer;
+				return fail("波形データを読み込めません");
+			}
+			dataSize = chunkSize;
+		}
+
+		//使わないチャンクは読み飛ばす
 		else
 		{
-			//サイズ調べて
-			ReadFile(hFile, &data.size, 4, &dwBytes, NULL);
-			char* pBuffer = new char[data.size];
-
-			//無駄に読み込む
-			ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL);
+			SetFilePointer(hFile, (LONG)(chunkSize + (chunkSize & 1)), NULL, FILE_CURRENT);
 		}
 	}
 
-	//データチャンクのサイズを取得
-	ReadFile(hFile, &data.size, 4, &dwBytes, NULL);
-
-	//波形データを読み込む
-	char* pBuffer = new char[data.size];
-	ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL);
-	CloseHandle(hFile);
+	if (pBuffer == nullptr)	return fail(isFormatFound ? "dataチャンクが見つかりません" : "fmtチャンクが見つかりません");
 
 
 	AudioData ad;
@@ -157,19 +202,28 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 
 	if (isLoop)	ad.buf.LoopCount = XAUDIO2_LOOP_INFINITE;
 
-	ad.buf.AudioBytes = data.size;
+	ad.buf.AudioBytes = dataSize;
 
 
-	ad.pSourceVoice = new IXAudio2SourceVoice * [svNum];
+	ad.pSourceVoice = new IXAudio2SourceVoice * [svNum]();
+	ad.svNum = svNum;
 
 	for (int i = 0; i < svNum; i++)
 	{
-		pXAudio->CreateSourceVoice(&ad.pSourceVoice[i], &fmt);
+		HRESULT hr = pXAudio->CreateSourceVoice(&ad.pSourceVoice[i], &fmt.Format);
+		if (FAILED(hr))
+		{
+			//作りかけのものを解放して、失敗にする
+			for (int j = 0; j < i; j++)
+			{
+				ad.pSourceVoice[j]->DestroyVoice();
+			}
+			SAFE_DELETE_ARRAY(ad.pSourceVoice);
+			SAFE_DELETE_ARRAY(ad.buf.pAudioData);
+			return fail("再生用のボイスを作成できません " + Debug::HResult(hr));
+		}
 	}
-	ad.svNum = svNum;
 	audioDatas.push_back(ad);
-
-	//SAFE_DELETE_ARRAY(pBuffer);
 
 	return (int)audioDatas.size() - 1;
 }
@@ -177,6 +231,8 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 //再生
 void Audio::Play(int ID, float volume)
 {
+	if (!IsValid(ID))	return;
+
 	for (int i = 0; i < audioDatas[ID].svNum; i++)
 	{
 		XAUDIO2_VOICE_STATE state;
@@ -195,6 +251,8 @@ void Audio::Play(int ID, float volume)
 
 void Audio::Stop(int ID)
 {
+	if (!IsValid(ID))	return;
+
 	for (int i = 0; i < audioDatas[ID].svNum; i++)
 	{
 		audioDatas[ID].pSourceVoice[i]->Stop();

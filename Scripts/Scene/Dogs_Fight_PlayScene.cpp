@@ -45,7 +45,6 @@ void Dogs_Fight_PlayScene::Initialize()
 	{
 		soundName = soundFolderName + soundDogs_Fight_PlaySceneNames[i] + soundModifierName;
 		hSound_[i] = Audio::Load(soundName);
-		assert(hSound_[i] >= 0u);
 	}
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
 	pItemObjectManager_ = new ItemObjectManager(this);

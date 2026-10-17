@@ -20,6 +20,7 @@ namespace Audio
 	//引数：isLoop		ループ再生させたいならtrue
 	//引数：svNum　		同時に鳴らす最大数（省略可）
 	//戻値：そのデータに割り当てられた番号
+	//　　　読み込めなかったときは、警告を記録して-1を返す（-1を渡したPlay / Stopは何もしない）
 	int Load(std::string fileName, bool isLoop = false, int svNum = 1);
 
 	//再生
