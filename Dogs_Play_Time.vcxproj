@@ -48,8 +48,8 @@
     <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\release;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
