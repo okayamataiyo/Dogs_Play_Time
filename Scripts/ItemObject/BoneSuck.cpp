@@ -30,7 +30,6 @@ void BoneSuck::Initialize()
 	//ƒ‚ƒfƒ‹‚Ìƒ[ƒh
 	std::string ModelName = modelFolderName + boneSuckName + modelModifierName;
 	hModel_ = Model::Load(ModelName);
-	assert(hModel_ >= 0);
 	pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
 	pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);

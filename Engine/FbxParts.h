@@ -104,12 +104,12 @@ class FbxParts
 
 
 	/////////privateな関数（Init関数から呼ばれる）//////////////////////////
-	void InitVertex(fbxsdk::FbxMesh * mesh);	//頂点バッファ準備
+	HRESULT InitVertex(fbxsdk::FbxMesh * mesh);	//頂点バッファ準備
 	void InitMaterial(fbxsdk::FbxNode * pNode);	//マテリアル準備
 	void InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &i);	//テクスチャ準備
-	void InitIndex(fbxsdk::FbxMesh * mesh);		//インデックスバッファ準備
+	HRESULT InitIndex(fbxsdk::FbxMesh * mesh);		//インデックスバッファ準備
 	void InitSkelton(FbxMesh * pMesh);			//骨の情報を準備
-	void IntConstantBuffer();	//コンスタントバッファ（シェーダーに情報を送るやつ）準備
+	HRESULT IntConstantBuffer();	//コンスタントバッファ（シェーダーに情報を送るやつ）準備
 
 public:
 	FbxParts();

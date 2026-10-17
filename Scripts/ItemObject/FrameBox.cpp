@@ -33,7 +33,6 @@ void FrameBox::Initialize()
     std::string modelName;
     modelName = debugCollisionFolderName + boxColliderName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= initZeroInt);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);

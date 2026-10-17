@@ -26,7 +26,6 @@ void Bone::Initialize()
 	//ƒ‚ƒfƒ‹‚Ìƒ[ƒh
 	std::string ModelName = modelFolderName + boneName + modelModifierName;
 	hModel_ = Model::Load(ModelName);
-	assert(hModel_ >= initZeroInt);
 
 	pCollision_ = new SphereCollider(initZeroXMFLOAT3, 1.0f);
 	AddCollider(pCollision_);

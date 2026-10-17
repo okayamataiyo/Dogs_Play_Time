@@ -6,9 +6,11 @@
 
 //コンストラクタ
 FbxParts::FbxParts():
-	ppIndexBuffer_(nullptr), pMaterial_(nullptr), 
+	vertexCount_(0), polygonCount_(0), indexCount_(0), materialCount_(0), polygonVertexCount_(0),
+	ppIndexBuffer_(nullptr), pMaterial_(nullptr),
 	pVertexBuffer_(nullptr), pConstantBuffer_(nullptr),
-	pVertexData_(nullptr), ppIndexData_(nullptr)
+	pVertexData_(nullptr), ppIndexData_(nullptr),
+	pSkinInfo_(nullptr), ppCluster_(nullptr), numBone_(0), pBoneArray_(nullptr), pWeightArray_(nullptr)
 {
 }
 
@@ -59,18 +61,25 @@ HRESULT FbxParts::Init(FbxNode *pNode)
 	polygonVertexCount_ = mesh->GetPolygonVertexCount();	//ポリゴン頂点インデックス数 
 
 
-	InitVertex(mesh);		//頂点バッファ準備
-	InitMaterial(pNode);	//マテリアル準備
-	InitIndex(mesh);		//インデックスバッファ準備
-	InitSkelton(mesh);		//骨の情報を準備
-	IntConstantBuffer();	//コンスタントバッファ（シェーダーに情報を送るやつ）準備
+	HRESULT hr = InitVertex(mesh);		//頂点バッファ準備
+	if (FAILED(hr))	return hr;
 
-	return E_NOTIMPL;
+	InitMaterial(pNode);	//マテリアル準備
+
+	hr = InitIndex(mesh);		//インデックスバッファ準備
+	if (FAILED(hr))	return hr;
+
+	InitSkelton(mesh);		//骨の情報を準備
+
+	hr = IntConstantBuffer();	//コンスタントバッファ（シェーダーに情報を送るやつ）準備
+	if (FAILED(hr))	return hr;
+
+	return S_OK;
 }
 
 
 //頂点バッファ準備
-void FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
+HRESULT FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 {
 	pVertexData_ = new VERTEX[vertexCount_];
 
@@ -122,7 +131,7 @@ void FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 	bd_vertex.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA data_vertex;
 	data_vertex.pSysMem = pVertexData_;
-	Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
+	return Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
 
 
 }
@@ -207,11 +216,11 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &
 }
 
 //インデックスバッファ準備
-void FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
+HRESULT FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 {
-	// マテリアルの数だけインデックスバッファーを作成
-	ppIndexBuffer_ = new ID3D11Buffer*[materialCount_];
-	ppIndexData_ = new DWORD*[materialCount_];
+	// マテリアルの数だけインデックスバッファーを作成（途中で失敗しても安全に解放できるよう、nullptrで埋めておく）
+	ppIndexBuffer_ = new ID3D11Buffer*[materialCount_]();
+	ppIndexData_ = new DWORD*[materialCount_]();
 
 	
 
@@ -252,10 +261,16 @@ void FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 		InitData.pSysMem = pIndex;
 		InitData.SysMemPitch = 0;
 		InitData.SysMemSlicePitch = 0;
-		if (FAILED(Direct3D::pDevice_->CreateBuffer(&bd, &InitData, &ppIndexBuffer_[i])))
+		//ポリゴンが1つもないマテリアル（使われていないマテリアル）は、インデックスバッファを作れないので作らない
+		//（従来からバッファはnullptrのままで、描画しても何も出ない）
+		if (count > 0)
 		{
-			//MessageBox(0, "インデックスバッファの生成に失敗", fbxFileName, MB_OK);
-			//return FALSE;
+			HRESULT hr = Direct3D::pDevice_->CreateBuffer(&bd, &InitData, &ppIndexBuffer_[i]);
+			if (FAILED(hr))
+			{
+				SAFE_DELETE_ARRAY(pIndex);
+				return hr;
+			}
 		}
 		pMaterial_[i].polygonCount = count / 3;
 		ppIndexData_[i] = new DWORD[count];
@@ -263,6 +278,7 @@ void FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 		SAFE_DELETE_ARRAY(pIndex);
 	}
 
+	return S_OK;
 }
 
 //骨の情報を準備
@@ -404,7 +420,7 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 }
 
 //コンスタントバッファ（シェーダーに情報を送るやつ）準備
-void FbxParts::IntConstantBuffer()
+HRESULT FbxParts::IntConstantBuffer()
 {
 	// 定数バッファの作成(パラメータ受け渡し用)
 	D3D11_BUFFER_DESC cb;
@@ -414,7 +430,7 @@ void FbxParts::IntConstantBuffer()
 	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags = 0;
 	cb.StructureByteStride = 0;
-	Direct3D::pDevice_->CreateBuffer(&cb, NULL, &pConstantBuffer_);
+	return Direct3D::pDevice_->CreateBuffer(&cb, NULL, &pConstantBuffer_);
 }
 
 //描画

@@ -21,7 +21,6 @@ void StageBlock::Initialize()
     //モデルデータのロード[
     std::string ModelName = modelFolderName + stageBlockName + modelModifierName;
     hModel_ = Model::Load(ModelName);
-    assert(hModel_ >= 0);
     transform_.scale_ = { 2,1,2 };
     transform_.position_.y = -32.0f;
 }

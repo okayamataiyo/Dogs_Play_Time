@@ -51,8 +51,10 @@ namespace Model
 
 	//モデルをロード
 	//引数：fileName　ファイル名
-	//戻値：そのモデルデータに割り当てられた番号
-	int Load(std::string fileName);
+	//引数：isRequired	必須のモデルならtrue（読み込めなかったら致命的なエラーとして記録し、ゲームを終了する）
+	//					falseなら警告として記録するだけで続行する
+	//戻値：そのモデルデータに割り当てられた番号（読み込めなかったときは-1）
+	int Load(std::string fileName, bool isRequired = true);
 
 	//描画
 	//引数：handle	描画したいモデルの番号

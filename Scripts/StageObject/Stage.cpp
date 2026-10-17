@@ -19,7 +19,6 @@ void Stage::Initialize()
 {
     //モデルデータのロード
     hModel_ = Model::Load("Model&Picture/NewStage.fbx");
-    assert(hModel_ >= 0);
     transform_.scale_ = { 2,1,2 };
 }
 

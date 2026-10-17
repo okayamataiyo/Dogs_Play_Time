@@ -64,7 +64,6 @@ void AIPlayer::Initialize()
     //▼モデルデータのロード
     std::string modelName = modelFolderName + aIPlayerName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= 0);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
     if (gameData_.walkOrFight_ == (int)DOGSFIGHT)

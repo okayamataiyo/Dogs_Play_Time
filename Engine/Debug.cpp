@@ -3,6 +3,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <vector>
+#include <algorithm>
 #include "Debug.h"
 
 namespace
@@ -142,7 +143,12 @@ void Debug::Fatal(std::string message)
 {
 	Debug::Log("[致命] " + message, true);
 	WriteLogLine("致命", message);
-	fatalMessages_.push_back(message);
+
+	//ダイアログに同じ内容が並ばないよう、覚えておくのは重複を除いたもの（ログには全件書く）
+	if (std::find(fatalMessages_.begin(), fatalMessages_.end(), message) == fatalMessages_.end())
+	{
+		fatalMessages_.push_back(message);
+	}
 }
 
 //致命的なエラーが記録されているか

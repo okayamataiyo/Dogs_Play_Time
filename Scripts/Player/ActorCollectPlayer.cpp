@@ -27,7 +27,6 @@ void ActorCollectPlayer::Initialize()
     //▼モデルデータのロード
     std::string modelName = modelFolderName + actorCollectPlayerName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 0.4f,0.4f,0.4f };
     jumpData_.positionY_ = transform_.position_.y;
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);

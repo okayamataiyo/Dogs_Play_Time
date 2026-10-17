@@ -38,7 +38,6 @@ void WoodBox::Initialize()
     //モデルデータのロード
     std::string modelName = modelFolderName + woodBoxName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= initZeroInt);
     XMFLOAT3 collisionPos = XMFLOAT3(0.0f,2.5f,0.0f);
     pCollision_ = new SphereCollider(collisionPos, 3.0f);
     AddCollider(pCollision_);

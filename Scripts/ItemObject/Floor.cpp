@@ -24,7 +24,6 @@ void Floor::Initialize()
     std::string ModelName;
     ModelName = modelFolderName + floorName + modelModifierName;
     hModel_ = Model::Load(ModelName);
-    assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 1,1,1 };
 }
 

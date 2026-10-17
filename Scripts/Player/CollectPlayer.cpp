@@ -65,7 +65,6 @@ void CollectPlayer::Initialize()
     //▼モデルデータのロード
     std::string modelName = modelFolderName + collectPlayerName + modelModifierName;
     hModel_ = Model::Load(modelName);
-    assert(hModel_ >= initZeroInt);
     transform_.scale_ = { 0.4f,0.4f,0.4f};
     jumpData_.positionY_ = transform_.position_.y;
     gameData_.FPS_ = 300;

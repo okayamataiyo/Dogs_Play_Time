@@ -1,5 +1,6 @@
 #include "Global.h"
 #include "Model.h"
+#include "Debug.h"
 
 //3Dモデル（FBXファイル）を管理する
 namespace Model
@@ -8,6 +9,13 @@ namespace Model
 	std::vector<ModelData*>	_datas;
 
 	int prevNum = 0;
+
+	//指定した番号のモデルが使えるか（範囲内で、解放されていない）
+	static bool IsValid(int handle)
+	{
+		return handle >= 0 && handle < (int)_datas.size() && _datas[handle] != nullptr;
+	}
+
 	//初期化
 	void Initialize()
 	{
@@ -15,7 +23,7 @@ namespace Model
 	}
 
 	//モデルをロード
-	int Load(std::string fileName)
+	int Load(std::string fileName, bool isRequired)
 	{
 			ModelData* pData = new ModelData;
 
@@ -39,6 +47,14 @@ namespace Model
 				if (FAILED(pData->pFbx->Load(fileName)))
 				{
 					//開けなかった
+					std::string message = "モデルを読み込めません: " + fileName;
+					if (!pData->pFbx->GetErrorMessage().empty())
+					{
+						message += " (" + pData->pFbx->GetErrorMessage() + ")";
+					}
+					if (isRequired)	Debug::Fatal(message);
+					else			Debug::Warning(message);
+
 					SAFE_DELETE(pData->pFbx);
 					SAFE_DELETE(pData);
 					return -1;
@@ -134,6 +150,8 @@ namespace Model
 	//アニメーションのフレーム数をセット
 	void SetAnimFrame(int handle, int startFrame, int endFrame, float animSpeed)
 	{
+		if (!IsValid(handle))	return;
+
 		_datas[handle]->SetAnimFrame(startFrame, endFrame, animSpeed);
 	}
 
@@ -148,6 +166,8 @@ namespace Model
 	//現在のアニメーションのフレームを取得
 	int GetAnimFrame(int handle)
 	{
+		if (!IsValid(handle))	return 0;
+
 		return (int)_datas[handle]->nowFrame;
 	}
 
@@ -155,6 +175,8 @@ namespace Model
 	//任意のボーンの位置を取得
 	XMFLOAT3 GetBonePosition(int handle, std::string boneName)
 	{
+		if (!IsValid(handle) || _datas[handle]->pFbx == nullptr)	return XMFLOAT3(0, 0, 0);
+
 		XMFLOAT3 pos = _datas[handle]->pFbx->GetBonePosition(boneName);
 		XMVECTOR vec = XMVector3TransformCoord(XMLoadFloat3(&pos), _datas[handle]->transform.GetWorldMatrix());
 		XMStoreFloat3(&pos, vec);
@@ -165,7 +187,7 @@ namespace Model
 	//ワールド行列を設定
 	void SetTransform(int handle, Transform & transform)
 	{
-		if (handle < 0 || handle >= _datas.size())
+		if (!IsValid(handle))
 		{
 			return;
 		}
@@ -177,6 +199,8 @@ namespace Model
 	//ワールド行列の取得
 	XMMATRIX GetMatrix(int handle)
 	{
+		if (!IsValid(handle))	return XMMatrixIdentity();
+
 		return _datas[handle]->transform.GetWorldMatrix();
 	}
 
@@ -184,6 +208,13 @@ namespace Model
 	//レイキャスト（レイを飛ばして当たり判定）
 	void RayCast(int handle, RayCastData *data)
 	{
+			//使えないモデルには当たらない
+			if (!IsValid(handle) || _datas[handle]->pFbx == nullptr)
+			{
+				data->hit = FALSE;
+				return;
+			}
+
 			XMFLOAT3 target = Transform::Float3Add(data->start, data->dir);
 			XMMATRIX matInv = XMMatrixInverse(nullptr, _datas[handle]->transform.GetWorldMatrix());
 			XMVECTOR vecStart = XMVector3TransformCoord(XMLoadFloat3(&data->start), matInv);

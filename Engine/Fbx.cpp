@@ -1,6 +1,7 @@
 #include "Fbx.h"
 #include "Direct3D.h"
 #include "FbxParts.h"
+#include "Debug.h"
 
 
 
@@ -26,14 +27,29 @@ HRESULT Fbx::Load(std::string fileName)
 	// FBXの読み込み
 	pFbxManager_ = FbxManager::Create();
 	pFbxScene_ = FbxScene::Create(pFbxManager_, "fbxscene");
+
+	//ファイルが無いときは、FBX SDKのエラー文言ではわかりにくいので、先に調べる
+	if (GetFileAttributes(fileName.c_str()) == INVALID_FILE_ATTRIBUTES)
+	{
+		errorMessage_ = "ファイルが見つかりません";
+		return E_FAIL;
+	}
 	FbxString FileName(fileName.c_str());
 	FbxImporter *fbxImporter = FbxImporter::Create(pFbxManager_, "imp");
 	if (!fbxImporter->Initialize(FileName.Buffer(), -1, pFbxManager_->GetIOSettings()))
 	{
 		//失敗
+		errorMessage_ = fbxImporter->GetStatus().GetErrorString();
+		fbxImporter->Destroy();
 		return E_FAIL;
 	}
-	fbxImporter->Import(pFbxScene_);
+	if (!fbxImporter->Import(pFbxScene_))
+	{
+		//失敗
+		errorMessage_ = fbxImporter->GetStatus().GetErrorString();
+		fbxImporter->Destroy();
+		return E_FAIL;
+	}
 	fbxImporter->Destroy();
 
 	// アニメーションのタイムモードの取得
@@ -58,9 +74,14 @@ HRESULT Fbx::Load(std::string fileName)
 	int childCount = rootNode->GetChildCount();
 
 	//1個ずつチェック
+	HRESULT hr = S_OK;
 	for (int i = 0; childCount > i; i++)
 	{
-		CheckNode(rootNode->GetChild(i), &parts_);
+		hr = CheckNode(rootNode->GetChild(i), &parts_);
+		if (FAILED(hr))
+		{
+			break;
+		}
 	}
 
 
@@ -68,10 +89,10 @@ HRESULT Fbx::Load(std::string fileName)
 	//カレントディレクトリを元の位置に戻す
 	SetCurrentDirectory(defaultCurrentDir);
 
-	return S_OK;
+	return hr;
 }
 
-void Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
+HRESULT Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
 {
 	//そのノードにはメッシュ情報が入っているだろうか？
 	FbxNodeAttribute* attr = pNode->GetNodeAttribute();
@@ -79,10 +100,16 @@ void Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
 	{
 		//パーツを用意
 		FbxParts* pParts = new FbxParts;
-		pParts->Init(pNode);
+		HRESULT hr = pParts->Init(pNode);
 
-		//パーツ情報を動的配列に追加
+		//パーツ情報を動的配列に追加（失敗したときも、解放はデストラクタに任せる）
 		pPartsList->push_back(pParts);
+
+		if (FAILED(hr))
+		{
+			errorMessage_ = "メッシュを準備できません。" + Debug::HResult(hr);
+			return hr;
+		}
 	}
 
 
@@ -94,9 +121,15 @@ void Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
 		//一人ずつチェック
 		for (int i = 0; i < childCount; i++)
 		{
-			CheckNode(pNode->GetChild(i), pPartsList);
+			HRESULT hr = CheckNode(pNode->GetChild(i), pPartsList);
+			if (FAILED(hr))
+			{
+				return hr;
+			}
 		}
 	}
+
+	return S_OK;
 }
 
 
