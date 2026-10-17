@@ -1,7 +1,7 @@
 # ADR-0005: FBX SDKを許諾確認まで外部依存として扱う
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: In progress
 
 ## 背景
 `Dogs_Play_Time.vcxproj`はFBX SDKを`C:\Program Files\Autodesk\...`の絶対パスから参照し、Debug/Releaseで2020.3.7と2020.2など複数のパスが混在している。SDKはリポジトリ外にあり、作業領域内ではヘッダーやライブラリの再配布許諾を確認できる資料が見つかっていない。

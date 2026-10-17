@@ -1,7 +1,7 @@
 # ADR-0001: Windows x64を対象プラットフォームとする
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: Done
 
 ## 背景
 本プロジェクトはWin32 APIとDirect3D 11を使うWindows向けアプリケーションである。Visual StudioプロジェクトにはWin32とx64の構成がある一方、FBX SDKの参照設定はx64向けである。監査方針として、Windows x64のみをサポート対象とすることが合意された。
