@@ -504,4 +504,13 @@
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="docs\adr\0001-windows-x64-target.md" />
+    <None Include="docs\adr\0002-fixed-60hz-simulation.md" />
+    <None Include="docs\adr\0004-audio-engine-lifetime.md" />
+    <None Include="docs\adr\0005-fbx-sdk-external-dependency.md" />
+    <None Include="docs\adr\0006-automated-tests-and-windows-ci.md" />
+    <None Include="docs\adr\0007-resource-failure-policy.md" />
+    <None Include="docs\adr\0003-gradual-raii-ownership.md" />
+  </ItemGroup>
 </Project>
