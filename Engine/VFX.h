@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "BillBoard.h"
 #include <list>
+#include <memory>
 
 
 //エミッター（パーティクルの発生源）を作る時のデータ一覧
@@ -62,7 +63,7 @@ namespace VFX
 		EmitterData data ;		//作成時に指定されたデータ
 		int handle = -1;		//ハンドル（番号）
 		DWORD frameCount = 0;	//開始してからのフレーム数
-		BillBoard* pBillBoard = nullptr;	//パーティクルに使うポリゴン
+		std::unique_ptr<BillBoard> pBillBoard;	//パーティクルに使うポリゴン
 		bool isDead = false;	//削除対象かどうか（実際はパーティクルが全部消えるまでエミッターは消えない）
 		int particleNum = 0;	//このエミッターから出た現存パーティクルの数
 	};
@@ -100,7 +101,7 @@ namespace VFX
 
 	//パーティクル生成
 	//引数：emitter	エミッター情報
-	void CreateParticle(std::list<VFX::Emitter*>::iterator& emitter);
+	void CreateParticle(std::list<std::unique_ptr<VFX::Emitter>>::iterator& emitter);
 
 
 	//更新

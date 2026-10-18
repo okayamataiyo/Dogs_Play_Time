@@ -3,8 +3,8 @@
 
 namespace VFX
 {
-    std::list<Emitter*>		emitterList_;	//エミッター達
-    std::list<Particle*>	particleList_;	//パーティクル達
+    std::list<std::unique_ptr<Emitter>>	emitterList_;	//エミッター達
+    std::list<std::unique_ptr<Particle>>	particleList_;	//パーティクル達
 };
 
 //更新
@@ -27,7 +27,6 @@ void VFX::ParticleUpdate()
         if ((*particle)->life == 0)
         {
             (*particle)->pEmitter->particleNum--;
-            delete (*particle);
             particle = particleList_.erase(particle);
         }
 
@@ -71,9 +70,7 @@ void VFX::EmitterUpdate()
             //そのエミッターから出たパーティクルが全部消えてたらエミッターも削除
             if ((*emitter)->particleNum <= 0)
             {
-                (*emitter)->pBillBoard->Release();
-                delete ((*emitter)->pBillBoard);
-                delete (*emitter);
+                //消すと、エミッターが持つビルボードも一緒に消える
                 emitter = emitterList_.erase(emitter);
             }
             else
@@ -108,13 +105,13 @@ void VFX::EmitterUpdate()
 }
 
 //パーティクル発生
-void VFX::CreateParticle(std::list<VFX::Emitter*>::iterator& emitter)
+void VFX::CreateParticle(std::list<std::unique_ptr<VFX::Emitter>>::iterator& emitter)
 {
     //指定個数分
     for (DWORD i = 0; i < (*emitter)->data.number; i++)
     {
         //パーティクル発生
-        Particle* pParticle = new Particle;
+        std::unique_ptr<Particle> pParticle = std::make_unique<Particle>();
 
         //初期
         {
@@ -177,12 +174,12 @@ void VFX::CreateParticle(std::list<VFX::Emitter*>::iterator& emitter)
         pParticle->gravity = (*emitter)->data.gravity;  //重力
         pParticle->accel = (*emitter)->data.accel;      //加速
 
-        pParticle->pEmitter = *emitter; //発生元
+        pParticle->pEmitter = (*emitter).get(); //発生元（借りているだけ）
 
                                     
-        particleList_.push_back(pParticle);    //発生
+        particleList_.push_back(std::move(pParticle));    //発生
 
-        pParticle->pEmitter->particleNum++; //発生元のパーティクル数をカウントアップ
+        (*emitter)->particleNum++; //発生元のパーティクル数をカウントアップ
 
     }
 }
@@ -228,21 +225,9 @@ void VFX::Draw()
 void VFX::Release()
 {
     //全パーティクル削除
-    for (auto particle = particleList_.begin(); particle != particleList_.end();)
-    {
-        delete (*particle);
-        particle = particleList_.erase(particle);
-    }
     particleList_.clear();
 
-    //全エミッター削除
-    for (auto emitter = emitterList_.begin(); emitter != emitterList_.end();)
-    {
-		(*emitter)->pBillBoard->Release();
-		delete ((*emitter)->pBillBoard);
-		delete (*emitter);
-		emitter = emitterList_.erase(emitter);
-	}
+    //全エミッター削除（ビルボードも一緒に消える）
     emitterList_.clear();
 }
 
@@ -257,16 +242,16 @@ int VFX::Start(EmitterData emitterData)
     }
 
 
-    Emitter* pEmitter = new Emitter;
+    std::unique_ptr<Emitter> pEmitter = std::make_unique<Emitter>();
 
     pEmitter->data = emitterData;
     pEmitter->handle = handle;
     pEmitter->frameCount = 0;
 
-    pEmitter->pBillBoard = new BillBoard;
+    pEmitter->pBillBoard = std::make_unique<BillBoard>();
     pEmitter->pBillBoard->Load(emitterData.textureFileName);
 
-    emitterList_.push_back(pEmitter);
+    emitterList_.push_back(std::move(pEmitter));
 
     return handle;
 }
