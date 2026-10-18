@@ -83,12 +83,12 @@ void CollectPlayer::Initialize()
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
-    pStateManager_ = new StateManager(this);
-    pStateManager_->AddState("WalkState", new CollectPlayerWalkState(pStateManager_));
-    pStateManager_->AddState("WaitState", new CollectPlayerWaitState(pStateManager_));
-    pStateManager_->AddState("RunState", new CollectPlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new CollectPlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new CollectPlayerStunState(pStateManager_));
+    pStateManager_ = std::make_unique<StateManager>(this);
+    pStateManager_->AddState("WalkState", std::make_unique<CollectPlayerWalkState>(pStateManager_.get()));
+    pStateManager_->AddState("WaitState", std::make_unique<CollectPlayerWaitState>(pStateManager_.get()));
+    pStateManager_->AddState("RunState", std::make_unique<CollectPlayerRunState>(pStateManager_.get()));
+    pStateManager_->AddState("JumpState", std::make_unique<CollectPlayerJumpState>(pStateManager_.get()));
+    pStateManager_->AddState("StunState", std::make_unique<CollectPlayerStunState>(pStateManager_.get()));
     pStateManager_->ChangeState("WaitState");
     if (attackOrCollectInverse_ == (int)FIRST)
     {
@@ -141,7 +141,8 @@ void CollectPlayer::UPSubViewDraw()
 
 void CollectPlayer::Release()
 {
-    SAFE_DELETE(pStateManager_);
+    //状態のExitStateがプレイヤーを使うので、プレイヤーの他のメンバーがまだ生きているこの時点で消す
+    pStateManager_.reset();
 }
 
 void CollectPlayer::UpdateReady()

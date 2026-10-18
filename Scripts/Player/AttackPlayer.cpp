@@ -84,12 +84,12 @@ void AttackPlayer::Initialize()
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
-    pStateManager_ = new StateManager(this);
-    pStateManager_->AddState("WalkState", new AttackPlayerWalkState(pStateManager_));
-    pStateManager_->AddState("WaitState", new AttackPlayerWaitState(pStateManager_));
-    pStateManager_->AddState("RunState", new AttackPlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new AttackPlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new AttackPlayerStunState(pStateManager_));
+    pStateManager_ = std::make_unique<StateManager>(this);
+    pStateManager_->AddState("WalkState", std::make_unique<AttackPlayerWalkState>(pStateManager_.get()));
+    pStateManager_->AddState("WaitState", std::make_unique<AttackPlayerWaitState>(pStateManager_.get()));
+    pStateManager_->AddState("RunState", std::make_unique<AttackPlayerRunState>(pStateManager_.get()));
+    pStateManager_->AddState("JumpState", std::make_unique<AttackPlayerJumpState>(pStateManager_.get()));
+    pStateManager_->AddState("StunState", std::make_unique<AttackPlayerStunState>(pStateManager_.get()));
     pStateManager_->ChangeState("WaitState");
     if (attackOrCollect_ == (int)FIRST)
     {
@@ -147,7 +147,8 @@ void AttackPlayer::UPSubViewDraw()
 
 void AttackPlayer::Release()
 {
-    SAFE_DELETE(pStateManager_);
+    //状態のExitStateがプレイヤーを使うので、プレイヤーの他のメンバーがまだ生きているこの時点で消す
+    pStateManager_.reset();
 }
 
 void AttackPlayer::UpdateReady()

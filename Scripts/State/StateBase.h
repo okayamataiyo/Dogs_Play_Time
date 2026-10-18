@@ -5,7 +5,7 @@ class StateManager;
 class StateBase
 {
 protected:
-	StateManager* pStateManager_;
+	StateManager* pStateManager_;	//‚±‚Ìó‘Ô‚ğ‚Á‚Ä‚¢‚éStateManageriØ‚è‚Ä‚¢‚é‚¾‚¯j
 public:
 	StateBase(StateManager* _manager)
 		:pStateManager_(_manager)

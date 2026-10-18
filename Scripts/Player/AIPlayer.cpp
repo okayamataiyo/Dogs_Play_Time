@@ -86,12 +86,12 @@ void AIPlayer::Initialize()
     {
         pItemObjectManager_ = pDogs_Fight_PlayScene_->GetItemObjectManager();
     }
-    pStateManager_ = new StateManager(this);
-    pStateManager_->AddState("WalkState", new AIPlayerWalkState(pStateManager_));
-    pStateManager_->AddState("WaitState", new AIPlayerWaitState(pStateManager_));
-    pStateManager_->AddState("RunState", new AIPlayerRunState(pStateManager_));
-    pStateManager_->AddState("JumpState", new AIPlayerJumpState(pStateManager_));
-    pStateManager_->AddState("StunState", new AIPlayerStunState(pStateManager_));
+    pStateManager_ = std::make_unique<StateManager>(this);
+    pStateManager_->AddState("WalkState", std::make_unique<AIPlayerWalkState>(pStateManager_.get()));
+    pStateManager_->AddState("WaitState", std::make_unique<AIPlayerWaitState>(pStateManager_.get()));
+    pStateManager_->AddState("RunState", std::make_unique<AIPlayerRunState>(pStateManager_.get()));
+    pStateManager_->AddState("JumpState", std::make_unique<AIPlayerJumpState>(pStateManager_.get()));
+    pStateManager_->AddState("StunState", std::make_unique<AIPlayerStunState>(pStateManager_.get()));
     pStateManager_->ChangeState("WaitState");
     dirData_.vecDirection_ = dir_;
     pParticleManager_ = Instantiate<ParticleManager>(this);
@@ -145,7 +145,8 @@ void AIPlayer::UPSubViewDraw()
 
 void AIPlayer::Release()
 {
-    SAFE_DELETE(pStateManager_);
+    //状態のExitStateがプレイヤーを使うので、プレイヤーの他のメンバーがまだ生きているこの時点で消す
+    pStateManager_.reset();
 }
 
 void AIPlayer::UpdateReady()

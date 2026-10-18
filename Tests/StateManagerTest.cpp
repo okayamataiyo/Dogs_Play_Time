@@ -42,7 +42,7 @@ TEST_CASE("StateManager: Update does nothing before any state is entered")
 	Log log;
 	{
 		StateManager manager(nullptr);
-		manager.AddState("A", new RecordingState(&manager, "A", &log));
+		manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
 		manager.Update();
 		CHECK(log.empty());
 	}
@@ -53,8 +53,8 @@ TEST_CASE("StateManager: ChangeState exits the old state, then enters the new on
 	Log log;
 	{
 		StateManager manager(nullptr);
-		manager.AddState("A", new RecordingState(&manager, "A", &log));
-		manager.AddState("B", new RecordingState(&manager, "B", &log));
+		manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
+		manager.AddState("B", std::make_unique<RecordingState>(&manager, "B", &log));
 
 		manager.ChangeState("A");
 		manager.Update();
@@ -70,7 +70,7 @@ TEST_CASE("StateManager: ChangeState to an unknown name does nothing")
 	Log log;
 	{
 		StateManager manager(nullptr);
-		manager.AddState("A", new RecordingState(&manager, "A", &log));
+		manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
 		manager.ChangeState("A");
 		log.clear();
 
@@ -85,30 +85,43 @@ TEST_CASE("StateManager: changing to the current state exits and enters it again
 	Log log;
 	{
 		StateManager manager(nullptr);
-		manager.AddState("A", new RecordingState(&manager, "A", &log));
+		manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
 		manager.ChangeState("A");
 		manager.ChangeState("A");
 		CHECK(Join(log) == "A:Enter A:Exit A:Enter");
 	}
 }
 
-TEST_CASE("StateManager: AddState with an existing name returns the existing state")
+TEST_CASE("StateManager: AddState with an existing name returns the existing state, and destroys the new one")
 {
 	Log log;
 	Log duplicateLog;
 	{
 		StateManager manager(nullptr);
-		StateBase* first = manager.AddState("A", new RecordingState(&manager, "A", &log));
+		StateBase* first = manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
 
-		//ìØÇ∂ñºëOÇ≈ìnÇµÇΩÇ‡ÇÃÇÕìoò^Ç≥ÇÍÇ∏ÅAä«óùÇ‡Ç≥ÇÍÇ»Ç¢ÅiéÛÇØéÊÇ¡ÇΩë§Ç≈è¡Ç∑Ç±Ç∆Ç…Ç»ÇÈÅj
-		RecordingState* duplicate = new RecordingState(&manager, "A", &duplicateLog);
-		CHECK(manager.AddState("A", duplicate) == first);
-		delete duplicate;
+		//ìØÇ∂ñºëOÇ≈ìnÇµÇΩÇ‡ÇÃÇÕìoò^Ç≥ÇÍÇ∏ÅAAddStateÇÃíÜÇ≈îjä¸Ç≥ÇÍÇÈ
+		CHECK(manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &duplicateLog)) == first);
+		CHECK(Join(duplicateLog) == "A:Destroyed");
 
 		manager.ChangeState("A");
 		CHECK(Join(log) == "A:Enter");
-		CHECK(duplicateLog.size() == 1);	//è¡ÇµÇΩÇ∆Ç´ÇÃ"A:Destroyed"ÇæÇØ
 	}
+}
+
+TEST_CASE("StateManager: AddState takes over the state and returns it")
+{
+	Log log;
+	{
+		StateManager manager(nullptr);
+		std::unique_ptr<RecordingState> state = std::make_unique<RecordingState>(&manager, "A", &log);
+		RecordingState* raw = state.get();
+
+		CHECK(manager.AddState("A", std::move(state)) == raw);
+		CHECK(state == nullptr);
+		CHECK(log.empty());
+	}
+	CHECK(Join(log) == "A:Exit A:Destroyed");
 }
 
 TEST_CASE("StateManager: the destructor exits and deletes every registered state in name order, even ones never entered")
@@ -116,9 +129,9 @@ TEST_CASE("StateManager: the destructor exits and deletes every registered state
 	Log log;
 	{
 		StateManager manager(nullptr);
-		manager.AddState("C", new RecordingState(&manager, "C", &log));
-		manager.AddState("A", new RecordingState(&manager, "A", &log));
-		manager.AddState("B", new RecordingState(&manager, "B", &log));
+		manager.AddState("C", std::make_unique<RecordingState>(&manager, "C", &log));
+		manager.AddState("A", std::make_unique<RecordingState>(&manager, "A", &log));
+		manager.AddState("B", std::make_unique<RecordingState>(&manager, "B", &log));
 		manager.ChangeState("B");
 		log.clear();
 	}

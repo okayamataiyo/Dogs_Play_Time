@@ -2,6 +2,7 @@
 //インクルード
 #include "../../Engine/GameObject.h"
 #include "PlayerBase.h"
+#include "../State/StateManager.h"
 
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
@@ -14,7 +15,6 @@ class Stage;
 class Floor;
 class SceneManager;
 class ItemObjectManager;
-class StateManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
@@ -76,7 +76,7 @@ private:
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
 	ItemObjectManager* pItemObjectManager_;
-	StateManager* pStateManager_;
+	std::unique_ptr<StateManager> pStateManager_;	//このプレイヤーが持つ（Release()で消す）
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;

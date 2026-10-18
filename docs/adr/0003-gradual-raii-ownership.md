@@ -1,7 +1,7 @@
 # ADR-0003: 所有権を段階的にRAIIへ移行する
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: In progress
 
 ## 背景
 `Engine/GameObject.h`では子オブジェクトを`std::list<GameObject*>`で保持し、`Instantiate`が`new`で生成する。解放は`Engine/GameObject.cpp`の再帰的な`Release`/`delete`処理に依存する。`Scripts/State/StateManager.h`も状態オブジェクトをraw pointerで保持している。
