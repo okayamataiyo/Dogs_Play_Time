@@ -1,7 +1,7 @@
 # ADR-0006: 自動テストとWindows x64ビルドCIを導入する
 
 - Status: Accepted
-- Implementation: Not started
+- Implementation: In progress
 
 ## 背景
 現在のVisual Studioプロジェクト探索では、専用テストプロジェクトやCI設定を確認できなかった。対象プラットフォームはWindows x64であり、ゲームのロジックとDirect3D等のOS依存処理を分けて検証する必要がある。
