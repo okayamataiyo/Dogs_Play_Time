@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dogs_Play_Time", "Dogs_Play_Time.vcxproj", "{D68FA256-14C6-4B85-B85F-EC93C87CD599}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dogs_Play_Time.Tests", "Tests\Dogs_Play_Time.Tests.vcxproj", "{DE9ED163-7ECF-4E09-B4F3-D7316127830F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{D68FA256-14C6-4B85-B85F-EC93C87CD599}.Debug|x64.Build.0 = Debug|x64
 		{D68FA256-14C6-4B85-B85F-EC93C87CD599}.Release|x64.ActiveCfg = Release|x64
 		{D68FA256-14C6-4B85-B85F-EC93C87CD599}.Release|x64.Build.0 = Release|x64
+		{DE9ED163-7ECF-4E09-B4F3-D7316127830F}.Debug|x64.ActiveCfg = Debug|x64
+		{DE9ED163-7ECF-4E09-B4F3-D7316127830F}.Debug|x64.Build.0 = Debug|x64
+		{DE9ED163-7ECF-4E09-B4F3-D7316127830F}.Release|x64.ActiveCfg = Release|x64
+		{DE9ED163-7ECF-4E09-B4F3-D7316127830F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

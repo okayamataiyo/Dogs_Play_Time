@@ -1,0 +1,4 @@
+doctest v2.5.3 (MIT License, see LICENSE.txt)
+Source: https://github.com/doctest/doctest/releases/tag/v2.5.3
+File:   doctest/doctest.h (not modified)
+SHA-256 of doctest.h: CFD518A3EF90F67E1F3BA514DF23FB3627437DE1A2FEEBA78CF5062A40021421
