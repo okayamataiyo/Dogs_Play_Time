@@ -1,6 +1,9 @@
 #include <xaudio2.h>
 #include <vector>
+#include <memory>
+#include <new>
 #include "Audio.h"
+#include "WavParser.h"
 #include "Global.h"
 #include "Debug.h"
 
@@ -110,88 +113,28 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	DWORD fileSize = GetFileSize(hFile, NULL);
 	if (fileSize == INVALID_FILE_SIZE)	return fail("ファイルの大きさを調べられません");
 
-	//指定したバイト数を読み込む（足りなければfalse）
-	auto readExact = [&](void* pDest, DWORD bytes) -> bool
+	//ファイルの中身をすべて読み込む
+	std::unique_ptr<BYTE[]> pFile(new (std::nothrow) BYTE[fileSize]);
+	if (pFile == nullptr)	return fail("メモリが足りません");
+	DWORD readBytes = 0;
+	if (!ReadFile(hFile, pFile.get(), fileSize, &readBytes, NULL) || readBytes != fileSize)
 	{
-		DWORD readBytes = 0;
-		return ReadFile(hFile, pDest, bytes, &readBytes, NULL) && readBytes == bytes;
-	};
-
-	//ファイルの残りのバイト数
-	auto remainBytes = [&]() -> DWORD
-	{
-		DWORD position = SetFilePointer(hFile, 0, NULL, FILE_CURRENT);
-		return position <= fileSize ? fileSize - position : 0;
-	};
-
-	//RIFFヘッダ
-	char riffId[4];
-	DWORD riffSize;
-	char waveId[4];
-	if (!readExact(riffId, 4) || !readExact(&riffSize, 4) || !readExact(waveId, 4) ||
-		memcmp(riffId, "RIFF", 4) != 0 || memcmp(waveId, "WAVE", 4) != 0)
-	{
-		return fail("WAVEファイルではありません");
+		return fail("ファイルを読み込めません");
 	}
 
 	//チャンクを順番にたどって、fmt（フォーマット）とdata（波形データ）を探す
-	//それ以外のチャンクは読み飛ばす
-	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
-	WAVEFORMATEXTENSIBLE fmt = {};
-	bool isFormatFound = false;
-	char* pBuffer = nullptr;
-	DWORD dataSize = 0;
-	while (pBuffer == nullptr)
+	WavParser::WavInfo wav;
+	std::string reason;
+	if (!WavParser::Parse(pFile.get(), fileSize, &wav, &reason))
 	{
-		//次のチャンクのIDとサイズ
-		char chunkId[4];
-		DWORD chunkSize;
-		if (!readExact(chunkId, 4) || !readExact(&chunkSize, 4))
-		{
-			break;	//ファイルの終わり
-		}
-
-		//チャンクの中身がファイルの残りに収まっているか
-		if (chunkSize > remainBytes())
-		{
-			return fail("ファイルが途中で切れています");
-		}
-
-		//フォーマット
-		if (memcmp(chunkId, "fmt ", 4) == 0)
-		{
-			if (chunkSize < 16)	return fail("fmtチャンクが不正です");
-
-			//先頭の必要な分だけ読み、残りは読み飛ばす
-			DWORD readSize = chunkSize < sizeof(fmt) ? chunkSize : (DWORD)sizeof(fmt);
-			if (!readExact(&fmt, readSize))	return fail("fmtチャンクを読み込めません");
-			isFormatFound = true;
-			SetFilePointer(hFile, (LONG)(chunkSize - readSize + (chunkSize & 1)), NULL, FILE_CURRENT);
-		}
-
-		//波形データ
-		else if (memcmp(chunkId, "data", 4) == 0)
-		{
-			if (!isFormatFound)	return fail("fmtチャンクがdataチャンクより前にありません");
-
-			pBuffer = new char[chunkSize];
-			if (!readExact(pBuffer, chunkSize))
-			{
-				delete[] pBuffer;
-				return fail("波形データを読み込めません");
-			}
-			dataSize = chunkSize;
-		}
-
-		//使わないチャンクは読み飛ばす
-		else
-		{
-			SetFilePointer(hFile, (LONG)(chunkSize + (chunkSize & 1)), NULL, FILE_CURRENT);
-		}
+		return fail(reason);
 	}
 
-	if (pBuffer == nullptr)	return fail(isFormatFound ? "dataチャンクが見つかりません" : "fmtチャンクが見つかりません");
-
+	//波形データだけを取り出す
+	WAVEFORMATEXTENSIBLE fmt = wav.format;
+	DWORD dataSize = wav.dataSize;
+	char* pBuffer = new char[dataSize];
+	memcpy(pBuffer, pFile.get() + wav.dataOffset, dataSize);
 
 	AudioData ad;
 

@@ -114,6 +114,7 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="Engine\WavParser.cpp" />
     <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackAction.cpp" />
     <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackDecorator.cpp" />
     <ClCompile Include="Scripts\BehaviourTree\AIPlayerAttackDiveAction.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="Engine\WavParser.h" />
     <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackAction.h" />
     <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackDecorator.h" />
     <ClInclude Include="Scripts\BehaviourTree\AIPlayerAttackDiveAction.h" />

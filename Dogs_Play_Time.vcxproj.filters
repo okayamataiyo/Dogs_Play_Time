@@ -110,6 +110,9 @@
     <ClCompile Include="Engine\Audio.cpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\WavParser.cpp">
+      <Filter>Engine\ResourceManager</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\Text.cpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
@@ -309,6 +312,9 @@
       <Filter>Engine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio.h">
+      <Filter>Engine\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\WavParser.h">
       <Filter>Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Text.h">
