@@ -5,15 +5,8 @@
 #include "Debug.h"
 
 Texture::Texture():
-	pSampleLinear_(nullptr), pTextureSRV_(nullptr), size_(XMFLOAT3(0,0,0))
+	size_(XMFLOAT3(0,0,0))
 {
-}
-
-
-Texture::~Texture()
-{
-	SAFE_RELEASE(pSampleLinear_);
-	SAFE_RELEASE(pTextureSRV_);
 }
 
 HRESULT Texture::Load(std::string fileName)
@@ -24,33 +17,33 @@ HRESULT Texture::Load(std::string fileName)
 
 
 	// テクスチャを読み込む
-	// 途中で失敗したら、どこで失敗したかを覚えて、それまでに作ったものを解放する
+	// 途中で失敗したら、どこで失敗したかを覚える（それまでに作ったものは、ComPtrが解放する）
 	// （COMの初期化はMainが行う）
-	IWICImagingFactory *pFactory = NULL;
-	IWICBitmapDecoder *pDecoder = NULL;
-	IWICBitmapFrameDecode* pFrame = NULL;
-	IWICFormatConverter* pFormatConverter = NULL;
-	ID3D11Texture2D*	pTexture = NULL;			// テクスチャデータ
+	Microsoft::WRL::ComPtr<IWICImagingFactory> pFactory;
+	Microsoft::WRL::ComPtr<IWICBitmapDecoder> pDecoder;
+	Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> pFrame;
+	Microsoft::WRL::ComPtr<IWICFormatConverter> pFormatConverter;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;			// テクスチャデータ
 	const char* step = "";
 	HRESULT hr = S_OK;
 	do
 	{
 		step = "画像を読み込む準備(WIC)ができません";
-		hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, reinterpret_cast<void **>(&pFactory));
+		hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, reinterpret_cast<void **>(pFactory.GetAddressOf()));
 		if (FAILED(hr))	break;
 
 		step = "画像ファイルを開けません";
-		hr = pFactory->CreateDecoderFromFilename(wtext, NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &pDecoder);
+		hr = pFactory->CreateDecoderFromFilename(wtext, NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, pDecoder.GetAddressOf());
 		if (FAILED(hr))	break;
 
 		step = "画像を読み取れません";
-		hr = pDecoder->GetFrame(0, &pFrame);
+		hr = pDecoder->GetFrame(0, pFrame.GetAddressOf());
 		if (FAILED(hr))	break;
 
 		step = "画像の形式を変換できません";
-		hr = pFactory->CreateFormatConverter(&pFormatConverter);
+		hr = pFactory->CreateFormatConverter(pFormatConverter.GetAddressOf());
 		if (FAILED(hr))	break;
-		hr = pFormatConverter->Initialize(pFrame, GUID_WICPixelFormat32bppRGBA, WICBitmapDitherTypeNone, NULL, 1.0f, WICBitmapPaletteTypeMedianCut);
+		hr = pFormatConverter->Initialize(pFrame.Get(), GUID_WICPixelFormat32bppRGBA, WICBitmapDitherTypeNone, NULL, 1.0f, WICBitmapPaletteTypeMedianCut);
 		if (FAILED(hr))	break;
 
 		UINT imgWidth;
@@ -74,34 +67,27 @@ HRESULT Texture::Load(std::string fileName)
 		texdec.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		texdec.MiscFlags = 0;
 		step = "テクスチャを作成できません";
-		hr = Direct3D::pDevice_->CreateTexture2D(&texdec, NULL, &pTexture);
+		hr = Direct3D::pDevice_->CreateTexture2D(&texdec, NULL, pTexture.GetAddressOf());
 		if (FAILED(hr))	break;
 
 		// テクスチャを送る
 		D3D11_MAPPED_SUBRESOURCE hMappedres;
 		step = "テクスチャにデータを送れません";
-		hr = Direct3D::pContext_->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &hMappedres);
+		hr = Direct3D::pContext_->Map(pTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &hMappedres);
 		if (FAILED(hr))	break;
 		hr = pFormatConverter->CopyPixels(NULL, imgWidth * 4, imgWidth * imgHeight * 4, (BYTE*)hMappedres.pData);
-		Direct3D::pContext_->Unmap(pTexture, 0);
+		Direct3D::pContext_->Unmap(pTexture.Get(), 0);
 		if (FAILED(hr))	break;
 
 		// シェーダリソースビューとサンプラーの作成
-		hr = CreateView(pTexture, &step);
+		hr = CreateView(pTexture.Get(), &step);
 	} while (false);
-
-	//途中で使ったものを解放（成功したときも、一時的に使ったものはいらない）
-	SAFE_RELEASE(pTexture);
-	SAFE_RELEASE(pFormatConverter);
-	SAFE_RELEASE(pFrame);
-	SAFE_RELEASE(pDecoder);
-	SAFE_RELEASE(pFactory);
 
 	if (FAILED(hr))
 	{
 		//失敗したので、作りかけのものも解放して、理由を覚えておく
-		SAFE_RELEASE(pSampleLinear_);
-		SAFE_RELEASE(pTextureSRV_);
+		pSampleLinear_.Reset();
+		pTextureSRV_.Reset();
 		errorMessage_ = std::string(step) + " " + Debug::HResult(hr);
 		return hr;
 	}
@@ -140,19 +126,18 @@ HRESULT Texture::CreateSolid(UINT width, UINT height, BYTE r, BYTE g, BYTE b, BY
 	data.pSysMem = pixels.data();
 	data.SysMemPitch = width * 4;
 
-	ID3D11Texture2D* pTexture = NULL;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 	const char* step = "代替のテクスチャを作成できません";
-	HRESULT hr = Direct3D::pDevice_->CreateTexture2D(&texdec, &data, &pTexture);
+	HRESULT hr = Direct3D::pDevice_->CreateTexture2D(&texdec, &data, pTexture.GetAddressOf());
 	if (SUCCEEDED(hr))
 	{
-		hr = CreateView(pTexture, &step);
+		hr = CreateView(pTexture.Get(), &step);
 	}
-	SAFE_RELEASE(pTexture);
 
 	if (FAILED(hr))
 	{
-		SAFE_RELEASE(pSampleLinear_);
-		SAFE_RELEASE(pTextureSRV_);
+		pSampleLinear_.Reset();
+		pTextureSRV_.Reset();
 		errorMessage_ = std::string(step) + " " + Debug::HResult(hr);
 		return hr;
 	}
@@ -169,7 +154,7 @@ HRESULT Texture::CreateView(ID3D11Texture2D* pTexture, const char** ppStep)
 	srv.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srv.Texture2D.MipLevels = 1;
 	*ppStep = "シェーダーリソースビューを作成できません";
-	HRESULT hr = Direct3D::pDevice_->CreateShaderResourceView(pTexture, &srv, &pTextureSRV_);
+	HRESULT hr = Direct3D::pDevice_->CreateShaderResourceView(pTexture, &srv, pTextureSRV_.ReleaseAndGetAddressOf());
 	if (FAILED(hr))	return hr;
 
 
@@ -181,5 +166,5 @@ HRESULT Texture::CreateView(ID3D11Texture2D* pTexture, const char** ppStep)
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	*ppStep = "サンプラーを作成できません";
-	return Direct3D::pDevice_->CreateSamplerState(&SamDesc, &pSampleLinear_);
+	return Direct3D::pDevice_->CreateSamplerState(&SamDesc, pSampleLinear_.ReleaseAndGetAddressOf());
 }

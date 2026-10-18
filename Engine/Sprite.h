@@ -2,7 +2,9 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#include <wrl/client.h>
 
+#include <memory>
 #include "string"
 #include "Texture.h"
 #include "Transform.h"
@@ -38,18 +40,18 @@ protected:
 	//【頂点バッファ】
 	//各頂点の情報（位置とか色とか）を格納するところ
 	//頂点数分の配列にして使う
-	ID3D11Buffer *pVertexBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer_;
 
 	//【インデックスバッファ】
 	//「どの頂点」と「どの頂点」と「どの頂点」で３角形ポリゴンになるかの情報を格納するところ
-	ID3D11Buffer *pIndexBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer_;
 
 	//【テクスチャ】
-	Texture*	pTexture_;
+	std::unique_ptr<Texture>	pTexture_;
 
 	//【定数バッファ】
 	//シェーダー（Simple2D.hlsl）のグローバル変数に値を渡すためのもの
-	ID3D11Buffer *pConstantBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer_;
 
 	//読み込めなかったときの理由
 	std::string errorMessage_;
@@ -62,9 +64,6 @@ protected:
 
 
 public:
-	Sprite();
-	~Sprite();
-
 	//ロード
 	//引数：fileName	画像ファイル名
 	//戻値：成功/失敗

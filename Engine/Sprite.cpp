@@ -2,27 +2,11 @@
 #include "Direct3D.h"
 #include "Global.h"
 
-//コンストラクタ
-Sprite::Sprite():
-	pTexture_(nullptr), pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr)
-{
-}
-
-//デストラクタ
-Sprite::~Sprite()
-{
-
-	SAFE_RELEASE(pVertexBuffer_);
-	SAFE_RELEASE(pIndexBuffer_);
-	SAFE_RELEASE(pConstantBuffer_);
-	SAFE_DELETE(pTexture_);
-}
-
 //準備
 HRESULT Sprite::Load(std::string fileName)
 {
 	//テクスチャ準備
-	pTexture_ = new Texture();
+	pTexture_ = std::make_unique<Texture>();
 	if(FAILED(pTexture_->Load(fileName)))
 	{
 		errorMessage_ = pTexture_->GetErrorMessage();
@@ -45,7 +29,7 @@ HRESULT Sprite::Load(std::string fileName)
 HRESULT Sprite::LoadPlaceholder()
 {
 	//テクスチャ準備（目立つマゼンタの矩形）
-	pTexture_ = new Texture();
+	pTexture_ = std::make_unique<Texture>();
 	if (FAILED(pTexture_->CreateSolid(128, 128, 255, 0, 255, 255)))
 	{
 		errorMessage_ = pTexture_->GetErrorMessage();
@@ -77,7 +61,7 @@ void Sprite::InitConstantBuffer()
 	cb.StructureByteStride = 0;
 
 	// 定数バッファの作成
-	Direct3D::pDevice_->CreateBuffer(&cb, NULL, &pConstantBuffer_);
+	Direct3D::pDevice_->CreateBuffer(&cb, NULL, pConstantBuffer_.ReleaseAndGetAddressOf());
 }
 
 
@@ -103,7 +87,7 @@ void Sprite::InitVertex()
 	bd_vertex.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA data_vertex;
 	data_vertex.pSysMem = vertices;
-	Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
+	Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, pVertexBuffer_.ReleaseAndGetAddressOf());
 }
 
 void Sprite::InitIndex()
@@ -122,7 +106,7 @@ void Sprite::InitIndex()
 	InitData.pSysMem = index;
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
-	Direct3D::pDevice_->CreateBuffer(&bd, &InitData, &pIndexBuffer_);
+	Direct3D::pDevice_->CreateBuffer(&bd, &InitData, pIndexBuffer_.ReleaseAndGetAddressOf());
 }
 
 
@@ -133,16 +117,16 @@ void Sprite::Draw(Transform& transform, RECT rect, float alpha)
 	Direct3D::SetShader(Direct3D::SHADER_2D);
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
-	Direct3D::pContext_->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
-	Direct3D::pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
-	Direct3D::pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);
+	Direct3D::pContext_->IASetVertexBuffers(0, 1, pVertexBuffer_.GetAddressOf(), &stride, &offset);
+	Direct3D::pContext_->VSSetConstantBuffers(0, 1, pConstantBuffer_.GetAddressOf());
+	Direct3D::pContext_->PSSetConstantBuffers(0, 1, pConstantBuffer_.GetAddressOf());
 	Direct3D::SetDepthBafferWriteEnable(false);
 
 
 	// インデックスバッファーをセット
 	stride = sizeof(int);
 	offset = 0;
-	Direct3D::pContext_->IASetIndexBuffer(pIndexBuffer_, DXGI_FORMAT_R32_UINT, 0);
+	Direct3D::pContext_->IASetIndexBuffer(pIndexBuffer_.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// パラメータの受け渡し
 	D3D11_MAPPED_SUBRESOURCE pdata;
@@ -171,7 +155,7 @@ void Sprite::Draw(Transform& transform, RECT rect, float alpha)
 	// テクスチャ合成色情報を渡す
 	cb.color = XMFLOAT4(1, 1, 1, alpha);
 
-	Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
+	Direct3D::pContext_->Map(pConstantBuffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
 	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
 
 
@@ -181,7 +165,7 @@ void Sprite::Draw(Transform& transform, RECT rect, float alpha)
 	ID3D11ShaderResourceView*	pSRV = pTexture_->GetSRV();
 	Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 
-	Direct3D::pContext_->Unmap(pConstantBuffer_, 0);									// GPUからのリソースアクセスを再開
+	Direct3D::pContext_->Unmap(pConstantBuffer_.Get(), 0);									// GPUからのリソースアクセスを再開
 
 	//ポリゴンメッシュを描画する
 	Direct3D::pContext_->DrawIndexed(6, 0, 0);

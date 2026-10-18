@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
 #include <wincodec.h>
+#include <wrl/client.h>
 #include "string"
 
 #pragma comment(lib, "d3d11.lib")
@@ -19,8 +20,8 @@ using namespace DirectX;
 //-----------------------------------------------------------
 class Texture
 {
-	ID3D11SamplerState*			pSampleLinear_;		//テクスチャサンプラー（テクスチャの貼り方）
-	ID3D11ShaderResourceView*	pTextureSRV_;		//シェーダーリソースビュー（テクスチャをシェーダーに送るためのもの）
+	Microsoft::WRL::ComPtr<ID3D11SamplerState>			pSampleLinear_;		//テクスチャサンプラー（テクスチャの貼り方）
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	pTextureSRV_;		//シェーダーリソースビュー（テクスチャをシェーダーに送るためのもの）
 	XMFLOAT3					size_;				//画像ファイルのサイズ
 	std::string					errorMessage_;		//読み込めなかったときの理由
 
@@ -31,7 +32,6 @@ class Texture
 
 public:
 	Texture();
-	~Texture();
 
 	//ロード
 	//引数：fileName	画像ファイル名
@@ -50,8 +50,8 @@ public:
 
 
 	//各アクセス関数
-	ID3D11SamplerState* GetSampler() { return pSampleLinear_; }	//サンプラーの取得
-	ID3D11ShaderResourceView* GetSRV() { return pTextureSRV_; }	//シェーダーリソースビューの取得
+	ID3D11SamplerState* GetSampler() { return pSampleLinear_.Get(); }	//サンプラーの取得
+	ID3D11ShaderResourceView* GetSRV() { return pTextureSRV_.Get(); }	//シェーダーリソースビューの取得
 	XMFLOAT3 GetSize() { return size_; }	//画像サイズの取得
 };
 
