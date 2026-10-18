@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <new>
+#include <wrl/client.h>
 #include "Audio.h"
 #include "WavParser.h"
 #include "Global.h"
@@ -9,24 +10,37 @@
 
 namespace Audio
 {
+	//ボイスを破棄する削除関数（deleteではなく、DestroyVoice()で破棄する決まり）
+	struct VoiceDestroyer
+	{
+		void operator()(IXAudio2Voice* pVoice) const
+		{
+			if (pVoice != nullptr)
+			{
+				pVoice->DestroyVoice();
+			}
+		}
+	};
+
 	//XAudio本体
-	IXAudio2* pXAudio = nullptr;
+	Microsoft::WRL::ComPtr<IXAudio2> pXAudio;
 
 	//マスターボイス
-	IXAudio2MasteringVoice* pMasteringVoice = nullptr;
+	std::unique_ptr<IXAudio2MasteringVoice, VoiceDestroyer> pMasteringVoice;
 
 
 	//ファイル毎に必要な情報
 	struct AudioData
 	{
-		//サウンド情報
+		//波形データ
+		//（メンバーは宣言の逆順に解放される。ソースボイスを破棄してから解放したいので、ボイスより先に宣言する）
+		std::unique_ptr<BYTE[]> data;
+
+		//サウンド情報（波形データの場所は、上のdataを指す）
 		XAUDIO2_BUFFER buf = {};
 
-		//ソースボイス
-		IXAudio2SourceVoice** pSourceVoice = nullptr;
-
-		//同時再生最大数
-		int svNum;
+		//ソースボイス（同時に鳴らす最大数だけ持つ）
+		std::vector<std::unique_ptr<IXAudio2SourceVoice, VoiceDestroyer>> voices;
 
 		//ファイル名
 		std::string fileName;
@@ -47,30 +61,32 @@ namespace Audio
 //戻値：成功ならS_OK、失敗なら失敗したAPIのHRESULT（原因は致命的なエラーとして記録済みで、作りかけのものは解放済み）
 HRESULT Audio::Initialize()
 {
-	if (pXAudio != nullptr)
+	if (pXAudio.Get() != nullptr)
 	{
 		return S_OK;
 	}
 
 	//XAudio本体を作る
-	HRESULT hr = XAudio2Create(&pXAudio);
+	HRESULT hr = XAudio2Create(pXAudio.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 	{
-		pXAudio = nullptr;
+		pXAudio.Reset();
 		AllRelease();
 		Debug::Fatal("XAudio2を初期化できません。" + Debug::HResult(hr));
 		return hr;
 	}
 
 	//マスターボイスを作る
-	hr = pXAudio->CreateMasteringVoice(&pMasteringVoice);
+	IXAudio2MasteringVoice* pMaster = nullptr;
+	hr = pXAudio->CreateMasteringVoice(&pMaster);
 	if (FAILED(hr))
 	{
-		pMasteringVoice = nullptr;
 		AllRelease();
 		Debug::Fatal("オーディオの出力先（マスターボイス）を作成できません。" + Debug::HResult(hr));
 		return hr;
 	}
+
+	pMasteringVoice.reset(pMaster);
 
 	return S_OK;
 }
@@ -133,14 +149,15 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	//波形データだけを取り出す
 	WAVEFORMATEXTENSIBLE fmt = wav.format;
 	DWORD dataSize = wav.dataSize;
-	char* pBuffer = new char[dataSize];
-	memcpy(pBuffer, pFile.get() + wav.dataOffset, dataSize);
+	std::unique_ptr<BYTE[]> pBuffer(new BYTE[dataSize]);
+	memcpy(pBuffer.get(), pFile.get() + wav.dataOffset, dataSize);
 
 	AudioData ad;
 
 	ad.fileName = fileName;
 
-	ad.buf.pAudioData = (BYTE*)pBuffer;
+	ad.data = std::move(pBuffer);
+	ad.buf.pAudioData = ad.data.get();
 	ad.buf.Flags = XAUDIO2_END_OF_STREAM;
 
 	if (isLoop)	ad.buf.LoopCount = XAUDIO2_LOOP_INFINITE;
@@ -148,25 +165,18 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	ad.buf.AudioBytes = dataSize;
 
 
-	ad.pSourceVoice = new IXAudio2SourceVoice * [svNum]();
-	ad.svNum = svNum;
-
+	//ソースボイスを、同時に鳴らす最大数だけ作る（途中で失敗したら、作りかけのものはadと一緒に解放される）
 	for (int i = 0; i < svNum; i++)
 	{
-		HRESULT hr = pXAudio->CreateSourceVoice(&ad.pSourceVoice[i], &fmt.Format);
+		IXAudio2SourceVoice* pVoice = nullptr;
+		HRESULT hr = pXAudio->CreateSourceVoice(&pVoice, &fmt.Format);
 		if (FAILED(hr))
 		{
-			//作りかけのものを解放して、失敗にする
-			for (int j = 0; j < i; j++)
-			{
-				ad.pSourceVoice[j]->DestroyVoice();
-			}
-			SAFE_DELETE_ARRAY(ad.pSourceVoice);
-			SAFE_DELETE_ARRAY(ad.buf.pAudioData);
 			return fail("再生用のボイスを作成できません " + Debug::HResult(hr));
 		}
+		ad.voices.emplace_back(pVoice);
 	}
-	audioDatas.push_back(ad);
+	audioDatas.push_back(std::move(ad));
 
 	return (int)audioDatas.size() - 1;
 }
@@ -176,16 +186,16 @@ void Audio::Play(int ID, float volume)
 {
 	if (!IsValid(ID))	return;
 
-	for (int i = 0; i < audioDatas[ID].svNum; i++)
+	for (size_t i = 0; i < audioDatas[ID].voices.size(); i++)
 	{
 		XAUDIO2_VOICE_STATE state;
-		audioDatas[ID].pSourceVoice[i]->GetState(&state);
-		audioDatas[ID].pSourceVoice[i]->SetVolume(volume);
+		audioDatas[ID].voices[i]->GetState(&state);
+		audioDatas[ID].voices[i]->SetVolume(volume);
 
 		if (state.BuffersQueued == 0)
 		{
-			audioDatas[ID].pSourceVoice[i]->SubmitSourceBuffer(&audioDatas[ID].buf);
-			audioDatas[ID].pSourceVoice[i]->Start();
+			audioDatas[ID].voices[i]->SubmitSourceBuffer(&audioDatas[ID].buf);
+			audioDatas[ID].voices[i]->Start();
 			break;
 		}
 	}
@@ -196,10 +206,10 @@ void Audio::Stop(int ID)
 {
 	if (!IsValid(ID))	return;
 
-	for (int i = 0; i < audioDatas[ID].svNum; i++)
+	for (size_t i = 0; i < audioDatas[ID].voices.size(); i++)
 	{
-		audioDatas[ID].pSourceVoice[i]->Stop();
-		audioDatas[ID].pSourceVoice[i]->FlushSourceBuffers();
+		audioDatas[ID].voices[i]->Stop();
+		audioDatas[ID].voices[i]->FlushSourceBuffers();
 	}
 }
 
@@ -207,15 +217,7 @@ void Audio::Stop(int ID)
 //ロードしたサウンドだけを解放する（XAudio本体とCOMは解放しない）
 void Audio::Release()
 {
-	for (int i = 0; i < audioDatas.size(); i++)
-	{
-		for (int j = 0; j < audioDatas[i].svNum; j++)
-		{
-			audioDatas[i].pSourceVoice[j]->DestroyVoice();
-		}
-		SAFE_DELETE_ARRAY(audioDatas[i].pSourceVoice);
-		SAFE_DELETE_ARRAY(audioDatas[i].buf.pAudioData);
-	}
+	//ソースボイスを破棄してから、波形データを解放する（AudioDataのメンバーの順序で、この順になる）
 	audioDatas.clear();
 }
 
@@ -227,16 +229,8 @@ void Audio::AllRelease()
 	//ロード済みのサウンドを先に解放する（ソースボイスはマスターボイスより先に破棄する）
 	Release();
 
-	if (pMasteringVoice)
-	{
-		pMasteringVoice->DestroyVoice();
-		pMasteringVoice = nullptr;
-	}
-
-	if (pXAudio)
-	{
-		pXAudio->Release();
-		pXAudio = nullptr;
-	}
+	//マスターボイス → XAudio本体の順に解放する
+	pMasteringVoice.reset();
+	pXAudio.Reset();
 
 }
