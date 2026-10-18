@@ -6,7 +6,7 @@
 namespace Image
 {
 	//ロード済みの画像データ一覧
-	std::vector<ImageData*>	_datas;
+	std::vector<std::unique_ptr<ImageData>>	_datas;
 
 	//指定した番号の画像が使えるか（範囲内で、解放されていない）
 	static bool IsValid(int handle)
@@ -23,7 +23,7 @@ namespace Image
 	//画像をロード
 	int Load(std::string fileName)
 	{
-		ImageData* pData = new ImageData;
+		std::unique_ptr<ImageData> pData = std::make_unique<ImageData>();
 
 		//開いたファイル一覧から同じファイル名のものが無いか探す
 		bool isExist = false;
@@ -41,7 +41,7 @@ namespace Image
 		//新たにファイルを開く
 		if (isExist == false)
 		{
-			pData->pSprite = new Sprite;
+			pData->pSprite = std::make_shared<Sprite>();
 			if (FAILED(pData->pSprite->Load(fileName)))
 			{
 				//開けなかった
@@ -51,15 +51,14 @@ namespace Image
 					message += " (" + pData->pSprite->GetErrorMessage() + ")";
 				}
 				Debug::Warning(message);
-				SAFE_DELETE(pData->pSprite);
+				pData->pSprite.reset();
 
 				//代替の画像（目立つマゼンタの矩形）に差し替える
-				pData->pSprite = new Sprite;
+				pData->pSprite = std::make_shared<Sprite>();
 				if (FAILED(pData->pSprite->LoadPlaceholder()))
 				{
 					Debug::Warning("代替の画像も作成できません: " + pData->pSprite->GetErrorMessage());
-					SAFE_DELETE(pData->pSprite);
-					SAFE_DELETE(pData);
+					pData->pSprite.reset();
 					return -1;
 				}
 			}
@@ -74,7 +73,7 @@ namespace Image
 		{
 			if (_datas[i] == nullptr)
 			{
-				_datas[i] = pData;
+				_datas[i] = std::move(pData);
 
 				//切り抜き範囲をリセット
 				ResetRect(i);
@@ -84,7 +83,7 @@ namespace Image
 		}
 
 		//新たに追加
-		_datas.push_back(pData);
+		_datas.push_back(std::move(pData));
 
 		//画像番号割り振り
 		int handle = (int)_datas.size() - 1;
@@ -118,25 +117,8 @@ namespace Image
 			return;
 		}
 
-		//同じモデルを他でも使っていないか
-		bool isExist = false;
-		for (int i = 0; i < _datas.size(); i++)
-		{
-			//すでに開いている場合
-			if (_datas[i] != nullptr && i != handle && _datas[i]->pSprite == _datas[handle]->pSprite)
-			{
-				isExist = true;
-				break;
-			}
-		}
-
-		//使ってなければモデル解放
-		if (isExist == false)
-		{
-			SAFE_DELETE(_datas[handle]->pSprite);
-		}
-
-		SAFE_DELETE(_datas[handle]);
+		//この画像を手放す（同じSpriteを使っている画像が他にいなければ、Spriteもここで消える）
+		_datas[handle].reset();
 	}
 
 

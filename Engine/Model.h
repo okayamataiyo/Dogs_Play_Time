@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include <assert.h>
 #include <vector>
+#include <memory>
 #include <string>
 #include "RayCastData.h"
 #include "Transform.h"
@@ -21,8 +22,8 @@ namespace Model
 		//ファイル名
 		std::string fileName;
 
-		//ロードしたモデルデータのアドレス
-		Fbx*		pFbx;
+		//ロードしたモデルデータ（同じファイルを読んだモデルどうしで共有し、最後の1つが消えたときにFbxも消える）
+		std::shared_ptr<Fbx>	pFbx;
 
 		//行列
 		Transform 	transform;

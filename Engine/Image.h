@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <string>
 #include "Sprite.h"
 #include "Transform.h"
@@ -18,8 +19,8 @@ namespace Image
 		//ファイル名
 		std::string fileName;
 
-		//ロードした画像データのアドレス
-		Sprite*		pSprite;
+		//ロードした画像データ（同じファイルを読んだ画像どうしで共有し、最後の1つが消えたときにSpriteも消える）
+		std::shared_ptr<Sprite>	pSprite;
 
 		//切り抜き範囲
 		RECT		rect;

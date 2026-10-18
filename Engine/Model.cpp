@@ -7,7 +7,7 @@
 namespace Model
 {
 	//ロード済みのモデルデータ一覧
-	std::vector<ModelData*>	_datas;
+	std::vector<std::unique_ptr<ModelData>>	_datas;
 
 	int prevNum = 0;
 
@@ -26,7 +26,7 @@ namespace Model
 	//モデルをロード
 	int Load(std::string fileName, bool isRequired)
 	{
-			ModelData* pData = new ModelData;
+			std::unique_ptr<ModelData> pData = std::make_unique<ModelData>();
 
 			//開いたファイル一覧から同じファイル名のものが無いか探す
 			bool isExist = false;
@@ -44,7 +44,7 @@ namespace Model
 			//新たにファイルを開く
 			if (isExist == false)
 			{
-				pData->pFbx = new Fbx;
+				pData->pFbx = std::make_shared<Fbx>();
 				if (FAILED(pData->pFbx->Load(fileName)))
 				{
 					//開けなかった
@@ -56,8 +56,7 @@ namespace Model
 					if (isRequired)	Debug::Fatal(message);
 					else			Debug::Warning(message);
 
-					SAFE_DELETE(pData->pFbx);
-					SAFE_DELETE(pData);
+					pData->pFbx.reset();
 					return -1;
 				}
 
@@ -71,13 +70,13 @@ namespace Model
 			{
 				if (_datas[i] == nullptr)
 				{
-					_datas[i] = pData;
+					_datas[i] = std::move(pData);
 					return i;
 				}
 			}
 
 			//新たに追加
-			_datas.push_back(pData);
+			_datas.push_back(std::move(pData));
 			return (int)_datas.size() - 1;
 	}
 
@@ -111,26 +110,8 @@ namespace Model
 			return;
 		}
 
-		//同じモデルを他でも使っていないか
-		bool isExist = false;
-		for (int i = 0; i < _datas.size(); i++)
-		{
-			//すでに開いている場合
-			if (_datas[i] != nullptr && i != handle && _datas[i]->pFbx == _datas[handle]->pFbx)
-			{
-				isExist = true;
-				break;
-			}
-		}
-
-		//使ってなければモデル解放
-		if (isExist == false )
-		{
-			SAFE_DELETE(_datas[handle]->pFbx);
-		}
-
-
-		SAFE_DELETE(_datas[handle]);
+		//このモデルを手放す（同じFbxを使っているモデルが他にいなければ、Fbxもここで消える）
+		_datas[handle].reset();
 	}
 
 
