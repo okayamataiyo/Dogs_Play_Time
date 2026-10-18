@@ -10,16 +10,12 @@ namespace
 	//判定の所有はオブジェクトに移るので、返したポインターは使うだけ
 	BoxCollider* AddBox(GameObject* object, XMFLOAT3 center, XMFLOAT3 size)
 	{
-		BoxCollider* box = new BoxCollider(center, size);
-		object->AddCollider(box);
-		return box;
+		return object->AddCollider(std::make_unique<BoxCollider>(center, size));
 	}
 
 	SphereCollider* AddSphere(GameObject* object, XMFLOAT3 center, float radius)
 	{
-		SphereCollider* sphere = new SphereCollider(center, radius);
-		object->AddCollider(sphere);
-		return sphere;
+		return object->AddCollider(std::make_unique<SphereCollider>(center, radius));
 	}
 
 	//どちらの側から調べても同じ結果になる

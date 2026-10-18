@@ -38,8 +38,7 @@ void WoodBox::Initialize()
     std::string modelName = modelFolderName + woodBoxName + modelModifierName;
     hModel_ = Model::Load(modelName);
     XMFLOAT3 collisionPos = XMFLOAT3(0.0f,2.5f,0.0f);
-    pCollision_ = new SphereCollider(collisionPos, 3.0f);
-    AddCollider(pCollision_);
+    pCollision_ = AddCollider(std::make_unique<SphereCollider>(collisionPos, 3.0f));
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);
     pAttackPlayer_ = (AttackPlayer*)FindObject(attackPlayerName);

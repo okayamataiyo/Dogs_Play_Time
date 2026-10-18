@@ -141,8 +141,8 @@ TEST_CASE("GameObject: objects under a scene get OnCollision when their collider
 	ObjC* scene = Instantiate<ObjC>(&root);		//本物のゲームと同じく、当たり判定の相手は「同じ親の下」にいる
 	ObjA* a = Instantiate<ObjA>(scene);
 	ObjB* b = Instantiate<ObjB>(scene);
-	a->AddCollider(new BoxCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2)));
-	b->AddCollider(new BoxCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2)));
+	a->AddCollider(std::make_unique<BoxCollider>(XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2)));
+	b->AddCollider(std::make_unique<BoxCollider>(XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2)));
 	a->SetPosition(0, 0, 0);
 	b->SetPosition(1, 0, 0);
 	scope.Clear();
@@ -164,22 +164,34 @@ TEST_CASE("GameObject: colliders are deleted by ClearCollider, by ReleaseSub and
 	{
 		TestRoot root;
 		ObjA* a = Instantiate<ObjA>(&root);
-		a->AddCollider(new CountedBox());
-		a->AddCollider(new CountedBox());
+		a->AddCollider(std::make_unique<CountedBox>());
+		a->AddCollider(std::make_unique<CountedBox>());
 		a->ClearCollider();
 		CHECK(CountedBox::destroyedCount == 2);
 
 		ObjB* b = Instantiate<ObjB>(&root);
-		b->AddCollider(new CountedBox());
+		b->AddCollider(std::make_unique<CountedBox>());
 		root.ReleaseAll();
 		CHECK(CountedBox::destroyedCount == 3);
 	}
 
 	//ReleaseSubを通さずに消した場合は、デストラクタが消す
 	ObjA* lone = new ObjA(nullptr);
-	lone->AddCollider(new CountedBox());
+	lone->AddCollider(std::make_unique<CountedBox>());
 	delete lone;
 	CHECK(CountedBox::destroyedCount == 4);
+}
+
+TEST_CASE("GameObject: AddCollider takes over the collider and returns it")
+{
+	LogScope scope;
+	TestRoot root;
+	ObjA* a = Instantiate<ObjA>(&root);
+
+	std::unique_ptr<SphereCollider> sphere = std::make_unique<SphereCollider>(XMFLOAT3(0, 0, 0), 1.0f);
+	SphereCollider* raw = sphere.get();
+	CHECK(a->AddCollider(std::move(sphere)) == raw);
+	CHECK(sphere == nullptr);
 }
 
 TEST_CASE("GameObject: the flags start as not initialized, entered, visible, alive, and can be changed")

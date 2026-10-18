@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <list>
+#include <memory>
 #include <string>
 #include <assert.h>
 #include "SphereCollider.h"
@@ -28,8 +29,8 @@ protected:
 	//オブジェクトの名前
 	std::string				objectName_;
 
-	//衝突判定リスト
-	std::list<Collider*>	colliderList_;	
+	//衝突判定リスト（コライダーの持ち主。AddColliderで受け取り、ClearColliderかデストラクターで消す）
+	std::list<std::unique_ptr<Collider>>	colliderList_;
 
 public:
 	//コンストラクタ
@@ -111,8 +112,15 @@ public:
 	//子オブジェクトを全て削除
 	void KillAllChildren();
 
-	//コライダー（衝突判定）を追加する
-	void AddCollider(Collider * collider);
+	//コライダー（衝突判定）を追加する（所有はこのオブジェクトに移る）
+	//戻値：追加したコライダー（このオブジェクトが消えるか、ClearColliderするまで有効。借りているだけ）
+	template <class T>
+	T* AddCollider(std::unique_ptr<T> collider)
+	{
+		T* pCollider = collider.get();
+		AddColliderSub(std::move(collider));
+		return pCollider;
+	}
 
 	//何かと衝突した場合に呼ばれる（オーバーライド用）
 	//引数：pTarget	衝突した相手
@@ -156,6 +164,9 @@ private:
 	//オブジェクト削除（再帰）
 	//引数：obj　削除するオブジェクト
 	void KillObjectSub(GameObject* obj);
+
+	//コライダーを持ち主のリストに加える（AddColliderの中身）
+	void AddColliderSub(std::unique_ptr<Collider> collider);
 
 
 private:

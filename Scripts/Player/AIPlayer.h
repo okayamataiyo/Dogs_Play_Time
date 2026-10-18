@@ -70,7 +70,7 @@ private:
 	Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
 	CollectPlayer* pCollectPlayer_;
 	AttackPlayer* pAttackPlayer_;
-	SphereCollider* pCollision_;
+	SphereCollider* pCollision_;	//GameObjectが持っているコライダー（借りているだけ）
 	WoodBox* pWoodBox_;
 	Stage* pStage_;
 	Floor* pFloor_;

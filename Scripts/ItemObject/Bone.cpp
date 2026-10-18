@@ -27,8 +27,7 @@ void Bone::Initialize()
 	std::string ModelName = modelFolderName + boneName + modelModifierName;
 	hModel_ = Model::Load(ModelName);
 
-	pCollision_ = new SphereCollider(initZeroXMFLOAT3, 1.0f);
-	AddCollider(pCollision_);
+	pCollision_ = AddCollider(std::make_unique<SphereCollider>(initZeroXMFLOAT3, 1.0f));
 	pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
 	pCollectPlayer_ = (CollectPlayer*)FindObject(collectPlayerName);
 	transform_.scale_ = { 0.7f,0.7f,0.7f };

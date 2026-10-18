@@ -46,7 +46,7 @@ private:
     Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
     Dogs_Fight_PlayScene* pDogs_Fight_PlayScene_;
     AttackPlayer* pAttackPlayer_;
-    SphereCollider* pCollision_;
+    SphereCollider* pCollision_;	//GameObjectが持っているコライダー（借りているだけ）
 
 public:
     //コンストラクタ

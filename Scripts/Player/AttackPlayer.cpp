@@ -68,8 +68,7 @@ void AttackPlayer::Initialize()
         gameData_.FPS_ = 300;
     }
     //▼コリジョンを設定
-    pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
-    AddCollider(pCollision_);
+    pCollision_ = AddCollider(std::make_unique<SphereCollider>(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f));
     //▼ポインタ変数に実体を設定
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);

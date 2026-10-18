@@ -67,8 +67,7 @@ void CollectPlayer::Initialize()
     transform_.scale_ = { 0.4f,0.4f,0.4f};
     jumpData_.positionY_ = transform_.position_.y;
     gameData_.FPS_ = 300;
-    pCollision_ = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
-    AddCollider(pCollision_);
+    pCollision_ = AddCollider(std::make_unique<SphereCollider>(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f));
     pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
     pDogs_Walk_PlayScene_ = (Dogs_Walk_PlayScene*)FindObject(Dogs_Walk_PlaySceneName);
     pDogs_Fight_PlayScene_ = (Dogs_Fight_PlayScene*)FindObject(Dogs_Fight_PlaySceneName);

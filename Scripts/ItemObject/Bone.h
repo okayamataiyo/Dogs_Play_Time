@@ -24,7 +24,7 @@ protected:
 	float boneInitPosY_;
 	XMFLOAT3 pickUpBoneScale_;
 	Dogs_Walk_PlayScene* pDogs_Walk_PlayScene_;
-	SphereCollider* pCollision_;
+	SphereCollider* pCollision_;	//GameObjectが持っているコライダー（借りているだけ）
 	Stage* pStage_;
 	CollectPlayer* pCollectPlayer_;
 public:

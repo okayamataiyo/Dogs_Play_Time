@@ -32,11 +32,7 @@ GameObject::GameObject(GameObject * parent, const std::string& name)
 //デストラクタ
 GameObject::~GameObject()
 {
-	for (auto it = colliderList_.begin(); it != colliderList_.end(); it++)
-	{
-		SAFE_DELETE(*it);
-	}
-	colliderList_.clear();
+	//コライダーは、colliderList_が消す
 }
 
 // 削除するかどうか
@@ -211,20 +207,16 @@ void GameObject::KillObjectSub(GameObject * obj)
 
 
 
-//コライダー（衝突判定）を追加する
-void GameObject::AddCollider(Collider* collider)
+//コライダーを持ち主のリストに加える（AddColliderの中身）
+void GameObject::AddColliderSub(std::unique_ptr<Collider> collider)
 {
 	collider->SetGameObject(this);
-	colliderList_.push_back(collider);
+	colliderList_.push_back(std::move(collider));
 }
 
 //コライダー（衝突判定）を削除
 void GameObject::ClearCollider()
 {
-	for (auto it = colliderList_.begin(); it != colliderList_.end(); it++)
-	{
-		SAFE_DELETE(*it);
-	}
 	colliderList_.clear();
 }
 
@@ -243,7 +235,7 @@ void GameObject::Collision(GameObject * pTarget)
 	{
 		for (auto j = pTarget->colliderList_.begin(); j != pTarget->colliderList_.end(); j++)
 		{
-			if ((*i)->IsHit(*j))
+			if ((*i)->IsHit((*j).get()))
 			{
 				//当たった
 				this->OnCollision(pTarget);
