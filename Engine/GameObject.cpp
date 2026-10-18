@@ -96,7 +96,7 @@ bool GameObject::IsVisibled()
 }
 
 //子オブジェクトリストを取得
-std::list<GameObject*>* GameObject::GetChildList()
+const std::list<std::unique_ptr<GameObject>>* GameObject::GetChildList()
 {
 	return &childList_;
 }
@@ -122,7 +122,7 @@ GameObject * GameObject::FindChildObject(const std::string & name)
 	while (it != end) {
 		//同じ名前のオブジェクトを見つけたらそれを返す
 		if ((*it)->GetObjectName() == name)
-			return *it;
+			return it->get();
 
 		//その子供（孫）以降にいないか探す
 		GameObject* obj = (*it)->FindChildObject(name);
@@ -146,61 +146,43 @@ const std::string& GameObject::GetObjectName(void) const
 }
 
 //子オブジェクトを追加（リストの最後へ）
-void GameObject::PushBackChild(GameObject * obj)
+void GameObject::PushBackChild(std::unique_ptr<GameObject> obj)
 {
 	assert(obj != nullptr);
 
 	obj->pParent_ = this;
-	childList_.push_back(obj);
+	childList_.push_back(std::move(obj));
 }
 
 //子オブジェクトを追加（リストの先頭へ）
-void GameObject::PushFrontChild(GameObject * obj)
+void GameObject::PushFrontChild(std::unique_ptr<GameObject> obj)
 {
 	assert(obj != nullptr);
 
 	obj->pParent_ = this;
-	childList_.push_front(obj);
+	childList_.push_front(std::move(obj));
 }
 
 //子オブジェクトを全て削除
 void GameObject::KillAllChildren(void)
 {
-	//子供がいないなら終わり
-	if (childList_.empty())
-		return;
-
-	//イテレータ
-	auto it = childList_.begin();	//先頭
-	auto end = childList_.end();	//末尾
-
-	//子オブジェクトを1個ずつ削除
-	while (it != end)
+	//子オブジェクトを1個ずつ、孫以下を片づけてから削除する
+	while (!childList_.empty())
 	{
-		KillObjectSub(*it);
-		delete *it;
-		it = childList_.erase(it);
+		KillObjectSub(childList_.front().get());
+		childList_.pop_front();
 	}
-
-	//リストをクリア
-	childList_.clear();
 }
 
 //オブジェクト削除（再帰）
+//obj自身を消すのは呼び出し側。ここでは、孫以下を葉から順にRelease()して消し、最後にobj自身のRelease()を呼ぶ
 void GameObject::KillObjectSub(GameObject * obj)
 {
-	if (!childList_.empty())
+	auto& list = obj->childList_;
+	while (!list.empty())
 	{
-		auto list = obj->GetChildList();
-		auto it = list->begin();
-		auto end = list->end();
-		while (it != end)
-		{
-			KillObjectSub(*it);
-			delete *it;
-			it = list->erase(it);
-		}
-		list->clear();
+		KillObjectSub(list.front().get());
+		list.pop_front();
 	}
 	obj->Release();
 }
@@ -250,7 +232,7 @@ void GameObject::Collision(GameObject * pTarget)
 	//子供も当たり判定
 	for (auto i = pTarget->childList_.begin(); i != pTarget->childList_.end(); i++)
 	{
-		Collision(*i);
+		Collision(i->get());
 	}
 }
 
@@ -296,7 +278,6 @@ void GameObject::UpdateSub()
 		if ((*it)->IsDead() == true)
 		{
 			(*it)->ReleaseSub();
-			SAFE_DELETE(*it);
 			it = childList_.erase(it);
 		}
 		else
@@ -354,8 +335,9 @@ void GameObject::ReleaseSub()
 	for (auto it = childList_.begin(); it != childList_.end(); it++)
 	{
 		(*it)->ReleaseSub();
-		SAFE_DELETE(*it);
+		it->reset();	//この子をここで消す（孫以下を片づけた後、次の子へ進む前）
 	}
+	childList_.clear();
 
 	Release();
 }

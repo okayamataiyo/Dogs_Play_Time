@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <memory>
 #include <time.h>
 #include <chrono>
 #include "Direct3D.h"
@@ -47,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	bool isImGuiWin32Initialized = false;
 	bool isImGuiDX11Initialized = false;
 	HWND hWnd = nullptr;
-	RootObject* pRootObject = nullptr;
+	std::unique_ptr<RootObject> pRootObject;
 
 	//初期化ファイルから取得する情報（取得できなかったときの既定値）
 	int screenWidth = 800;		//スクリーンの幅
@@ -124,7 +125,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//ルートオブジェクト準備
 		//すべてのゲームオブジェクトの親となるオブジェクト
-		pRootObject = new RootObject;
+		pRootObject = std::make_unique<RootObject>();
 		pRootObject->Initialize();
 
 		//最初のシーンで、必須のリソースの読み込みに失敗していたら先へ進まない
@@ -270,7 +271,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (pRootObject != nullptr)
 	{
 		pRootObject->ReleaseSub();
-		SAFE_DELETE(pRootObject);
+		pRootObject.reset();
 	}
 	Input::Release();
 	if (isImGuiDX11Initialized)		ImGui_ImplDX11_Shutdown();

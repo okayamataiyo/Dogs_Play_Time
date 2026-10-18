@@ -31,7 +31,11 @@ TEST_CASE("GameObject: Instantiate adds the child to the end of the list, Instan
 	CHECK(scope.Text() == "A:Initialize B:Initialize C:Initialize");
 	CHECK(a->GetParent() == &root);
 
-	std::vector<GameObject*> children(root.GetChildList()->begin(), root.GetChildList()->end());
+	std::vector<GameObject*> children;
+	for (const auto& child : *root.GetChildList())
+	{
+		children.push_back(child.get());
+	}
 	REQUIRE(children.size() == 3);
 	CHECK(children[0] == c);
 	CHECK(children[1] == a);
@@ -192,6 +196,31 @@ TEST_CASE("GameObject: AddCollider takes over the collider and returns it")
 	SphereCollider* raw = sphere.get();
 	CHECK(a->AddCollider(std::move(sphere)) == raw);
 	CHECK(sphere == nullptr);
+}
+
+TEST_CASE("GameObject: an object deleted without ReleaseSub also deletes its children")
+{
+	LogScope scope;
+	ObjA* parent = new ObjA(nullptr);
+	Instantiate<ObjB>(parent);
+	scope.Clear();
+
+	delete parent;
+	CHECK(scope.Text() == "A:Destroyed B:Destroyed");
+}
+
+TEST_CASE("GameObject: Instantiate hands the object to the parent, which deletes it with ReleaseSub in the same order as before")
+{
+	LogScope scope;
+	TestRoot root;
+	ObjA* a = Instantiate<ObjA>(&root);
+	ObjD* d = InstantiateFront<ObjD>(a);
+	CHECK(d->GetParent() == a);
+	CHECK(a->GetParent() == &root);
+	scope.Clear();
+
+	root.ReleaseAll();
+	CHECK(scope.Text() == "D:Release D:Destroyed A:Release A:Destroyed root:Release");
 }
 
 TEST_CASE("GameObject: the flags start as not initialized, entered, visible, alive, and can be changed")

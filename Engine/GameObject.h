@@ -80,8 +80,8 @@ public:
 
 
 	//子オブジェクトリストを取得
-	//戻値：子オブジェクトリスト
-	std::list<GameObject*>* GetChildList();
+	//戻値：子オブジェクトリスト（読むだけ。子の持ち主はこのオブジェクトなので、取り出して持ち去らないこと）
+	const std::list<std::unique_ptr<GameObject>>* GetChildList();
 
 	//親オブジェクトを取得
 	//戻値：親オブジェクトのアドレス
@@ -102,12 +102,12 @@ public:
 	const std::string& GetObjectName(void) const;
 
 	//子オブジェクトを追加（リストの最後へ）
-	//引数：追加するオブジェクト
-	void PushBackChild(GameObject* obj);
+	//引数：obj	追加するオブジェクト（所有はこのオブジェクトに移る）
+	void PushBackChild(std::unique_ptr<GameObject> obj);
 
 	//子オブジェクトを追加（リストの先頭へ）
-	//引数：obj 追加するオブジェクト
-	void PushFrontChild(GameObject* obj);
+	//引数：obj	追加するオブジェクト（所有はこのオブジェクトに移る）
+	void PushFrontChild(std::unique_ptr<GameObject> obj);
 
 	//子オブジェクトを全て削除
 	void KillAllChildren();
@@ -183,34 +183,35 @@ private:
 	//親オブジェクト
 	GameObject* pParent_;
 
-	//子オブジェクトリスト
-	std::list<GameObject*> childList_;
+	//子オブジェクトリスト（子の持ち主。このオブジェクトが消えるときに、子もここで消える）
+	std::list<std::unique_ptr<GameObject>> childList_;
 };
 
 
 //オブジェクトを作成するテンプレート
+//引数：pParent	親オブジェクト（必須。作ったオブジェクトは親が持つ）
+//戻値：作ったオブジェクト（親が消えるまで有効。借りているだけ）
 template <class T>
 T* Instantiate(GameObject* pParent)
 {
-	T* pNewObject = new T(pParent);
-	if (pParent != nullptr)
-	{
-		pParent->PushBackChild(pNewObject);
-	}
-	pNewObject->Initialize();
-	return pNewObject;
+	assert(pParent != nullptr);
+	std::unique_ptr<T> pNewObject = std::make_unique<T>(pParent);
+	T* pObject = pNewObject.get();
+	pParent->PushBackChild(std::move(pNewObject));
+	pObject->Initialize();
+	return pObject;
 }
 
 //オブジェクトを作成するテンプレート(チャイルドリストの最初へ)
+//引数・戻値はInstantiateと同じ
 template <class T>
 T* InstantiateFront(GameObject* pParent)
 {
-	T* pNewObject = new T(pParent);
-	if (pParent != nullptr)
-	{
-		pParent->PushFrontChild(pNewObject);
-	}
-	pNewObject->Initialize();
-	return pNewObject;
+	assert(pParent != nullptr);
+	std::unique_ptr<T> pNewObject = std::make_unique<T>(pParent);
+	T* pObject = pNewObject.get();
+	pParent->PushFrontChild(std::move(pNewObject));
+	pObject->Initialize();
+	return pObject;
 }
 
