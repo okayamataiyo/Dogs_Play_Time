@@ -296,6 +296,9 @@
     <ClInclude Include="Engine\Model.h">
       <Filter>Engine\ResourceManager</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\RayCastData.h">
+      <Filter>Engine\ResourceManager</Filter>
+    </ClInclude>
     <ClInclude Include="Engine\Global.h">
       <Filter>Engine</Filter>
     </ClInclude>

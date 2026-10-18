@@ -180,6 +180,7 @@
     <ClInclude Include="Engine\Json\json.hpp" />
     <ClInclude Include="Engine\Json\JsonReader.h" />
     <ClInclude Include="Engine\Model.h" />
+    <ClInclude Include="Engine\RayCastData.h" />
     <ClInclude Include="Engine\VFX.h" />
     <ClInclude Include="Engine\RootObject.h" />
     <ClInclude Include="Engine\SceneManager.h" />

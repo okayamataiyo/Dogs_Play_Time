@@ -3,8 +3,11 @@
 #include <assert.h>
 #include <vector>
 #include <string>
-#include "Fbx.h"
+#include "RayCastData.h"
 #include "Transform.h"
+
+//FBXファイルの実体。FBX SDKのヘッダーをここで読み込まないよう、前方宣言だけにしている
+class Fbx;
 
 //-----------------------------------------------------------
 //3Dモデル（FBXファイル）を管理する
