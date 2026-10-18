@@ -91,6 +91,7 @@
     <ClCompile Include="ColliderTest.cpp" />
     <ClCompile Include="GameObjectTest.cpp" />
     <ClCompile Include="Stubs.cpp" />
+    <ClCompile Include="WavParserTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <!-- テスト対象のゲーム本体のソース（そのままコンパイルして使う） -->
@@ -103,6 +104,7 @@
     <ClCompile Include="..\Engine\BoxCollider.cpp" />
     <ClCompile Include="..\Engine\SphereCollider.cpp" />
     <ClCompile Include="..\Engine\GameObject.cpp" />
+    <ClCompile Include="..\Engine\WavParser.cpp" />
     <ClCompile Include="..\Scripts\State\StateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
