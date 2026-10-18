@@ -1,0 +1,47 @@
+# 自動テストを、Windows x64のDebug / Releaseでビルドして実行する（ADR-0006）
+#
+# ゲーム本体はこのCIの対象外。FBX SDKはリポジトリに同梱できず、クラウドのランナーにも
+# 入れられないとライセンス本文から読めるため（ADR-0005）。本体のビルドは手元で確認する。
+# ここでビルドするのは、FBX SDKもDirect3Dも使わない部分のテスト（Tests/）だけ。
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# 同じブランチで新しい実行が始まったら、古い実行は止める
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.configuration }}, x64)
+    # VS 2026（ツールセットv145）が入ったイメージ。windows-latestだと、いつか別のVSに切り替わるので固定する
+    runs-on: windows-2025
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
+        with:
+          msbuild-architecture: x64
+
+      - name: Show msbuild version
+        run: msbuild /version /nologo
+
+      - name: Build tests
+        run: msbuild Tests\Dogs_Play_Time.Tests.vcxproj /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /m /v:minimal /nologo
+
+      - name: Run tests
+        run: .\Tests\x64\${{ matrix.configuration }}\Dogs_Play_Time.Tests.exe
