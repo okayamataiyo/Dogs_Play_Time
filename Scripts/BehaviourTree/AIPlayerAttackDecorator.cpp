@@ -13,12 +13,12 @@ AIPlayerAttackDecorator::AIPlayerAttackDecorator(Node* _pParentNode, GameObject*
 	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
-	pAIPlayerAttackAction_ = new AIPlayerAttackAction(this, _pGameObject);
+	pAIPlayerAttackAction_ = std::make_unique<AIPlayerAttackAction>(this, _pGameObject);
 }
 
 AIPlayerAttackDecorator::~AIPlayerAttackDecorator()
 {
-	SAFE_DELETE(pAIPlayerAttackAction_);
+	//子のノードは、unique_ptrが消す（不完全な型のまま持てるように、デストラクターはここで定義している）
 }
 
 void AIPlayerAttackDecorator::ChoiceUpdate()

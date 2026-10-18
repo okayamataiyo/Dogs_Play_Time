@@ -99,7 +99,7 @@ void AIPlayer::Initialize()
     pImageManager_->SecInit();
     pBoneImageManager_ = Instantiate<ImageManager>(this);
     pBoneImageManager_->SetMode((int)BONEIMAGE);
-    pAIPlayerWaitSelector_ = new AIPlayerWaitSelector(nullptr, this);
+    pAIPlayerWaitSelector_ = std::make_unique<AIPlayerWaitSelector>(nullptr, this);
     diveData_.divePower_ = 0.4f;
 }
 

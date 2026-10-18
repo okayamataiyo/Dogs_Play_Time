@@ -46,7 +46,7 @@ void GameSelectScene::Initialize()
 	pDogsFightText_->SetRotateY(0.0f);
 	pDogsFightText_->SetPosition(XMFLOAT3(-5.0f, 0.0f, 0.0f));
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
-	pStageObjectManager_ = new StageObjectManager(this);
+	pStageObjectManager_ = std::make_unique<StageObjectManager>(this);
 	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
 	XMFLOAT3 positionStage = { 5.0f,38.0f,10.0f };

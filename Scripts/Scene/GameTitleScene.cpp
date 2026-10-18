@@ -34,7 +34,7 @@ void GameTitleScene::Initialize()
 	pSolidText_ = Instantiate<SolidText>(this);
 	pSolidText_->SetMode((int)GAMETITLE);
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
-	pStageObjectManager_ = new StageObjectManager(this);
+	pStageObjectManager_ = std::make_unique<StageObjectManager>(this);
 	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pStageObjectManager_->CreateStageObject(STAGE, positionStage);
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);

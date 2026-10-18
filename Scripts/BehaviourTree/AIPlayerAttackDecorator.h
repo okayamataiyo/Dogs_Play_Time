@@ -1,6 +1,7 @@
 #pragma once
 //インクルード
 #include "Node.h"
+#include <memory>
 
 class GameObject;
 class AIPlayerAttackAction;
@@ -18,7 +19,7 @@ public:
 	void FailureUpdate() override;
 
 private:
-	AIPlayerAttackAction* pAIPlayerAttackAction_;
+	std::unique_ptr<AIPlayerAttackAction> pAIPlayerAttackAction_;	//子のノード（このノードが持つ）
 	AIPlayer* pAIPlayer_;
 };
 

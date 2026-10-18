@@ -2,9 +2,9 @@
 //インクルード
 #include "../../Engine/GameObject.h"
 #include "../../Engine/Camera.h"
+#include "../StageObject/StageObjectManager.h"
 
 class SolidText;
-class StageObjectManager;
 class SceneManager;
 class Stage;
 class ActorAttackPlayer;
@@ -28,7 +28,7 @@ private:
 	XMFLOAT3 camPos_;
 	XMFLOAT3 camTar_;
 	SolidText* pSolidText_;
-	StageObjectManager* pStageObjectManager_;
+	std::unique_ptr<StageObjectManager> pStageObjectManager_;	//このシーンが持つ
 	SceneManager* pSceneManager_;
 	Stage* pStage_;
 	UIManager* pUIManager_;

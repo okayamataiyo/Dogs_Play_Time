@@ -3,6 +3,7 @@
 #include "../../Engine/GameObject.h"
 #include "PlayerBase.h"
 #include "../State/StateManager.h"
+#include "../BehaviourTree/AIPlayerWaitSelector.h"
 
 class Dogs_Walk_PlayScene;
 class Dogs_Fight_PlayScene;
@@ -18,7 +19,6 @@ class ItemObjectManager;
 class ImageManager;
 class ParticleManager;
 class UIManager;
-class AIPlayerWaitSelector;
 
 namespace
 {
@@ -75,12 +75,12 @@ private:
 	Stage* pStage_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
-	ItemObjectManager* pItemObjectManager_;
+	ItemObjectManager* pItemObjectManager_;	//シーンが持っているもの（借りているだけ）
 	std::unique_ptr<StateManager> pStateManager_;	//このプレイヤーが持つ（Release()で消す）
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;
 	ParticleManager* pParticleManager_;
-	AIPlayerWaitSelector* pAIPlayerWaitSelector_;
+	std::unique_ptr<AIPlayerWaitSelector> pAIPlayerWaitSelector_;	//このプレイヤーが持つ（ビヘイビアツリーの根）
 public:
 	enum class SOUNDSTATE
 	{

@@ -2,6 +2,7 @@
 //インクルード
 #include "../../Engine/GameObject.h"
 #include "../../Engine/Camera.h"
+#include "../StageObject/StageObjectManager.h"
 #include "../Button.h"
 
 namespace
@@ -11,7 +12,6 @@ namespace
 }
 
 class SceneManager;
-class StageObjectManager;
 class SolidText;
 class ImageManager;
 class UIManager;
@@ -31,7 +31,7 @@ private:
 	XMFLOAT3 skyPosFly_;
 	XMFLOAT3 camPos_;
 	SceneManager* pSceneManager_;
-	StageObjectManager* pStageObjectManager_;
+	std::unique_ptr<StageObjectManager> pStageObjectManager_;	//このシーンが持つ
 	SolidText* pSolidText_;
 	ImageManager* pImageManager_;
 	ImageManager* pGameTitleImageManager_;

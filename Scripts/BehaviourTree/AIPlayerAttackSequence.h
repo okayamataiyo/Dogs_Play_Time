@@ -1,6 +1,7 @@
 #pragma once
 //インクルード
 #include "Node.h"
+#include <memory>
 #include <map>
 
 class GameObject;
@@ -28,9 +29,9 @@ public:
 	void FailureUpdate() override;
 
 private:
-	AIPlayerAttackDecorator* pAIPlayerAttackDecorator_;
-	AIPlayerAttackSeeAction* pAIPlayerAttackSeeAction_;
-	AIPlayerAttackDiveDecorator* pAIPlayerAttackDiveDecorator_;
+	std::unique_ptr<AIPlayerAttackDecorator> pAIPlayerAttackDecorator_;	//子のノード（このノードが持つ）
+	std::unique_ptr<AIPlayerAttackSeeAction> pAIPlayerAttackSeeAction_;	//子のノード（このノードが持つ）
+	std::unique_ptr<AIPlayerAttackDiveDecorator> pAIPlayerAttackDiveDecorator_;	//子のノード（このノードが持つ）
 	ATTACKSEQUENCEPRIORITY priority_;
 	std::map<ATTACKSEQUENCEPRIORITY, Node*> nodes_;
 };

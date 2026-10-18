@@ -78,7 +78,7 @@ private:
 	Stage* pStage_;
 	Floor* pFloor_;
 	SceneManager* pSceneManager_;
-	ItemObjectManager* pItemObjectManager_;
+	ItemObjectManager* pItemObjectManager_;	//シーンが持っているもの（借りているだけ）
 	std::unique_ptr<StateManager> pStateManager_;	//このプレイヤーが持つ（Release()で消す）
 	ImageManager* pImageManager_;
 	ImageManager* pBoneImageManager_;

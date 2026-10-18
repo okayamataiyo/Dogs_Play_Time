@@ -14,14 +14,13 @@ AIPlayerWaitSelector::AIPlayerWaitSelector(Node* _pParentNode,GameObject* _pGame
 	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
-	pAIPlayerWaitAction_ = new AIPlayerWaitAction(this, nodeData_.pGameObject_);
-	pAIPlayerAttackSequence_ = new AIPlayerAttackSequence(this, nodeData_.pGameObject_);
+	pAIPlayerWaitAction_ = std::make_unique<AIPlayerWaitAction>(this, nodeData_.pGameObject_);
+	pAIPlayerAttackSequence_ = std::make_unique<AIPlayerAttackSequence>(this, nodeData_.pGameObject_);
 }
 
 AIPlayerWaitSelector::~AIPlayerWaitSelector()
 {
-	SAFE_DELETE(pAIPlayerWaitAction_);
-	SAFE_DELETE(pAIPlayerAttackSequence_);
+	//子のノードは、unique_ptrが消す（不完全な型のまま持てるように、デストラクターはここで定義している）
 }
 
 void AIPlayerWaitSelector::ChoiceUpdate()
@@ -49,8 +48,8 @@ void AIPlayerWaitSelector::ReadyUpdate()
 
 void AIPlayerWaitSelector::RunningUpdate()
 {
-	nodes_[FIRST] = pAIPlayerAttackSequence_;
-	nodes_[SECONDS] = pAIPlayerWaitAction_;
+	nodes_[FIRST] = pAIPlayerAttackSequence_.get();
+	nodes_[SECONDS] = pAIPlayerWaitAction_.get();
 
 	auto& node = nodes_[priority_];
 	const int nextNode = 1;

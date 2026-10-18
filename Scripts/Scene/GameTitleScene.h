@@ -2,6 +2,7 @@
 //インクルード
 #include "../../Engine/GameObject.h"
 #include "../../Engine/Camera.h"
+#include "../StageObject/StageObjectManager.h"
 
 namespace
 {
@@ -9,7 +10,6 @@ namespace
 	std::string gameTitleSceneName = "GameTitleScene";
 }
 
-class StageObjectManager;
 class SolidText;
 class ImageManager;
 class SceneManager;
@@ -23,7 +23,7 @@ private:
 	XMFLOAT3 camTar_;
 	SolidText* pSolidText_;
 	ImageManager* pImageManager_;
-	StageObjectManager* pStageObjectManager_;
+	std::unique_ptr<StageObjectManager> pStageObjectManager_;	//このシーンが持つ
 	SceneManager* pSceneManager_;
 public:
 	GameTitleScene(GameObject* _pParent);

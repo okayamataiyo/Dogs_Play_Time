@@ -47,8 +47,8 @@ void Dogs_Fight_PlayScene::Initialize()
 		hSound_[i] = Audio::Load(soundName);
 	}
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
-	pItemObjectManager_ = new ItemObjectManager(this);
-	pStageObjectManager_ = new StageObjectManager(this);
+	pItemObjectManager_ = std::make_unique<ItemObjectManager>(this);
+	pStageObjectManager_ = std::make_unique<StageObjectManager>(this);
 	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pStageObjectManager_->CreateStageObjectOrigin(STAGE);
 

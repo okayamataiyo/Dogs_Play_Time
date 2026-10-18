@@ -2,8 +2,8 @@
 //インクルード
 #include "../Engine/Model.h"
 #include "../Engine/GameObject.h"
+#include "../Engine/Text.h"
 
-class Text;
 
 namespace
 {
@@ -30,7 +30,7 @@ private:
 	int padNum_;
 	int hModel_[4];
 	UISTATE UIState_;
-	Text* pText_;
+	std::unique_ptr<Text> pText_;	//このUIManagerが持つ
 public:
 	UIManager(GameObject* _pParent);
 	void Initialize() override;

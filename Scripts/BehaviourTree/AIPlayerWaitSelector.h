@@ -1,6 +1,7 @@
 #pragma once
 //インクルード
 #include "Node.h"
+#include <memory>
 #include <map>
 
 enum class WAITSELECTORPRIORITY
@@ -26,8 +27,8 @@ public:
 	void FailureUpdate() override;
 
 private:
-	AIPlayerWaitAction* pAIPlayerWaitAction_;
-	AIPlayerAttackSequence* pAIPlayerAttackSequence_;
+	std::unique_ptr<AIPlayerWaitAction> pAIPlayerWaitAction_;	//子のノード（このノードが持つ）
+	std::unique_ptr<AIPlayerAttackSequence> pAIPlayerAttackSequence_;	//子のノード（このノードが持つ）
 	WAITSELECTORPRIORITY priority_;
 	std::map<WAITSELECTORPRIORITY, Node*> nodes_;
 };

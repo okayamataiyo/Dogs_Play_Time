@@ -17,19 +17,17 @@ AIPlayerAttackSequence::AIPlayerAttackSequence(Node* _pParentNode, GameObject* _
 	nodeData_.myNodeState_ = READY;
 	nodeData_.pParentNode_ = _pParentNode;
 	nodeData_.pGameObject_ = _pGameObject;
-	pAIPlayerAttackDecorator_ = new AIPlayerAttackDecorator(this, nodeData_.pGameObject_);
-	pAIPlayerAttackSeeAction_ = new AIPlayerAttackSeeAction(this, nodeData_.pGameObject_);
-	pAIPlayerAttackDiveDecorator_ = new AIPlayerAttackDiveDecorator(this, nodeData_.pGameObject_);
-	nodes_[FIRST] = pAIPlayerAttackSeeAction_;
-	nodes_[SECONDS] = pAIPlayerAttackDecorator_;
-	nodes_[THIRD] = pAIPlayerAttackDiveDecorator_;
+	pAIPlayerAttackDecorator_ = std::make_unique<AIPlayerAttackDecorator>(this, nodeData_.pGameObject_);
+	pAIPlayerAttackSeeAction_ = std::make_unique<AIPlayerAttackSeeAction>(this, nodeData_.pGameObject_);
+	pAIPlayerAttackDiveDecorator_ = std::make_unique<AIPlayerAttackDiveDecorator>(this, nodeData_.pGameObject_);
+	nodes_[FIRST] = pAIPlayerAttackSeeAction_.get();
+	nodes_[SECONDS] = pAIPlayerAttackDecorator_.get();
+	nodes_[THIRD] = pAIPlayerAttackDiveDecorator_.get();
 }
 
 AIPlayerAttackSequence::~AIPlayerAttackSequence()
 {
-	SAFE_DELETE(pAIPlayerAttackDecorator_);
-	SAFE_DELETE(pAIPlayerAttackSeeAction_);
-	SAFE_DELETE(pAIPlayerAttackDiveDecorator_);
+	//子のノードは、unique_ptrが消す（不完全な型のまま持てるように、デストラクターはここで定義している）
 }
 
 void AIPlayerAttackSequence::ChoiceUpdate()

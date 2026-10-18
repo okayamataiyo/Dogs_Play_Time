@@ -40,7 +40,7 @@ void DogSelectScene::Initialize()
 	walkOrFight_ = GetPrivateProfileInt("PLAYSCENEID", "WalkOrFight", 0, "Setting/PlaySceneSetting.ini");
 	ShowCursor();
 	pSceneManager_ = (SceneManager*)FindObject(sceneManagerName);
-	pStageObjectManager_ = new StageObjectManager(this);
+	pStageObjectManager_ = std::make_unique<StageObjectManager>(this);
 	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pSky_ = (Sky*)pStageObjectManager_->GetStageObjectBase();
 	XMFLOAT3 positionStage = { 3.0f,38.0f,10.0f };

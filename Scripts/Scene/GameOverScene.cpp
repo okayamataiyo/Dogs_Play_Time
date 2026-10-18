@@ -44,7 +44,7 @@ void GameOverScene::Initialize()
 	XMFLOAT3 positionStage = { 0.0f,38.0f,10.0f };
 	XMFLOAT3 positionActorAttackPlayer = { 0.0f,0.0f,20.0f };
 	XMFLOAT3 positionActorCollectPlayer = { 0.0f,0.0f,25.0f };
-	pStageObjectManager_ = new StageObjectManager(this);
+	pStageObjectManager_ = std::make_unique<StageObjectManager>(this);
 	pStageObjectManager_->CreateStageObjectOrigin(SKY);
 	pStageObjectManager_->CreateStageObject(STAGE, positionStage);
 	pStage_ = (Stage*)pStageObjectManager_->GetStageObjectBase();

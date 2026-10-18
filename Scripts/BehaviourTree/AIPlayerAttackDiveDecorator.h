@@ -1,6 +1,7 @@
 #pragma once
 //インクルード
 #include "Node.h"
+#include <memory>
 
 class GameObject;
 class AIPlayerAttackDiveAction;
@@ -19,7 +20,7 @@ public:
 
 private:
 	bool isDive_;
-	AIPlayerAttackDiveAction* pAIPlayerAttackDiveAction_;
+	std::unique_ptr<AIPlayerAttackDiveAction> pAIPlayerAttackDiveAction_;	//子のノード（このノードが持つ）
 	AIPlayer* pAIPlayer_;
 };
 

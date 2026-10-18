@@ -2,6 +2,7 @@
 //インクルード
 #include "../../Engine/GameObject.h"
 #include "../../Engine/Camera.h"
+#include "../StageObject/StageObjectManager.h"
 #include "../ItemObject/ItemObjectManager.h"
 
 namespace
@@ -21,8 +22,6 @@ class SceneManager;
 class AttackPlayer;
 class CollectPlayer;
 class AIPlayer;
-class ItemObjectManager;
-class StageObjectManager;
 class ImageManager;
 
 /// <summary>
@@ -86,8 +85,8 @@ private:
     AttackPlayer* pAttackPlayer_;
     CollectPlayer* pCollectPlayer_;
     AIPlayer* pAIPlayer_;
-    ItemObjectManager* pItemObjectManager_;
-    StageObjectManager* pStageObjectManager_;
+    std::unique_ptr<ItemObjectManager> pItemObjectManager_;	//このシーンが持つ（プレイヤーなどは、GetItemObjectManager()で借りる）
+    std::unique_ptr<StageObjectManager> pStageObjectManager_;	//このシーンが持つ
     ImageManager* pAttackImageManager_;
     ImageManager* pCollectImageManager_;
 
@@ -110,7 +109,7 @@ public:
     XMFLOAT3 GetAttackPlayerPosition() { return attackPlayerPosition_; }
     void AddBoneCount(int _boneCount) { boneCount_ += _boneCount; }
     void AddWoodBoxCount(int _woodBoxCount) { woodBoxCount_ += _woodBoxCount; }
-    ItemObjectManager* GetItemObjectManager() { return pItemObjectManager_; }
+    ItemObjectManager* GetItemObjectManager() { return pItemObjectManager_.get(); }
     void HideCursor() { while (::ShowCursor(false) >= 0); }
     void SetGameStop();
 };
