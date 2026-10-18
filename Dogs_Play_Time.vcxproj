@@ -275,6 +275,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="docs\build.md" />
     <None Include="docs\adr\0001-windows-x64-target.md" />
     <None Include="docs\adr\0002-fixed-60hz-simulation.md" />
     <None Include="docs\adr\0003-gradual-raii-ownership.md" />
