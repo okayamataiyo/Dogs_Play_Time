@@ -17,3 +17,16 @@
 ## 検討した選択肢
 - 更新と描画を一体の60Hzループに固定する。
 - 経過時間に応じて各移動量を補正する可変時間刻み方式にする。
+
+## 調査メモ（実装前のコード）
+ADR-0006の検討で、実装前の状態を調べた。これを実装するときの前提になる。
+- ループ（`Engine/Main.cpp`）は、`(現在時刻 - 前回の更新時刻) * Fps > 1000`（ミリ秒の整数）が成り立ったときだけ、入力の更新・`UpdateSub`・`VFX::Update`・全ビューポートの描画・`Present`までを一続きで行う。`Fps`が更新と描画の両方の頻度を決めている。
+- 上の式では、Fps=60でも間隔が最短17msになるため、実際の更新は最短で約58.8Hz（コードからの計算で、実測はしていない）。厳密な60Hzにすると、全体が約2%速くなる。
+- 待つ間は、毎周回`timeBeginPeriod(1)`と`timeEndPeriod(1)`を呼びながら回り続ける（`Sleep(1)`は更新した後だけ）。`Present(0, 0)`なので、垂直同期は使っていない。
+- アニメーションは`Model::Draw`の中で進む（`nowFrame += animSpeed`）。ビューポートごとに`DrawSub`が呼ばれ、左右の画面の両方に描かれるモデル（`BothViewDraw`）は、1フレームに2回進む。アニメーションを設定しているのはプレイヤー（`CollectPlayer`・`AttackPlayer`・`AIPlayer`）だけで、速さは`PlayerBase.cpp`の`animSpeed_`（0.25〜1.0）。
+- `Camera::Update(type)`は、ビューポート3つぶんが毎フレーム呼ばれ、呼ぶたびに視点切り替えの`vPSize_`が進む。つまり3倍の速さで進んでいる。
+- `Camera::Update(2)`は、要素数2の配列`position_`・`target_`の範囲外を読む（3つめのビューポートのとき）。
+- `Input::Update()`も、この条件の中で呼ばれる。更新と描画を分けるときは、更新側で呼ばないと、押した瞬間の判定（`IsKeyDown`）を取りこぼす。
+- ゲームの時間は、すべて更新の回数で数えている（例：`scoreTimeCounter_ % FPS_`。`FPS_`は300で、更新300回ぶん）。実時間を測っているのは`Main.cpp`だけ。
+- `Direct3D::FPS` / `GetFPS()`は、`Main.cpp`が値を入れているだけで、読んでいる所はない。
+- `Tests/GameObjectTest.cpp`が、`DrawSub`のビューポートごとの振り分け（`BothViewDraw`・`LeftViewDraw`などの順序）を固定している。
