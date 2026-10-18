@@ -2,11 +2,29 @@
 #include <d3d11.h>
 #include <fbxsdk.h>
 #include <vector>
+#include <memory>
 #include <string>
 #include "Transform.h"
 #include "RayCastData.h"
 
 class FbxParts;
+
+//FBX SDKのオブジェクトを解放する削除関数（deleteではなく、Destroy()で解放する決まり）
+template<class T>
+struct FbxDestroyer
+{
+	void operator()(T* p) const
+	{
+		if (p != nullptr)
+		{
+			p->Destroy();
+		}
+	}
+};
+
+//FBX SDKのオブジェクトを持つunique_ptr
+template<class T>
+using FbxUniquePtr = std::unique_ptr<T, FbxDestroyer<T>>;
 
 //-----------------------------------------------------------
 //　FBXファイルを扱うクラス
@@ -20,14 +38,15 @@ class Fbx
 
 
 
-	//モデルの各パーツ（複数あるかも）
-	std::vector<FbxParts*>	parts_;
-
 	//FBXファイルを扱う機能の本体
-	FbxManager* pFbxManager_;
+	//（メンバーは宣言の逆順に解放される。パーツ → シーン → 本体の順に解放したいので、この順に宣言する）
+	FbxUniquePtr<FbxManager>	pFbxManager_;
 
 	//FBXファイルのシーン（Mayaで作ったすべての物体）を扱う
-	FbxScene*	pFbxScene_;
+	FbxUniquePtr<FbxScene>	pFbxScene_;
+
+	//モデルの各パーツ（複数あるかも）
+	std::vector<std::unique_ptr<FbxParts>>	parts_;
 
 
 	// アニメーションのフレームレート
@@ -50,7 +69,7 @@ class Fbx
 	//引数：pNode		調べるノード
 	//引数：pPartsList	パーツのリスト
 	//戻値：成功ならS_OK、失敗ならHRESULT
-	HRESULT CheckNode(FbxNode* pNode, std::vector<FbxParts*> *pPartsList);
+	HRESULT CheckNode(FbxNode* pNode, std::vector<std::unique_ptr<FbxParts>> *pPartsList);
 
 
 
@@ -71,9 +90,6 @@ public:
 	//描画
 	//引数：World	ワールド行列
 	void    Draw(Transform& transform, int frame);
-
-	//解放
-	void    Release();
 
 	//任意のボーンの位置を取得
 	//引数：boneName	取得したいボーンの位置

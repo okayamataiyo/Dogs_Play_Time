@@ -10,23 +10,15 @@ Fbx::Fbx():_animSpeed(0)
 }
 
 
-Fbx::~Fbx()
-{
-	for (int i = 0; i < parts_.size(); i++)
-	{
-		delete parts_[i];
-	}
-	parts_.clear();
-
-	pFbxScene_->Destroy();
-	pFbxManager_->Destroy();
-}
+//メンバーが宣言の逆順（パーツ → シーン → FBX SDK本体）に解放される
+//FbxPartsが不完全な型のヘッダーでは定義できないので、ここで定義する
+Fbx::~Fbx() = default;
 
 HRESULT Fbx::Load(std::string fileName)
 {
 	// FBXの読み込み
-	pFbxManager_ = FbxManager::Create();
-	pFbxScene_ = FbxScene::Create(pFbxManager_, "fbxscene");
+	pFbxManager_.reset(FbxManager::Create());
+	pFbxScene_.reset(FbxScene::Create(pFbxManager_.get(), "fbxscene"));
 
 	//ファイルが無いときは、FBX SDKのエラー文言ではわかりにくいので、先に調べる
 	if (GetFileAttributes(fileName.c_str()) == INVALID_FILE_ATTRIBUTES)
@@ -35,22 +27,22 @@ HRESULT Fbx::Load(std::string fileName)
 		return E_FAIL;
 	}
 	FbxString FileName(fileName.c_str());
-	FbxImporter *fbxImporter = FbxImporter::Create(pFbxManager_, "imp");
-	if (!fbxImporter->Initialize(FileName.Buffer(), -1, pFbxManager_->GetIOSettings()))
 	{
-		//失敗
-		errorMessage_ = fbxImporter->GetStatus().GetErrorString();
-		fbxImporter->Destroy();
-		return E_FAIL;
+		//読み込み用のインポーター（このブロックを抜けると、Destroy()で解放される）
+		FbxUniquePtr<FbxImporter> fbxImporter(FbxImporter::Create(pFbxManager_.get(), "imp"));
+		if (!fbxImporter->Initialize(FileName.Buffer(), -1, pFbxManager_->GetIOSettings()))
+		{
+			//失敗
+			errorMessage_ = fbxImporter->GetStatus().GetErrorString();
+			return E_FAIL;
+		}
+		if (!fbxImporter->Import(pFbxScene_.get()))
+		{
+			//失敗
+			errorMessage_ = fbxImporter->GetStatus().GetErrorString();
+			return E_FAIL;
+		}
 	}
-	if (!fbxImporter->Import(pFbxScene_))
-	{
-		//失敗
-		errorMessage_ = fbxImporter->GetStatus().GetErrorString();
-		fbxImporter->Destroy();
-		return E_FAIL;
-	}
-	fbxImporter->Destroy();
 
 	// アニメーションのタイムモードの取得
 	_frameRate = pFbxScene_->GetGlobalSettings().GetTimeMode();
@@ -92,18 +84,18 @@ HRESULT Fbx::Load(std::string fileName)
 	return hr;
 }
 
-HRESULT Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
+HRESULT Fbx::CheckNode(FbxNode * pNode, std::vector<std::unique_ptr<FbxParts>>* pPartsList)
 {
 	//そのノードにはメッシュ情報が入っているだろうか？
 	FbxNodeAttribute* attr = pNode->GetNodeAttribute();
 	if (attr != nullptr && attr->GetAttributeType() == FbxNodeAttribute::eMesh)
 	{
 		//パーツを用意
-		FbxParts* pParts = new FbxParts;
+		std::unique_ptr<FbxParts> pParts = std::make_unique<FbxParts>();
 		HRESULT hr = pParts->Init(pNode);
 
 		//パーツ情報を動的配列に追加（失敗したときも、解放はデストラクタに任せる）
-		pPartsList->push_back(pParts);
+		pPartsList->push_back(std::move(pParts));
 
 		if (FAILED(hr))
 		{
@@ -130,12 +122,6 @@ HRESULT Fbx::CheckNode(FbxNode * pNode, std::vector<FbxParts*>* pPartsList)
 	}
 
 	return S_OK;
-}
-
-
-void Fbx::Release()
-{
-
 }
 
 XMFLOAT3 Fbx::GetBonePosition(std::string boneName)
@@ -170,7 +156,7 @@ void Fbx::Draw(Transform& transform, int frame)
 		//メッシュアニメーションの場合
 		else
 		{
-			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_);
+			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_.get());
 		}
 	}
 }
