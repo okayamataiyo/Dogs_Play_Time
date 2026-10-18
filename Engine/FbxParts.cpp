@@ -8,45 +8,8 @@
 //コンストラクタ
 FbxParts::FbxParts():
 	vertexCount_(0), polygonCount_(0), indexCount_(0), materialCount_(0), polygonVertexCount_(0),
-	ppIndexBuffer_(nullptr), pMaterial_(nullptr),
-	pVertexBuffer_(nullptr), pConstantBuffer_(nullptr),
-	pVertexData_(nullptr), ppIndexData_(nullptr),
-	pSkinInfo_(nullptr), ppCluster_(nullptr), numBone_(0), pBoneArray_(nullptr), pWeightArray_(nullptr)
+	pSkinInfo_(nullptr), numBone_(0)
 {
-}
-
-//デストラクタ
-FbxParts::~FbxParts()
-{
-	SAFE_DELETE_ARRAY(pBoneArray_);
-	SAFE_DELETE_ARRAY(ppCluster_);
-
-	if (pWeightArray_ != nullptr)
-	{
-		for (DWORD i = 0; i < vertexCount_; i++)
-		{
-			SAFE_DELETE_ARRAY(pWeightArray_[i].pBoneIndex);
-			SAFE_DELETE_ARRAY(pWeightArray_[i].pBoneWeight);
-		}
-		SAFE_DELETE_ARRAY(pWeightArray_);
-	}
-
-
-
-	SAFE_DELETE_ARRAY(pVertexData_);
-	for (DWORD i = 0; i < materialCount_; i++)
-	{
-		SAFE_RELEASE(ppIndexBuffer_[i]);
-		SAFE_DELETE(ppIndexData_[i]);
-		SAFE_DELETE(pMaterial_[i].pTexture);
-
-	}
-	SAFE_DELETE_ARRAY(ppIndexBuffer_);
-	SAFE_DELETE_ARRAY(ppIndexData_);
-	SAFE_DELETE_ARRAY(pMaterial_);
-
-	SAFE_RELEASE(pVertexBuffer_);
-	SAFE_RELEASE(pConstantBuffer_);
 }
 
 //FBXファイルから情報をロードして諸々準備する
@@ -82,7 +45,7 @@ HRESULT FbxParts::Init(FbxNode *pNode)
 //頂点バッファ準備
 HRESULT FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 {
-	pVertexData_ = new VERTEX[vertexCount_];
+	vertexData_.resize(vertexCount_);
 
 	for (DWORD poly = 0; poly < polygonCount_; poly++)
 	{
@@ -93,18 +56,18 @@ HRESULT FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 
 			/////////////////////////頂点の位置/////////////////////////////////////
 			FbxVector4 pos = mesh->GetControlPointAt(index);
-			pVertexData_[index].position = XMFLOAT3((float)pos[0], (float)pos[1], (float)pos[2]);
+			vertexData_[index].position = XMFLOAT3((float)pos[0], (float)pos[1], (float)pos[2]);
 
 			/////////////////////////頂点の法線/////////////////////////////////////
 			FbxVector4 Normal;
 			mesh->GetPolygonVertexNormal(poly, vertex, Normal);	//ｉ番目のポリゴンの、ｊ番目の頂点の法線をゲット
-			pVertexData_[index].normal = XMFLOAT3((float)Normal[0], (float)Normal[1], (float)Normal[2]);
+			vertexData_[index].normal = XMFLOAT3((float)Normal[0], (float)Normal[1], (float)Normal[2]);
 
 			///////////////////////////頂点のＵＶ/////////////////////////////////////
 			FbxLayerElementUV * pUV = mesh->GetLayer(0)->GetUVs();
 			int uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
 			FbxVector2  uv = pUV->GetDirectArray().GetAt(uvIndex);
-			pVertexData_[index].uv = XMFLOAT3((float)uv.mData[0], (float)(1.0f - uv.mData[1]), 0.0f);
+			vertexData_[index].uv = XMFLOAT3((float)uv.mData[0], (float)(1.0f - uv.mData[1]), 0.0f);
 		}
 	}
 
@@ -117,7 +80,7 @@ HRESULT FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 		for (int k = 0; k < m_dwNumUV; k++)
 		{
 			FbxVector2 uv = pUV->GetDirectArray().GetAt(k);
-			pVertexData_[k].uv = XMFLOAT3((float)uv.mData[0], (float)(1.0f - uv.mData[1]), 0.0f);
+			vertexData_[k].uv = XMFLOAT3((float)uv.mData[0], (float)(1.0f - uv.mData[1]), 0.0f);
 		}
 	}
 
@@ -131,8 +94,8 @@ HRESULT FbxParts::InitVertex(fbxsdk::FbxMesh * mesh)
 	bd_vertex.MiscFlags = 0;
 	bd_vertex.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA data_vertex;
-	data_vertex.pSysMem = pVertexData_;
-	return Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
+	data_vertex.pSysMem = vertexData_.data();
+	return Direct3D::pDevice_->CreateBuffer(&bd_vertex, &data_vertex, pVertexBuffer_.ReleaseAndGetAddressOf());
 
 
 }
@@ -143,14 +106,12 @@ void FbxParts::InitMaterial(fbxsdk::FbxNode * pNode)
 
 	// マテリアルバッファの生成
 	materialCount_ = pNode->GetMaterialCount();
-	pMaterial_ = new MATERIAL[materialCount_];
+	materials_.resize(materialCount_);
 
 
 
 	for (DWORD i = 0; i < materialCount_; i++)
 	{
-		ZeroMemory(&pMaterial_[i], sizeof(pMaterial_[i]));
-
 		// フォンシェーディングを想定したマテリアルバッファの抽出
 		FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
 		FbxSurfacePhong* pPhong = (FbxSurfacePhong*)pMaterial;
@@ -165,17 +126,17 @@ void FbxParts::InitMaterial(fbxsdk::FbxNode * pNode)
 
 
 		// 環境光＆拡散反射光＆鏡面反射光の反射成分値をマテリアルバッファにコピー
-		pMaterial_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
-		pMaterial_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
-		pMaterial_[i].specular = XMFLOAT4(0, 0, 0, 0);
-		pMaterial_[i].shininess = 0;
+		materials_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
+		materials_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+		materials_[i].specular = XMFLOAT4(0, 0, 0, 0);
+		materials_[i].shininess = 0;
 
 
 		if (pMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
 		{
 			specular = pPhong->Specular;
-			pMaterial_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
-			pMaterial_[i].shininess = (float)pPhong->Shininess;
+			materials_[i].specular = XMFLOAT4((float)specular[0], (float)specular[1], (float)specular[2], 1.0f);
+			materials_[i].shininess = (float)pPhong->Shininess;
 		}
 
 
@@ -188,7 +149,7 @@ void FbxParts::InitMaterial(fbxsdk::FbxNode * pNode)
 //テクスチャ準備
 void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &i)
 {
-	pMaterial_[i].pTexture = nullptr;
+	materials_[i].pTexture = nullptr;
 
 
 	// テクスチャー情報の取得
@@ -209,12 +170,12 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &
 
 
 
-		pMaterial_[i].pTexture = new Texture;
-		if (FAILED(pMaterial_[i].pTexture->Load(name)))
+		materials_[i].pTexture = std::make_unique<Texture>();
+		if (FAILED(materials_[i].pTexture->Load(name)))
 		{
 			//読み込めないときはテクスチャ無しとして扱う（マテリアルの色だけで無地に表示される）
-			Debug::Warning(std::string("テクスチャを読み込めません。無地で表示します: ") + name + " (" + pMaterial_[i].pTexture->GetErrorMessage() + ")");
-			SAFE_DELETE(pMaterial_[i].pTexture);
+			Debug::Warning(std::string("テクスチャを読み込めません。無地で表示します: ") + name + " (" + materials_[i].pTexture->GetErrorMessage() + ")");
+			materials_[i].pTexture.reset();
 		}
 
 
@@ -224,9 +185,9 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial * pMaterial, const DWORD &
 //インデックスバッファ準備
 HRESULT FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 {
-	// マテリアルの数だけインデックスバッファーを作成（途中で失敗しても安全に解放できるよう、nullptrで埋めておく）
-	ppIndexBuffer_ = new ID3D11Buffer*[materialCount_]();
-	ppIndexData_ = new DWORD*[materialCount_]();
+	// マテリアルの数だけインデックスバッファーを作成
+	indexBuffers_.resize(materialCount_);
+	indexData_.resize(materialCount_);
 
 	
 
@@ -236,8 +197,7 @@ HRESULT FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 	for (DWORD i = 0; i < materialCount_; i++)
 	{
 		count = 0;
-		DWORD *pIndex = new DWORD[polygonCount_ * 3];
-		ZeroMemory(&pIndex[i], sizeof(pIndex[i]));
+		std::vector<DWORD> index(polygonCount_ * 3);
 
 		// ポリゴンを構成する三角形平面が、
 		// 「頂点バッファ」内のどの頂点を利用しているかを調べる
@@ -249,7 +209,7 @@ HRESULT FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 			{
 				for (DWORD k = 0; k < 3; k++)
 				{
-					pIndex[count + k] = mesh->GetPolygonVertex(j, k);
+					index[count + k] = mesh->GetPolygonVertex(j, k);
 				}
 				count += 3;
 			}
@@ -264,24 +224,21 @@ HRESULT FbxParts::InitIndex(fbxsdk::FbxMesh * mesh)
 		bd.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = pIndex;
+		InitData.pSysMem = index.data();
 		InitData.SysMemPitch = 0;
 		InitData.SysMemSlicePitch = 0;
 		//ポリゴンが1つもないマテリアル（使われていないマテリアル）は、インデックスバッファを作れないので作らない
 		//（従来からバッファはnullptrのままで、描画しても何も出ない）
 		if (count > 0)
 		{
-			HRESULT hr = Direct3D::pDevice_->CreateBuffer(&bd, &InitData, &ppIndexBuffer_[i]);
+			HRESULT hr = Direct3D::pDevice_->CreateBuffer(&bd, &InitData, indexBuffers_[i].ReleaseAndGetAddressOf());
 			if (FAILED(hr))
 			{
-				SAFE_DELETE_ARRAY(pIndex);
 				return hr;
 			}
 		}
-		pMaterial_[i].polygonCount = count / 3;
-		ppIndexData_[i] = new DWORD[count];
-		memcpy(ppIndexData_[i], pIndex, sizeof(DWORD) * count);
-		SAFE_DELETE_ARRAY(pIndex);
+		materials_[i].polygonCount = count / 3;
+		indexData_[i].assign(index.begin(), index.begin() + count);
 	}
 
 	return S_OK;
@@ -305,21 +262,19 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 	// 頂点からポリゴンを逆引きするための情報を作成する
 	struct  POLY_INDEX
 	{
-		int *   polyIndex;      // ポリゴンの番号
-		int *   vertexIndex;    // 頂点の番号
+		std::vector<int>	polyIndex;      // ポリゴンの番号
+		std::vector<int>	vertexIndex;    // 頂点の番号
 		int     numRef;         // 頂点を共有するポリゴンの数
 	};
 
-	POLY_INDEX * polyTable = new POLY_INDEX[vertexCount_];
+	std::vector<POLY_INDEX> polyTable(vertexCount_);
 	for (DWORD i = 0; i < vertexCount_; i++)
 	{
 		// 三角形ポリゴンに合わせて、頂点とポリゴンの関連情報を構築する
 		// 総頂点数＝ポリゴン数×３頂点
-		polyTable[i].polyIndex = new int[polygonCount_ * 3];
-		polyTable[i].vertexIndex = new int[polygonCount_ * 3];
+		polyTable[i].polyIndex.assign(polygonCount_ * 3, 0);
+		polyTable[i].vertexIndex.assign(polygonCount_ * 3, 0);
 		polyTable[i].numRef = 0;
-		ZeroMemory(polyTable[i].polyIndex, sizeof(int)* polygonCount_ * 3);
-		ZeroMemory(polyTable[i].vertexIndex, sizeof(int)* polygonCount_ * 3);
 
 		// ポリゴン間で共有する頂点を列挙する
 		for (DWORD k = 0; k < polygonCount_; k++)
@@ -338,25 +293,20 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 
 	// ボーン情報を取得する
 	numBone_ = pSkinInfo_->GetClusterCount();
-	ppCluster_ = new FbxCluster*[numBone_];
+	clusters_.resize(numBone_);
 	for (int i = 0; i < numBone_; i++)
 	{
-		ppCluster_[i] = pSkinInfo_->GetCluster(i);
+		clusters_[i] = pSkinInfo_->GetCluster(i);
 	}
 
 	// ボーンの数に合わせてウェイト情報を準備する
-	pWeightArray_ = new FbxParts::Weight[vertexCount_];
+	weightArray_.resize(vertexCount_);
 	for (DWORD i = 0; i < vertexCount_; i++)
 	{
-		pWeightArray_[i].posOrigin = pVertexData_[i].position;
-		pWeightArray_[i].normalOrigin = pVertexData_[i].normal;
-		pWeightArray_[i].pBoneIndex = new int[numBone_];
-		pWeightArray_[i].pBoneWeight = new float[numBone_];
-		for (int j = 0; j < numBone_; j++)
-		{
-			pWeightArray_[i].pBoneIndex[j] = -1;
-			pWeightArray_[i].pBoneWeight[j] = 0.0f;
-		}
+		weightArray_[i].posOrigin = vertexData_[i].position;
+		weightArray_[i].normalOrigin = vertexData_[i].normal;
+		weightArray_[i].boneIndex.assign(numBone_, -1);
+		weightArray_[i].boneWeight.assign(numBone_, 0.0f);
 	}
 
 
@@ -366,9 +316,9 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 	// そこから逆に、頂点ベースでボーンインデックス・重みを整頓する
 	for (int i = 0; i < numBone_; i++)
 	{
-		int numIndex = ppCluster_[i]->GetControlPointIndicesCount();   //このボーンに影響を受ける頂点数
-		int * piIndex = ppCluster_[i]->GetControlPointIndices();       //ボーン/ウェイト情報の番号
-		double * pdWeight = ppCluster_[i]->GetControlPointWeights();     //頂点ごとのウェイト情報
+		int numIndex = clusters_[i]->GetControlPointIndicesCount();   //このボーンに影響を受ける頂点数
+		int * piIndex = clusters_[i]->GetControlPointIndices();       //ボーン/ウェイト情報の番号
+		double * pdWeight = clusters_[i]->GetControlPointWeights();     //頂点ごとのウェイト情報
 
 																				 //頂点側からインデックスをたどって、頂点サイドで整理する
 		for (int k = 0; k < numIndex; k++)
@@ -379,15 +329,15 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 				if (m >= numBone_)
 					break;
 
-				if (pdWeight[k] > pWeightArray_[piIndex[k]].pBoneWeight[m])
+				if (pdWeight[k] > weightArray_[piIndex[k]].boneWeight[m])
 				{
 					for (int n = numBone_ - 1; n > m; n--)
 					{
-						pWeightArray_[piIndex[k]].pBoneIndex[n] = pWeightArray_[piIndex[k]].pBoneIndex[n - 1];
-						pWeightArray_[piIndex[k]].pBoneWeight[n] = pWeightArray_[piIndex[k]].pBoneWeight[n - 1];
+						weightArray_[piIndex[k]].boneIndex[n] = weightArray_[piIndex[k]].boneIndex[n - 1];
+						weightArray_[piIndex[k]].boneWeight[n] = weightArray_[piIndex[k]].boneWeight[n - 1];
 					}
-					pWeightArray_[piIndex[k]].pBoneIndex[m] = i;
-					pWeightArray_[piIndex[k]].pBoneWeight[m] = (float)pdWeight[k];
+					weightArray_[piIndex[k]].boneIndex[m] = i;
+					weightArray_[piIndex[k]].boneWeight[m] = (float)pdWeight[k];
 					break;
 				}
 			}
@@ -396,12 +346,12 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 	}
 
 	//ボーンを生成
-	pBoneArray_ = new FbxParts::Bone[numBone_];
+	boneArray_.resize(numBone_);
 	for (int i = 0; i < numBone_; i++)
 	{
 		// ボーンのデフォルト位置を取得する
 		FbxAMatrix  matrix;
-		ppCluster_[i]->GetTransformLinkMatrix(matrix);
+		clusters_[i]->GetTransformLinkMatrix(matrix);
 
 		// 行列コピー（Fbx形式からDirectXへの変換）
 		XMFLOAT4X4 pose;
@@ -412,16 +362,8 @@ void FbxParts::InitSkelton(FbxMesh * pMesh)
 				pose(x,y) = (float)matrix.Get(x, y);
 			}
 		}
-		pBoneArray_[i].bindPose = XMLoadFloat4x4(&pose);
+		boneArray_[i].bindPose = XMLoadFloat4x4(&pose);
 	}
-
-	// 一時的なメモリ領域を解放する
-	for (DWORD i = 0; i < vertexCount_; i++)
-	{
-		SAFE_DELETE_ARRAY(polyTable[i].polyIndex);
-		SAFE_DELETE_ARRAY(polyTable[i].vertexIndex);
-	}
-	SAFE_DELETE_ARRAY(polyTable);
 
 }
 
@@ -436,7 +378,7 @@ HRESULT FbxParts::IntConstantBuffer()
 	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags = 0;
 	cb.StructureByteStride = 0;
-	return Direct3D::pDevice_->CreateBuffer(&cb, NULL, &pConstantBuffer_);
+	return Direct3D::pDevice_->CreateBuffer(&cb, NULL, pConstantBuffer_.ReleaseAndGetAddressOf());
 }
 
 //描画
@@ -445,11 +387,11 @@ void FbxParts::Draw(Transform& transform)
 	//今から描画する頂点情報をシェーダに伝える
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
-	Direct3D::pContext_->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+	Direct3D::pContext_->IASetVertexBuffers(0, 1, pVertexBuffer_.GetAddressOf(), &stride, &offset);
 
 	//使用するコンスタントバッファをシェーダに伝える
-	Direct3D::pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
-	Direct3D::pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);
+	Direct3D::pContext_->VSSetConstantBuffers(0, 1, pConstantBuffer_.GetAddressOf());
+	Direct3D::pContext_->PSSetConstantBuffers(0, 1, pConstantBuffer_.GetAddressOf());
 
 
 	//シェーダーのコンスタントバッファーに各種データを渡す
@@ -458,7 +400,7 @@ void FbxParts::Draw(Transform& transform)
 		// インデックスバッファーをセット
 		UINT    stride = sizeof(int);
 		UINT    offset = 0;
-		Direct3D::pContext_->IASetIndexBuffer(ppIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
+		Direct3D::pContext_->IASetIndexBuffer(indexBuffers_[i].Get(), DXGI_FORMAT_R32_UINT, 0);
 
 
 		// パラメータの受け渡し
@@ -467,19 +409,19 @@ void FbxParts::Draw(Transform& transform)
 		cb.worldVewProj =	XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());						// リソースへ送る値をセット
 		cb.world =		XMMatrixTranspose(transform.GetWorldMatrix());
 		cb.normalTrans =	XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
-		cb.ambient = pMaterial_[i].ambient;
-		cb.diffuse = pMaterial_[i].diffuse;
-		cb.speculer = pMaterial_[i].specular;
-		cb.shininess = pMaterial_[i].shininess;
+		cb.ambient = materials_[i].ambient;
+		cb.diffuse = materials_[i].diffuse;
+		cb.speculer = materials_[i].specular;
+		cb.shininess = materials_[i].shininess;
 		for (int i = 0u; i <= 1; i++)
 		{
 			cb.cameraPosition = XMFLOAT4(Camera::GetPosition(i).x, Camera::GetPosition(i).y, Camera::GetPosition(i).z, 0);
 		}
 		cb.lightDirection = XMFLOAT4(1, -1, 1, 0);
-		cb.isTexture = pMaterial_[i].pTexture != nullptr;
+		cb.isTexture = materials_[i].pTexture != nullptr;
 
 
-		Direct3D::pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
+		Direct3D::pContext_->Map(pConstantBuffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
 		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
 
 
@@ -488,16 +430,16 @@ void FbxParts::Draw(Transform& transform)
 
 		if (cb.isTexture)
 		{
-			ID3D11SamplerState*			pSampler = pMaterial_[i].pTexture->GetSampler();
+			ID3D11SamplerState*			pSampler = materials_[i].pTexture->GetSampler();
 			Direct3D::pContext_->PSSetSamplers(0, 1, &pSampler);
 
-			ID3D11ShaderResourceView*	pSRV = pMaterial_[i].pTexture->GetSRV();
+			ID3D11ShaderResourceView*	pSRV = materials_[i].pTexture->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
-		Direct3D::pContext_->Unmap(pConstantBuffer_, 0);									// GPUからのリソースアクセスを再開
+		Direct3D::pContext_->Unmap(pConstantBuffer_.Get(), 0);									// GPUからのリソースアクセスを再開
 
 		 //ポリゴンメッシュを描画する
-		Direct3D::pContext_->DrawIndexed(pMaterial_[i].polygonCount * 3, 0, 0);
+		Direct3D::pContext_->DrawIndexed(materials_[i].polygonCount * 3, 0, 0);
 	}
 
 }
@@ -508,8 +450,8 @@ void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
 	// ボーンごとの現在の行列を取得する
 	for (int i = 0; i < numBone_; i++)
 	{
-		FbxAnimEvaluator * evaluator = ppCluster_[i]->GetLink()->GetScene()->GetAnimationEvaluator();
-		FbxMatrix mCurrentOrentation = evaluator->GetNodeGlobalTransform(ppCluster_[i]->GetLink(), time);
+		FbxAnimEvaluator * evaluator = clusters_[i]->GetLink()->GetScene()->GetAnimationEvaluator();
+		FbxMatrix mCurrentOrentation = evaluator->GetNodeGlobalTransform(clusters_[i]->GetLink(), time);
 
 		// 行列コピー（Fbx形式からDirectXへの変換）
 		XMFLOAT4X4 pose;
@@ -522,9 +464,9 @@ void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
 		}
 
 		// オフセット時のポーズの差分を計算する
-		pBoneArray_[i].newPose = XMLoadFloat4x4(&pose);
-		pBoneArray_[i].diffPose = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose);
-		pBoneArray_[i].diffPose *= pBoneArray_[i].newPose;
+		boneArray_[i].newPose = XMLoadFloat4x4(&pose);
+		boneArray_[i].diffPose = XMMatrixInverse(nullptr, boneArray_[i].bindPose);
+		boneArray_[i].diffPose *= boneArray_[i].newPose;
 	}
 
 	// 各ボーンに対応した頂点の変形制御
@@ -535,32 +477,32 @@ void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
 		ZeroMemory(&matrix, sizeof(matrix));
 		for (int m = 0; m < numBone_; m++)
 		{
-			if (pWeightArray_[i].pBoneIndex[m] < 0)
+			if (weightArray_[i].boneIndex[m] < 0)
 			{
 				break;
 			}
-			matrix += pBoneArray_[pWeightArray_[i].pBoneIndex[m]].diffPose * pWeightArray_[i].pBoneWeight[m];
+			matrix += boneArray_[weightArray_[i].boneIndex[m]].diffPose * weightArray_[i].boneWeight[m];
 
 		}
 
 		// 作成された関節行列を使って、頂点を変形する
-		XMVECTOR Pos = XMLoadFloat3(&pWeightArray_[i].posOrigin);
-		XMVECTOR Normal = XMLoadFloat3(&pWeightArray_[i].normalOrigin);
-		XMStoreFloat3(&pVertexData_[i].position,XMVector3TransformCoord(Pos, matrix));
+		XMVECTOR Pos = XMLoadFloat3(&weightArray_[i].posOrigin);
+		XMVECTOR Normal = XMLoadFloat3(&weightArray_[i].normalOrigin);
+		XMStoreFloat3(&vertexData_[i].position,XMVector3TransformCoord(Pos, matrix));
 		XMFLOAT3X3 mat33;
 		XMStoreFloat3x3(&mat33, matrix);
 		XMMATRIX matrix33 = XMLoadFloat3x3(&mat33);
-		XMStoreFloat3(&pVertexData_[i].normal, XMVector3TransformCoord(Normal, matrix));
+		XMStoreFloat3(&vertexData_[i].normal, XMVector3TransformCoord(Normal, matrix));
 
 	}
 
 	// 頂点バッファをロックして、変形させた後の頂点情報で上書きする
 	D3D11_MAPPED_SUBRESOURCE msr = {};
-	Direct3D::pContext_->Map(pVertexBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+	Direct3D::pContext_->Map(pVertexBuffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
 	if (msr.pData)
 	{
-		memcpy_s(msr.pData, msr.RowPitch, pVertexData_, sizeof(VERTEX) * vertexCount_);
-		Direct3D::pContext_->Unmap(pVertexBuffer_, 0);
+		memcpy_s(msr.pData, msr.RowPitch, vertexData_.data(), sizeof(VERTEX) * vertexCount_);
+		Direct3D::pContext_->Unmap(pVertexBuffer_.Get(), 0);
 	}
 
 
@@ -590,10 +532,10 @@ bool FbxParts::GetBonePosition(std::string boneName, XMFLOAT3 * position)
 {
 	for (int i = 0; i < numBone_; i++)
 	{
-		if (boneName == ppCluster_[i]->GetLink()->GetName())
+		if (boneName == clusters_[i]->GetLink()->GetName())
 		{
 			FbxAMatrix  matrix;
-			ppCluster_[i]->GetTransformLinkMatrix(matrix);
+			clusters_[i]->GetTransformLinkMatrix(matrix);
 
 			position->x = (float)matrix[3][0];
 			position->y = (float)matrix[3][1];
@@ -615,13 +557,13 @@ void FbxParts::RayCast(RayCastData * data)
 	for (DWORD i = 0; i < materialCount_; i++)
 	{
 		//そのマテリアルのポリゴン毎
-		for (DWORD j = 0; j < pMaterial_[i].polygonCount; j++)
+		for (DWORD j = 0; j < materials_[i].polygonCount; j++)
 		{
 			//3頂点
 			XMFLOAT3 ver[3];
-			ver[0] = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
-			ver[1] = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
-			ver[2] = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
+			ver[0] = vertexData_[indexData_[i][j * 3 + 0]].position;
+			ver[1] = vertexData_[indexData_[i][j * 3 + 1]].position;
+			ver[2] = vertexData_[indexData_[i][j * 3 + 2]].position;
 
 			BOOL  hit = FALSE;
 			float dist = 0.0f;

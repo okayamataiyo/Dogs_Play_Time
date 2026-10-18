@@ -2,6 +2,9 @@
 #include <fbxsdk.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <vector>
+#include <memory>
+#include <wrl/client.h>
 #include "Texture.h"
 #include "Transform.h"
 
@@ -48,8 +51,9 @@ class FbxParts
 		XMFLOAT4	ambient;			//環境光（アンビエント）への反射強度
 		XMFLOAT4	specular;			//鏡面反射光（スペキュラ）への反射強度
 		float		shininess;			//ハイライトの強さ（サイズ）
-		Texture*	pTexture;			//テクスチャ
-	}*pMaterial_;
+		std::unique_ptr<Texture>	pTexture;	//テクスチャ
+	};
+	std::vector<MATERIAL> materials_;	//マテリアルの一覧
 
 	// ボーン構造体（関節情報）
 	struct  Bone
@@ -64,8 +68,8 @@ class FbxParts
 	{
 		XMFLOAT3	posOrigin;		// 元々の頂点座標
 		XMFLOAT3	normalOrigin;	// 元々の法線ベクトル
-		int*		pBoneIndex;		// 関連するボーンのID
-		float*		pBoneWeight;	// ボーンの重み
+		std::vector<int>	boneIndex;		// 関連するボーンのID
+		std::vector<float>	boneWeight;		// ボーンの重み
 	};
 
 	//各データの個数
@@ -76,30 +80,30 @@ class FbxParts
 	DWORD polygonVertexCount_;//ポリゴン頂点インデックス数 
 
 		
-	VERTEX *pVertexData_;
-	DWORD** ppIndexData_;
+	std::vector<VERTEX> vertexData_;				//頂点の一覧
+	std::vector<std::vector<DWORD>> indexData_;		//マテリアルごとのインデックスの一覧
 
 
 	//【頂点バッファ】
 	//各頂点の情報（位置とか色とか）を格納するところ
 	//頂点数分の配列にして使う
-	ID3D11Buffer *pVertexBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer_;
 
 	//【インデックスバッファ】
 	//「どの頂点」と「どの頂点」と「どの頂点」で３角形ポリゴンになるかの情報を格納するところ
-	ID3D11Buffer **ppIndexBuffer_ = NULL;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> indexBuffers_;	//マテリアルごと
 
 	//【定数バッファ】
 	//シェーダー（Simple3D.hlsl）のグローバル変数に値を渡すためのもの
-	ID3D11Buffer *pConstantBuffer_;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer_;
 
 
 	// ボーン制御情報
-	FbxSkin*		pSkinInfo_;		// スキンメッシュ情報（スキンメッシュアニメーションのデータ本体）
-	FbxCluster**	ppCluster_;		// クラスタ情報（関節ごとに関連付けられた頂点情報）
+	FbxSkin*		pSkinInfo_;		// スキンメッシュ情報（スキンメッシュアニメーションのデータ本体。FBXのシーンが持っているものを借りているだけ）
+	std::vector<FbxCluster*>	clusters_;	// クラスタ情報（関節ごとに関連付けられた頂点情報。FBXのシーンが持っているものを借りているだけ）
 	int				numBone_;		// FBXに含まれている関節の数
-	Bone*			pBoneArray_;	// 各関節の情報
-	Weight*			pWeightArray_;	// ウェイト情報（頂点の対する各関節の影響度合い）
+	std::vector<Bone>	boneArray_;		// 各関節の情報
+	std::vector<Weight>	weightArray_;	// ウェイト情報（頂点の対する各関節の影響度合い）
 
 
 
@@ -113,7 +117,6 @@ class FbxParts
 
 public:
 	FbxParts();
-	~FbxParts();
 
 	//FBXファイルから情報をロードして諸々準備する
 	//引数：pNode　情報が入っているノード
